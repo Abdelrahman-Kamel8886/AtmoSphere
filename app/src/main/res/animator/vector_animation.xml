@@ -1,0 +1,15 @@
+<!-- res/animator/group_scale_animation.xml -->
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:propertyName="scaleX"
+        android:duration="500"
+        android:valueFrom="0.7"
+        android:valueTo="1"
+        android:valueType="floatType" />
+    <objectAnimator
+        android:propertyName="scaleY"
+        android:duration="500"
+        android:valueFrom="0.7"
+        android:valueTo="1"
+        android:valueType="floatType" />
+</set>

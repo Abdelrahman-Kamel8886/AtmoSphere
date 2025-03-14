@@ -1,0 +1,7 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/baseline_settings_24">
+
+    <target
+        android:name="settingsGroup"
+        android:animation="@animator/vector_animation" />
+</animated-vector>
