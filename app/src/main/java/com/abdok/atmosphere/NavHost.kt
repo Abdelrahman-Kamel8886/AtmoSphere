@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
+import com.abdok.atmosphere.Ui.Home.HomeScreen
 
 
 @Composable
@@ -34,12 +35,6 @@ fun setupNavHost(navController: NavHostController) {
 }
 
 
-@Composable
-fun HomeScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Home Screen", fontSize = 24.sp)
-    }
-}
 
 @Composable
 fun LocationsScreen() {
