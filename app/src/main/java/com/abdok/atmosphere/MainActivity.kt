@@ -17,8 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
+import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Ui.CurvedNavBar
+import com.abdok.atmosphere.Ui.Home.HomeViewModel
+import com.abdok.atmosphere.Ui.Home.HomeViewModelFactory
 
 
 class MainActivity : ComponentActivity() {
@@ -27,11 +35,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
            MainScreen()
+
         }
     }
 }
 
-@Preview
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()

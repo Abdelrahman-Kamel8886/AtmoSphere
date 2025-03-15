@@ -12,6 +12,13 @@ class RemoteDataSource private constructor(val service: RetroServices) {
         lang: String
     ) = service.getWeatherLatLon(lat, lon, units, lang)
 
+    suspend fun getForecastLatLon(
+        lat: Double,
+        lon: Double,
+        units: String,
+        lang: String
+    ) = service.getForecastLatLon(lat, lon, units, lang)
+
     companion object {
         private var instance: RemoteDataSource? = null
         fun getInstance(service: RetroServices): RemoteDataSource {
