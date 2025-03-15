@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.abdok.atmosphere.Data.ScreenRoutes
+import com.abdok.atmosphere.Data.Models.ScreenRoutes
 
 
 @Composable

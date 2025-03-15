@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Data
+package com.abdok.atmosphere.Data.Models
 
 import androidx.annotation.DrawableRes
 import com.abdok.atmosphere.R

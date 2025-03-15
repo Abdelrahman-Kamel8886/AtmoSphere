@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Data
+package com.abdok.atmosphere.Data.Models
 
 import kotlinx.serialization.Serializable
 

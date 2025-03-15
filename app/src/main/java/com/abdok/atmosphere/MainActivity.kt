@@ -70,8 +70,6 @@ fun hamada(){
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         })
-
-
     }
 }
 

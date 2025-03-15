@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin ("plugin.serialization") version "2.1.10"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    id ("kotlin-kapt")
 }
 
 android {
@@ -77,8 +78,34 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
-    // To use constraintlayout in compose
+    //To use constraintlayout in compose
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+
+    //gson
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //okhttp3
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //Glide
+    implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+    //WorkManager
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+
+    //Room Database
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
+
+    //LiveData & Compose
+    val compose_version = "1.0.0"
+    implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
+
 
 
 
