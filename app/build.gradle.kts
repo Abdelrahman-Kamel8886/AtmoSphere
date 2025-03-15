@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin ("plugin.serialization") version "2.1.10"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
 }
 
 android {
@@ -67,8 +69,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //curved bottom navigation bar
+    implementation (libs.curved.bottom.navigation)
 
-    implementation ("np.com.susanthapa:curved_bottom_navigation:0.6.5")
+    //compose navigation & serialization
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+    implementation("androidx.navigation:navigation-compose:2.8.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
+    // To use constraintlayout in compose
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+
 
 
 }
