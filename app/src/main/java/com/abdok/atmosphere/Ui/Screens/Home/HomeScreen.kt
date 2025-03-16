@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,16 +14,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -34,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Repository
@@ -43,23 +48,26 @@ import com.abdok.atmosphere.Repository
 import androidx.lifecycle.viewmodel.compose.*
 import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Ui.theme.ColorBackground
-import com.abdok.atmosphere.Ui.theme.ColorGradient1
-import com.abdok.atmosphere.Ui.theme.ColorGradient2
-import com.abdok.atmosphere.Ui.theme.ColorGradient3
 import com.abdok.atmosphere.Ui.theme.ColorTextSecondary
 import com.abdok.atmosphere.Ui.theme.ColorTextSecondaryVariant
+import com.abdok.atmosphere.Utils.BackgroundMapper
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
-import com.abdok.atmosphere.Utils.DateHelper
+import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.IconsMapper
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen() {
 
-    val homeFactory = HomeViewModelFactory(Repository.getInstance(
-        RemoteDataSource.getInstance(
-            RetroConnection.retroServices)))
+    val homeFactory = HomeViewModelFactory(
+        Repository.getInstance(
+            RemoteDataSource.getInstance(
+                RetroConnection.retroServices
+            )
+        )
+    )
 
     val viewModel: HomeViewModel = viewModel(factory = homeFactory)
 
@@ -70,7 +78,7 @@ fun HomeScreen(){
     val loc4 = 60.666733 to 11.169271
     val loc5 = 4.666733 to 36.169271
 
-    val  loc = loc1
+    val loc = loc1
 
 
     viewModel.getWeatherAndForecastLatLon(loc.first, loc.second)
@@ -86,47 +94,155 @@ fun HomeScreen(){
     messageState.value.let {
         Log.e("TAG", "HomeScreen error: $it")
     }
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background GIF
+        /*RainEffectBackground(
+            modifier = Modifier
+                .matchParentSize()
+                .zIndex(0f) // Set background layer to lowest
+        )*/
 
-    Box(modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .fillMaxSize()){
-        combinedWeatherData.value?.weatherResponse?.let {
-            //DailyWeather(it)
-            Column {
-                topView(it.name , CountryHelper.getCountryNameFromCode(it.sys.country)?:"")
-                Spacer(modifier = Modifier.height(8.dp))
-                WeatherCard(it)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(1f) // Ensure content appears on top of the background
+        ) {
+            combinedWeatherData.value?.weatherResponse?.let {
+                //DailyWeather(it)
+                Column {
+                    val brush = BackgroundMapper.getBackground(it.weather[0].icon)
+                    TopView(it.name, CountryHelper.getCountryNameFromCode(it.sys.country) ?: "")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    WeatherCard(it)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    SunsetSunriseView(brush = brush)
+                }
+
             }
-
         }
+    }
+
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun RainEffectBackground(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        // Load the GIF
+        GlideImage(
+            contentScale = ContentScale.FillHeight,
+            model = R.drawable.ra, // Use the GIF in res/drawable
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(0.5f)
+        )
+    }
+}
+
+@Composable
+fun TopView(
+    city: String = "Zefta",
+    country: String = "Egypt"
+) {
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp, start = 16.dp)
+    ) {
+
+        Text(
+            text = "$city,",
+            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
+        )
+
+        Text(
+            text = country,
+            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
+        )
+
 
     }
 }
 
 @Preview
 @Composable
-fun topView(
-    city : String = "Zefta",
-    country : String = "Egypt"
-){
-
-    Column(
-        Modifier
+fun SunsetSunriseView(
+    sunsetTime: String ="6:00 PM", sunriseTime: String = "6:40 AM",
+    progress: Float = 0.4f,
+    brush: Brush = BackgroundMapper.getBackground("01d")
+) {
+    var sliderWidth = remember { mutableStateOf(0f) }
+    Row(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp, start = 16.dp)) {
+            .padding(16.dp)
+            .background(brush, shape = RoundedCornerShape(12.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(id = R.drawable.sunset), // Add your sunset icon
+                contentDescription = "Sunset",
+                tint = Color.White
+            )
+            Text(
+                text = "Sunset",
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
+            Text(
+                text = sunsetTime,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
-        Text(text = "$city," ,
-            fontWeight = FontWeight.SemiBold
-            ,fontSize = 30.sp)
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Slider(
+                value = progress,
+                onValueChange = {  },
+                valueRange = 0f..1f,
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Gray,
+                    inactiveTrackColor = Color.Gray
+                ),
+                modifier = Modifier
+                    .height(40.dp) // Increase height to give room for icon
+            )
+        }
 
-        Text(text = country ,
-            fontWeight = FontWeight.SemiBold
-            ,fontSize = 30.sp)
-
-
-
-
-
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(id = R.drawable.sunrise), // Add your sunrise icon
+                contentDescription = "Sunrise",
+                tint = Color.White
+            )
+            Text(
+                text = "Sunrise",
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
+            Text(
+                text = sunriseTime,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -281,14 +397,15 @@ fun WeatherCard(weather: WeatherResponse) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = 8.dp)
     ) {
-        val (backgroundCard, title, lastUpdate , weatherImage , degree) = createRefs()
+        val (backgroundCard, title, lastUpdate, weatherImage, degree) = createRefs()
         CardBackground(modifier = Modifier.constrainAs(backgroundCard) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
-        }, height = 240)
+        }, height = 240, weather.weather[0].icon)
 
         val icon = IconsMapper.iconsMap.get(weather.weather.get(0).icon)
         icon?.let { painterResource(it) }?.let {
@@ -311,8 +428,7 @@ fun WeatherCard(weather: WeatherResponse) {
             color = ColorTextSecondary,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(title) {
-                start.linkTo(anchor = weatherImage.start)
-                end.linkTo(anchor = weatherImage.end)
+                start.linkTo(anchor = weatherImage.start, margin = 24.dp)
                 top.linkTo(anchor = weatherImage.bottom)
             }
         )
@@ -322,18 +438,18 @@ fun WeatherCard(weather: WeatherResponse) {
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(lastUpdate) {
                 start.linkTo(anchor = title.start)
-                top.linkTo(anchor = title.bottom , margin = 4.dp)
+                top.linkTo(anchor = title.bottom, margin = 4.dp)
             }
         )
         Column(
             modifier = Modifier.constrainAs(degree) {
                 top.linkTo(anchor = weatherImage.top)
                 bottom.linkTo(anchor = weatherImage.bottom)
-                absoluteRight.linkTo(anchor = parent.absoluteRight , margin = 24.dp)
-            }
-            ,horizontalAlignment = Alignment.End
+                absoluteRight.linkTo(anchor = parent.absoluteRight, margin = 24.dp)
+            }, horizontalAlignment = Alignment.End
         ) {
-            Box(modifier = Modifier.padding(top = 20.dp),
+            Box(
+                modifier = Modifier.padding(top = 20.dp),
                 contentAlignment = Alignment.TopEnd
             ) {
                 Row {
@@ -377,7 +493,8 @@ fun WeatherCard(weather: WeatherResponse) {
 
 @Composable
 fun CardBackground(
-    modifier: Modifier = Modifier, height : Int = 250
+    modifier: Modifier = Modifier, height: Int = 250,
+    condition: String = "02d"
 ) {
 
     Canvas(
@@ -387,7 +504,7 @@ fun CardBackground(
             .padding(8.dp)
     ) {
         val topHeightRatio = 0.3f
-        val cornerRadius =36.dp.toPx()
+        val cornerRadius = 36.dp.toPx()
         val topHeight = size.height * topHeightRatio
 
         val path = Path().apply {
@@ -398,18 +515,24 @@ fun CardBackground(
             lineTo(size.width - cornerRadius, size.height)
             quadraticBezierTo(size.width, size.height, size.width, size.height - cornerRadius)
             lineTo(size.width, size.height * 0.1f + cornerRadius)
-            quadraticBezierTo(size.width, size.height * 0.1f, size.width - cornerRadius, size.height * 0.1f)
+            quadraticBezierTo(
+                size.width,
+                size.height * 0.1f,
+                size.width - cornerRadius,
+                size.height * 0.1f
+            )
             lineTo(cornerRadius, topHeight)
             close()
         }
 
         drawPath(
             path = path,
-            brush = Brush.linearGradient(
+            brush = BackgroundMapper.getBackground(condition)
+            /*brush = Brush.linearGradient(
                 0f to ColorGradient1,
                 0.5f to ColorGradient2,
                 1f to ColorGradient3
-            ),
+            )*/,
             style = Fill
         )
     }

@@ -26,4 +26,7 @@ val ColorTextPrimary = Color(0xFF2c2e35)
 val ColorTextPrimaryVariant = ColorTextPrimary.copy(alpha = 0.7f)
 val ColorTextSecondary = Color.White
 val ColorTextSecondaryVariant = ColorTextSecondary.copy(alpha = 0.7f)
+
+val ColorTextDark= Color.DarkGray
+val ColorTextDarkVariant = Color.Gray.copy(alpha = 0.7f)
 val ColorTextAction = ColorGradient2
