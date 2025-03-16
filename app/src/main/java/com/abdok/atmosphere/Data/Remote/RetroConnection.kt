@@ -1,6 +1,6 @@
 package com.abdok.atmosphere.Data.Remote
 
-import com.abdok.atmosphere.Utils.Consts
+import com.abdok.atmosphere.Utils.Constants
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,16 +12,15 @@ object RetroConnection {
             val request = chain.request().newBuilder()
                 .url(
                     chain.request().url.newBuilder()
-                        .addQueryParameter("appid", Consts.API_KEY)
+                        .addQueryParameter("appid", Constants.API_KEY)
                         .build()
                 )
                 .build()
             chain.proceed(request)
-        }
-        .build()
+        }.build()
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(Consts.BASE_URL)
+        .baseUrl(Constants.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()

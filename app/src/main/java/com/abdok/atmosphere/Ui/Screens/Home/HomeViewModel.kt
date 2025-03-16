@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Ui.Home
+package com.abdok.atmosphere.Ui.Screens.Home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,11 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
-import com.abdok.atmosphere.Data.Models.ForecastResponse
-import com.abdok.atmosphere.Data.Models.WeatherResponse
-import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Repository
-import com.abdok.atmosphere.Utils.Consts
+import com.abdok.atmosphere.Utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -32,8 +29,8 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     fun getWeatherAndForecastLatLon(
         lat: Double,
         lon: Double,
-        units: String = Units.METRIC.value,
-        lang: String = Consts.DEFAULT_LANG
+        units: String = Constants.unit,
+        lang: String = Constants.DEFAULT_LANG
     ){
         viewModelScope.launch(Dispatchers.IO) {
             try {

@@ -2,13 +2,13 @@ package com.abdok.atmosphere.Data.Remote
 
 import com.abdok.atmosphere.Data.Models.ForecastResponse
 import com.abdok.atmosphere.Data.Models.WeatherResponse
-import com.abdok.atmosphere.Enums.Units
+import com.abdok.atmosphere.Utils.Constants
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface RetroServices {
 
-    @GET("data/2.5/weather")
+    @GET(Constants.WEATHER_ENDPOINT)
     suspend fun getWeatherLatLon(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
@@ -16,7 +16,7 @@ interface RetroServices {
         @Query("lang") lang: String
     ): WeatherResponse
 
-    @GET("data/2.5/forecast")
+    @GET(Constants.FORECAST_ENDPOINT)
     suspend fun getForecastLatLon(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,

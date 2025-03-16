@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.ui.theme
+package com.abdok.atmosphere.Ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.ui.theme
+package com.abdok.atmosphere.Ui.theme
 
 import android.app.Activity
 import android.os.Build

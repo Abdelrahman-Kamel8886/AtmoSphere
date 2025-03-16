@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
-import com.abdok.atmosphere.Ui.Home.HomeScreen
+import com.abdok.atmosphere.Ui.Screens.Home.HomeScreen
 
 
 @Composable

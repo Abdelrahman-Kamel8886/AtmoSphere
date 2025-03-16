@@ -1,5 +1,7 @@
-package com.abdok.atmosphere.Ui
+package com.abdok.atmosphere.Ui.Screens
 
+import android.graphics.Color
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -10,13 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.abdok.atmosphere.Data.Models.ScreenMenuItem
+import com.abdok.atmosphere.Ui.theme.ColorBackground
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 
 @Composable
 fun CurvedNavBar(navController: NavHostController) {
-
-    val color = MaterialTheme.colorScheme.error.toArgb()
 
     AndroidView(
         factory = { context ->
@@ -34,12 +35,11 @@ fun CurvedNavBar(navController: NavHostController) {
                     navController.popBackStack()
                     navController.navigate(ScreenMenuItem.menuItems[i].route)
                 }
-                navBackgroundColor = color
-
             }
         },
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
+            .background(color = ColorBackground)
     )
 }
