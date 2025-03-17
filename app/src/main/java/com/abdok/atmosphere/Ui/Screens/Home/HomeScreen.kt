@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -23,8 +25,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,12 +51,14 @@ import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Ui.theme.ColorTextSecondary
 import com.abdok.atmosphere.Ui.theme.ColorTextSecondaryVariant
+import com.abdok.atmosphere.Ui.theme.colorSunText
 import com.abdok.atmosphere.Utils.BackgroundMapper
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
 import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.Dates.SunCycleModel
 import com.abdok.atmosphere.Utils.IconsMapper
+import com.abdok.atmosphere.Utils.SharedModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -79,14 +82,12 @@ fun HomeScreen() {
     val loc4 = 60.666733 to 11.169271
     val loc5 = 4.666733 to 36.169271
 
-    val loc = loc1
-
+    val loc = loc2
 
     viewModel.getWeatherAndForecastLatLon(loc.first, loc.second)
 
     val combinedWeatherData = viewModel.combinedWeatherData.observeAsState()
     val messageState = viewModel.error.observeAsState()
-
 
 
     Log.d("TAG", "HomeScreen weather: ${combinedWeatherData.value?.weatherResponse.toString()}")
@@ -106,18 +107,21 @@ fun HomeScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .zIndex(1f) // Ensure content appears on top of the background
+                .zIndex(1f)
+                .verticalScroll(rememberScrollState())// Ensure content appears on top of the background
         ) {
             combinedWeatherData.value?.weatherResponse?.let {
                 //DailyWeather(it)
-                Column {
-                    val brush = BackgroundMapper.getBackground(it.weather[0].icon)
+                val cardBrush = BackgroundMapper.getCardBackground(it.weather[0].icon)
+                val screenBrush = BackgroundMapper.getScreenBackground(it.weather[0].icon)
+                SharedModel.screenBackground.value = screenBrush
+
+                Column{
                     TopView(it.name, CountryHelper.getCountryNameFromCode(it.sys.country) ?: "")
                     Spacer(modifier = Modifier.height(8.dp))
                     WeatherCard(it)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SunCycleView(brush = brush, sunRise =it.sys.sunrise.toLong() , sunSet =it.sys.sunset.toLong() )
-
+                    SunCycleView(brush = cardBrush, sunRise =it.sys.sunrise.toLong() , sunSet =it.sys.sunset.toLong() )
                 }
 
             }
@@ -154,7 +158,7 @@ fun TopView(
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp, start = 16.dp)
+            .padding(top = 48.dp, start = 16.dp)
     ) {
 
         Text(
@@ -178,21 +182,27 @@ fun SunCycleView(
 ) {
     val sunsetSunrise = SunCycleModel.getSunCycleModel(sunRise,sunSet)
     if (sunsetSunrise.isDayTime){
-        SunriseSunsetView(brush = brush , progress = sunsetSunrise.progress,sunriseTime = sunsetSunrise.sunriseTime, sunsetTime = sunsetSunrise.sunsetTime)
+        SunriseSunsetView(brush = brush
+            , progress = sunsetSunrise.progress,
+            sunriseTime = sunsetSunrise.sunriseTime,
+            sunsetTime = sunsetSunrise.sunsetTime)
     }
     else{
-        SunsetSunriseView(brush = brush , progress = sunsetSunrise.progress,sunriseTime = sunsetSunrise.sunriseTime, sunsetTime = sunsetSunrise.sunsetTime)
+        SunsetSunriseView(brush = brush ,
+            progress = sunsetSunrise.progress,
+            sunriseTime = sunsetSunrise.sunriseTime,
+            sunsetTime = sunsetSunrise.sunsetTime)
     }
 
 }
 
+@Preview
 @Composable
 fun SunsetSunriseView(
     sunsetTime: String ="6:00 PM", sunriseTime: String = "6:40 AM",
     progress: Float = 0.4f,
-    brush: Brush = BackgroundMapper.getBackground("01d")
+    brush: Brush = BackgroundMapper.getCardBackground("01n")
 ) {
-    var sliderWidth = remember { mutableStateOf(0f) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -209,8 +219,8 @@ fun SunsetSunriseView(
                 tint = Color.White
             )
             Text(
-                text = "Sunset",
-                color = Color.Gray,
+                text = stringResource(R.string.sunset),
+                color = Color.LightGray,
                 fontSize = 14.sp
             )
             Text(
@@ -248,8 +258,8 @@ fun SunsetSunriseView(
                 tint = Color.White
             )
             Text(
-                text = "Sunrise",
-                color = Color.Gray,
+                text = stringResource(R.string.sunrise),
+                color = Color.LightGray,
                 fontSize = 14.sp
             )
             Text(
@@ -262,14 +272,13 @@ fun SunsetSunriseView(
     }
 }
 
-
+@Preview
 @Composable
 fun SunriseSunsetView(
     sunsetTime: String ="6:00 PM", sunriseTime: String = "6:40 AM",
     progress: Float = 0.4f,
-    brush: Brush = BackgroundMapper.getBackground("01d")
+    brush: Brush = BackgroundMapper.getCardBackground("02d")
 ) {
-    var sliderWidth = remember { mutableStateOf(0f) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -286,8 +295,8 @@ fun SunriseSunsetView(
                 tint = Color.White
             )
             Text(
-                text = "Sunrise",
-                color = Color.Gray,
+                text = stringResource(R.string.sunrise),
+                color = colorSunText,
                 fontSize = 14.sp
             )
             Text(
@@ -325,9 +334,10 @@ fun SunriseSunsetView(
                 tint = Color.White
             )
             Text(
-                text = "Sunset",
-                color = Color.Gray,
-                fontSize = 14.sp
+                text = stringResource(R.string.sunset),
+                color = colorSunText,
+                fontSize = 14.sp,
+
             )
             Text(
                 text = sunsetTime,
@@ -479,7 +489,7 @@ fun CardBackground(
 
         drawPath(
             path = path,
-            brush = BackgroundMapper.getBackground(condition)
+            brush = BackgroundMapper.getCardBackground(condition)
             /*brush = Brush.linearGradient(
                 0f to ColorGradient1,
                 0.5f to ColorGradient2,
@@ -488,6 +498,14 @@ fun CardBackground(
             style = Fill
         )
     }
+}
+
+@Preview
+@Composable
+fun HourlyColumn(
+
+){
+    Text(text = "18")
 }
 
 

@@ -1,12 +1,13 @@
 package com.abdok.atmosphere.Ui.Screens
 
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -18,6 +19,10 @@ import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 
 @Composable
 fun CurvedNavBar(navController: NavHostController) {
+
+    val defaultBackground = Brush.linearGradient(
+        listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
+    )
 
     AndroidView(
         factory = { context ->
@@ -40,6 +45,6 @@ fun CurvedNavBar(navController: NavHostController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(color = ColorBackground)
+            .background(color = Color.Transparent)
     )
 }
