@@ -90,7 +90,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     //To use constraintlayout in compose
-        implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 
     //gson
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -122,6 +122,17 @@ dependencies {
 
     //lottie
     implementation ("com.airbnb.android:lottie-compose:6.1.0")
+
+
+    // locations & map
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.maps.android:maps-compose:6.4.1")
+
+    //workManger
+    implementation("androidx.work:work-runtime:2.9.0")
+
+
+
 
 
 

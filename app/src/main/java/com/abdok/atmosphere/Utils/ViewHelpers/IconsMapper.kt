@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Utils
+package com.abdok.atmosphere.Utils.ViewHelpers
 
 import com.abdok.atmosphere.R
 

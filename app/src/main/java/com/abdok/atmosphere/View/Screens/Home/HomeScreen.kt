@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.View.Screens.Home
 
+import android.location.Location
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -23,12 +24,14 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,23 +51,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.RetroConnection
-import com.abdok.atmosphere.Repository
+import com.abdok.atmosphere.Data.Repository.Repository
 
 import androidx.lifecycle.viewmodel.compose.*
+import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Models.ForecastResponse
 import com.abdok.atmosphere.Data.Models.WeatherResponse
+import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.View.theme.ColorTextSecondary
 import com.abdok.atmosphere.View.theme.ColorTextSecondaryVariant
 import com.abdok.atmosphere.View.theme.colorSunText
-import com.abdok.atmosphere.Utils.BackgroundMapper
+import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
 import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.Dates.SunCycleModel
-import com.abdok.atmosphere.Utils.IconsMapper
+import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.getDaysForecast
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -73,18 +79,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun HomeScreen() {
-
-    val homeFactory = HomeViewModelFactory(
-        Repository.getInstance(
-            RemoteDataSource.getInstance(
-                RetroConnection.retroServices
-            )
-        )
-    )
-
-    val viewModel: HomeViewModel = viewModel(factory = homeFactory)
-
+fun HomeScreen(viewModel: HomeViewModel , location: Location) {
 
     val loc1 = 30.666733 to 31.169271
     val loc2 = 50.666733 to 8.468946
@@ -94,18 +89,33 @@ fun HomeScreen() {
 
     val loc = loc1
 
-    viewModel.getWeatherAndForecastLatLon(loc.first, loc.second)
+    LaunchedEffect(Unit) {
+        viewModel.getWeatherAndForecastLatLon(loc.first, loc.first)
+    }
 
-    val combinedWeatherData = viewModel.combinedWeatherData.observeAsState()
+    val weatherDataState = viewModel.combinedWeatherData.collectAsStateWithLifecycle()
     val messageState = viewModel.error.observeAsState()
 
 
-    Log.d("TAG", "HomeScreen weather: ${combinedWeatherData.value?.weatherResponse.toString()}")
-    Log.d("TAG", "HomeScreen Forecast: ${combinedWeatherData.value?.forecastResponse.toString()}")
-
-    messageState.value.let {
-        Log.e("TAG", "HomeScreen error: $it")
+    when(weatherDataState.value){
+        is Response.Loading -> {
+            Box (Modifier.fillMaxSize() , contentAlignment = Alignment.Center){
+                CircularProgressIndicator()
+            }
+        }
+        is Response.Error -> {
+            val message = (weatherDataState.value as Response.Error).exception
+            Text(text = message)
+        }
+        is Response.Success -> {
+            val data = (weatherDataState.value as Response.Success).data
+            DrawHome(combinedWeatherData = data)
+        }
     }
+}
+
+@Composable
+fun DrawHome(combinedWeatherData:CombinedWeatherData){
     Box(modifier = Modifier.fillMaxSize()) {
 /*        // Background GIF
         *//*RainEffectBackground(
@@ -118,9 +128,9 @@ fun HomeScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .zIndex(1f)
-                .verticalScroll(rememberScrollState())// Ensure content appears on top of the background
+                .verticalScroll(rememberScrollState())
         ) {
-            combinedWeatherData.value?.weatherResponse?.let {
+            combinedWeatherData.weatherResponse?.let {
                 val cardBrush = BackgroundMapper.getCardBackground(it.weather[0].icon)
                 val screenBrush = BackgroundMapper.getScreenBackground(it.weather[0].icon)
                 SharedModel.screenBackground.value = screenBrush
@@ -135,7 +145,7 @@ fun HomeScreen() {
                         .fillMaxWidth()
                         .padding(start = 16.dp), fontWeight = FontWeight.Bold , fontSize = 24.sp)
                     Spacer(modifier = Modifier.height(16.dp))
-                    HourlyForecastList(combinedWeatherData.value?.forecastResponse!!)
+                    HourlyForecastList(combinedWeatherData?.forecastResponse!!)
                     Spacer(modifier = Modifier.height(16.dp))
                     WindCard(brush = cardBrush , value = it.wind.speed , degree = it.wind.deg.toFloat())
                     Spacer(modifier = Modifier.height(8.dp))
@@ -155,15 +165,15 @@ fun HomeScreen() {
                         .fillMaxWidth()
                         .padding(start = 16.dp), fontWeight = FontWeight.Bold , fontSize = 24.sp)
                     Spacer(modifier = Modifier.height(16.dp))
-                    DaysForecastList(brush = cardBrush , forecast = combinedWeatherData.value?.forecastResponse!!)
+                    DaysForecastList(brush = cardBrush , forecast = combinedWeatherData?.forecastResponse!!)
                     Spacer(modifier = Modifier.height(100.dp))
                 }
 
             }
         }
     }
-
 }
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -593,9 +603,7 @@ fun DaysForecastList(
         val map = forecast.getDaysForecast()
 
         map.forEach { (key, list) ->
-
             DayRow(daylist = list)
-
         }
     }
 

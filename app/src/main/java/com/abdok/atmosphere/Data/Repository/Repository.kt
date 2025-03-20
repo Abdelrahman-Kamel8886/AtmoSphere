@@ -1,4 +1,4 @@
-package com.abdok.atmosphere
+package com.abdok.atmosphere.Data.Repository
 
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 

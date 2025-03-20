@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
-import com.abdok.atmosphere.Repository
+import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
@@ -20,8 +23,11 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     private var mutableForecastData: MutableLiveData<ForecastResponse> = MutableLiveData()
     val forecastData: LiveData<ForecastResponse> = mutableForecastData*/
 
-    private var mutableCombinedWeatherData: MutableLiveData<CombinedWeatherData> = MutableLiveData()
-    val combinedWeatherData: LiveData<CombinedWeatherData> = mutableCombinedWeatherData
+    private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)
+    val combinedWeatherData = mutableCombinedWeatherData.asStateFlow()
+
+   /* private var mutableCombinedWeatherData: MutableLiveData<CombinedWeatherData> = MutableLiveData()
+    val combinedWeatherData: LiveData<CombinedWeatherData> = mutableCombinedWeatherData*/
 
     private var mutableError :MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = mutableError
@@ -40,10 +46,11 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
                 val weather = weatherDeferred.await()
                 val forecast = forecastDeferred.await()
 
-                mutableCombinedWeatherData.postValue(CombinedWeatherData(weather , forecast))
+                mutableCombinedWeatherData.value = Response.Success(CombinedWeatherData(weather , forecast))
 
             }catch (exception : Exception){
-                mutableError.postValue(exception.message)
+                mutableCombinedWeatherData.value = Response.Error(exception.message.toString())
+                //mutableError.postValue(exception.message)
             }
         }
     }
