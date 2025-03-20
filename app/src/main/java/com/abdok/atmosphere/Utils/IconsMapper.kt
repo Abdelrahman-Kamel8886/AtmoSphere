@@ -24,9 +24,6 @@ object IconsMapper {
         "11n" to R.drawable.thunderstorm_day,
         "13n" to R.drawable.snow_night,
         "50n" to R.drawable.mist_night
-
-
-
     )
 
 }

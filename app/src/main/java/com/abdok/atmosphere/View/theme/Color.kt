@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Ui.theme
+package com.abdok.atmosphere.View.theme
 
 import androidx.compose.ui.graphics.Color
 

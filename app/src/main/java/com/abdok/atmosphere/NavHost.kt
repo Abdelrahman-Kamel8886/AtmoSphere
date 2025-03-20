@@ -7,13 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
-import com.abdok.atmosphere.Ui.Screens.Home.HomeScreen
+import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 
 
 @Composable

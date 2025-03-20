@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Ui.Screens.Home
+package com.abdok.atmosphere.View.Screens.Home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

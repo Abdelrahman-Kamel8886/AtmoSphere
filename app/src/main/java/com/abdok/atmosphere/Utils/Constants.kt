@@ -18,4 +18,8 @@ object Constants {
     val unit = Units.METRIC.value
 
 
+    val windUnit = "m/s"
+    val visibilityUnit = "m"
+
+
 }

@@ -1,6 +1,10 @@
 package com.abdok.atmosphere.Utils.Dates
 
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -11,6 +15,29 @@ object DateHelper {
         val date = Date(timestamp.toLong() * 1000)
         val format = SimpleDateFormat("dd MMM", Locale.getDefault())
         return format.format(date)
+    }
+
+    fun getDayFormTimestamp(timestamp: Long): String {
+        val date = Instant.ofEpochSecond(timestamp)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+
+        val today = LocalDate.now()
+        val tomorrow = today.plusDays(1)
+
+        return when (date) {
+            today -> "${date.format(DateTimeFormatter.ofPattern("dd MMM"))} Today"
+            tomorrow -> "${date.format(DateTimeFormatter.ofPattern("dd MMM"))} Tomorrow"
+            else -> date.format(DateTimeFormatter.ofPattern("dd MMM EEE"))
+        }
+    }
+
+    fun getHourFormTime(timestamp: Long): String {
+        val time = Instant.ofEpochSecond(timestamp)
+            .atZone(ZoneId.systemDefault())
+            .toLocalTime()
+
+        return time.format(DateTimeFormatter.ofPattern("hh:mm a"))
     }
 
     fun getRelativeTime(timestamp: Int): String {

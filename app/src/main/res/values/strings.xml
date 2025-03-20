@@ -3,4 +3,9 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="sunset">Sunset</string>
     <string name="sunrise">Sunrise</string>
+    <string name="today">Today</string>
+    <string name="_5_days_forecast">5-Days Forecast</string>
+    <string name="winds_speed_directions"><![CDATA[Winds Speed & Directions]]></string>
+    <string name="humidity">Humidity</string>
+    <string name="air_pressure">Air pressure</string>
 </resources>

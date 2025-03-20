@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Ui.Screens.Home
+package com.abdok.atmosphere.View.Screens.Home
 
 import android.util.Log
 import androidx.compose.foundation.Canvas
@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +33,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -47,11 +53,12 @@ import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Repository
 
 import androidx.lifecycle.viewmodel.compose.*
+import com.abdok.atmosphere.Data.Models.ForecastResponse
 import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Ui.theme.ColorTextSecondary
-import com.abdok.atmosphere.Ui.theme.ColorTextSecondaryVariant
-import com.abdok.atmosphere.Ui.theme.colorSunText
+import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.theme.ColorTextSecondaryVariant
+import com.abdok.atmosphere.View.theme.colorSunText
 import com.abdok.atmosphere.Utils.BackgroundMapper
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
@@ -59,8 +66,11 @@ import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.Dates.SunCycleModel
 import com.abdok.atmosphere.Utils.IconsMapper
 import com.abdok.atmosphere.Utils.SharedModel
+import com.abdok.atmosphere.Utils.getDaysForecast
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun HomeScreen() {
@@ -82,7 +92,7 @@ fun HomeScreen() {
     val loc4 = 60.666733 to 11.169271
     val loc5 = 4.666733 to 36.169271
 
-    val loc = loc2
+    val loc = loc1
 
     viewModel.getWeatherAndForecastLatLon(loc.first, loc.second)
 
@@ -97,8 +107,8 @@ fun HomeScreen() {
         Log.e("TAG", "HomeScreen error: $it")
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background GIF
-        /*RainEffectBackground(
+/*        // Background GIF
+        *//*RainEffectBackground(
             modifier = Modifier
                 .matchParentSize()
                 .zIndex(0f) // Set background layer to lowest
@@ -111,17 +121,42 @@ fun HomeScreen() {
                 .verticalScroll(rememberScrollState())// Ensure content appears on top of the background
         ) {
             combinedWeatherData.value?.weatherResponse?.let {
-                //DailyWeather(it)
                 val cardBrush = BackgroundMapper.getCardBackground(it.weather[0].icon)
                 val screenBrush = BackgroundMapper.getScreenBackground(it.weather[0].icon)
                 SharedModel.screenBackground.value = screenBrush
 
-                Column{
+                Column {
+                    Spacer(modifier = Modifier.height(32.dp))
                     TopView(it.name, CountryHelper.getCountryNameFromCode(it.sys.country) ?: "")
                     Spacer(modifier = Modifier.height(8.dp))
                     WeatherCard(it)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SunCycleView(brush = cardBrush, sunRise =it.sys.sunrise.toLong() , sunSet =it.sys.sunset.toLong() )
+                    Text(text = stringResource(R.string.today) , modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp), fontWeight = FontWeight.Bold , fontSize = 24.sp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HourlyForecastList(combinedWeatherData.value?.forecastResponse!!)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    WindCard(brush = cardBrush , value = it.wind.speed , degree = it.wind.deg.toFloat())
+                    Spacer(modifier = Modifier.height(8.dp))
+                    WeatherGrid(cardBrush
+                        , humidity = "${it.main.humidity}%"
+                        , visibility = "${it.visibility} ${Constants.visibilityUnit}"
+                        , pressure = "${it.main.pressure} hpa"
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    SunCycleView(
+                        brush = cardBrush,
+                        sunRise = it.sys.sunrise.toLong(),
+                        sunSet = it.sys.sunset.toLong()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = stringResource(R.string._5_days_forecast) , modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp), fontWeight = FontWeight.Bold , fontSize = 24.sp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DaysForecastList(brush = cardBrush , forecast = combinedWeatherData.value?.forecastResponse!!)
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
 
             }
@@ -178,20 +213,22 @@ fun TopView(
 
 @Composable
 fun SunCycleView(
-    brush: Brush,sunRise: Long,sunSet: Long
+    brush: Brush, sunRise: Long, sunSet: Long
 ) {
-    val sunsetSunrise = SunCycleModel.getSunCycleModel(sunRise,sunSet)
-    if (sunsetSunrise.isDayTime){
-        SunriseSunsetView(brush = brush
-            , progress = sunsetSunrise.progress,
+    val sunsetSunrise = SunCycleModel.getSunCycleModel(sunRise, sunSet)
+    if (sunsetSunrise.isDayTime) {
+        SunriseSunsetView(
+            brush = brush, progress = sunsetSunrise.progress,
             sunriseTime = sunsetSunrise.sunriseTime,
-            sunsetTime = sunsetSunrise.sunsetTime)
-    }
-    else{
-        SunsetSunriseView(brush = brush ,
+            sunsetTime = sunsetSunrise.sunsetTime
+        )
+    } else {
+        SunsetSunriseView(
+            brush = brush,
             progress = sunsetSunrise.progress,
             sunriseTime = sunsetSunrise.sunriseTime,
-            sunsetTime = sunsetSunrise.sunsetTime)
+            sunsetTime = sunsetSunrise.sunsetTime
+        )
     }
 
 }
@@ -199,7 +236,7 @@ fun SunCycleView(
 @Preview
 @Composable
 fun SunsetSunriseView(
-    sunsetTime: String ="6:00 PM", sunriseTime: String = "6:40 AM",
+    sunsetTime: String = "6:00 PM", sunriseTime: String = "6:40 AM",
     progress: Float = 0.4f,
     brush: Brush = BackgroundMapper.getCardBackground("01n")
 ) {
@@ -214,7 +251,7 @@ fun SunsetSunriseView(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painter = painterResource(id = R.drawable.sunset), // Add your sunset icon
+                painter = painterResource(id = R.drawable.sunset),
                 contentDescription = "Sunset",
                 tint = Color.White
             )
@@ -239,21 +276,21 @@ fun SunsetSunriseView(
         ) {
             Slider(
                 value = progress,
-                onValueChange = {  },
+                onValueChange = { },
                 valueRange = 0f..1f,
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.Gray,
+                    activeTrackColor = Color.White,
                     inactiveTrackColor = Color.Gray
                 ),
                 modifier = Modifier
-                    .height(40.dp) // Increase height to give room for icon
+                    .height(40.dp)
             )
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painter = painterResource(id = R.drawable.sunrise), // Add your sunrise icon
+                painter = painterResource(id = R.drawable.sunrise),
                 contentDescription = "Sunrise",
                 tint = Color.White
             )
@@ -275,7 +312,7 @@ fun SunsetSunriseView(
 @Preview
 @Composable
 fun SunriseSunsetView(
-    sunsetTime: String ="6:00 PM", sunriseTime: String = "6:40 AM",
+    sunsetTime: String = "6:00 PM", sunriseTime: String = "6:40 AM",
     progress: Float = 0.4f,
     brush: Brush = BackgroundMapper.getCardBackground("02d")
 ) {
@@ -290,7 +327,7 @@ fun SunriseSunsetView(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painter = painterResource(id = R.drawable.sunrise), // Add your sunrise icon
+                painter = painterResource(id = R.drawable.sunrise),
                 contentDescription = "Sunrise",
                 tint = Color.White
             )
@@ -315,21 +352,21 @@ fun SunriseSunsetView(
         ) {
             Slider(
                 value = progress,
-                onValueChange = {  },
+                onValueChange = { },
                 valueRange = 0f..1f,
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.Gray,
+                    activeTrackColor = Color.White,
                     inactiveTrackColor = Color.Gray
                 ),
                 modifier = Modifier
-                    .height(40.dp) // Increase height to give room for icon
+                    .height(40.dp)
             )
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painter = painterResource(id = R.drawable.sunset), // Add your sunset icon
+                painter = painterResource(id = R.drawable.sunset),
                 contentDescription = "Sunset",
                 tint = Color.White
             )
@@ -338,7 +375,7 @@ fun SunriseSunsetView(
                 color = colorSunText,
                 fontSize = 14.sp,
 
-            )
+                )
             Text(
                 text = sunsetTime,
                 color = Color.White,
@@ -500,12 +537,337 @@ fun CardBackground(
     }
 }
 
-@Preview
+@Composable
+fun HourlyForecastList(
+    forecast: ForecastResponse
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp),
+    ) {
+        val map = forecast.getDaysForecast()
+        val list = map.values.first()
+        items(list.size) {
+            HourlyColumn(list[it])
+        }
+    }
+}
+
 @Composable
 fun HourlyColumn(
+    hour : ForecastResponse.Item0
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "${DateHelper.getHourFormTime(hour.dt.toLong())}",
+            color = Color.Gray,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(end = 16.dp)
+        )
+        Image(
+            painter = painterResource(IconsMapper.iconsMap.get(hour.weather.get(0).icon)?:R.drawable.clear_sky_day),
+            contentDescription = "Sunset",
+            modifier = Modifier.size(48.dp)
+        )
+        Text(text = "${hour.main.temp.toInt()}°${Constants.degree}", color = Color.DarkGray, fontSize = 14.sp, fontWeight = FontWeight.Bold)
 
-){
-    Text(text = "18")
+    }
+
 }
+
+
+@Composable
+fun DaysForecastList(
+    brush: Brush = BackgroundMapper.getCardBackground("01d"),
+    forecast: ForecastResponse
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .background(brush, shape = RoundedCornerShape(12.dp)),
+    ) {
+
+        val map = forecast.getDaysForecast()
+
+        map.forEach { (key, list) ->
+
+            DayRow(daylist = list)
+
+        }
+    }
+
+    /*repeat(8){
+        DayRow()
+    }*/
+}
+
+@Composable
+fun DayRow(
+    daylist: List<ForecastResponse.Item0>
+) {
+
+    val date = DateHelper.getDayFormTimestamp(daylist.get(0).dt.toLong())
+    val icon = daylist.first().weather.get(0).icon.replace("n","d")
+
+    var min = daylist.get(0).main.temp_min.toInt()
+    var max = daylist.get(0).main.temp_max.toInt()
+
+
+    for (item in daylist){
+        min = Math.min(item.main.temp_min.toInt() , min)
+        max = Math.max(item.main.temp_max.toInt() , max)
+    }
+
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        val (description, image, degree) = createRefs()
+
+        Column(modifier = Modifier.constrainAs(description) {
+            start.linkTo(parent.start)
+            top.linkTo(parent.top)
+            bottom.linkTo(parent.bottom)
+        }) {
+            Text(
+                text = "${date}",
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+        }
+
+        Image(
+            painter = painterResource(id = IconsMapper.iconsMap.get(icon) ?: R.drawable.clear_sky_day),
+            contentDescription = "Sunset",
+            modifier = Modifier
+                .size(48.dp)
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start, margin = 32.dp)
+                    end.linkTo(parent.end)
+                }
+        )
+
+
+        Text(text = "${min}°${Constants.degree} / ${max}°${Constants.degree}",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.constrainAs(degree) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+            }
+        )
+
+    }
+
+}
+
+@Composable
+fun WindDirectionIndicator(modifier: Modifier, windDirection: Float = 299f) {
+    Canvas(
+        modifier = modifier
+            .size(86.dp)
+            .padding(16.dp)
+    ) {
+        val radius = size.minDimension / 2
+        val center = Offset(size.width / 2, size.height / 2)
+
+        // Draw the circle markers
+        for (i in 0 until 12) {
+            val angle = Math.toRadians((i * 30).toDouble())
+            val start = Offset(
+                center.x + (radius - 10) * cos(angle).toFloat(),
+                center.y + (radius - 10) * sin(angle).toFloat()
+            )
+            val end = Offset(
+                center.x + radius * cos(angle).toFloat(),
+                center.y + radius * sin(angle).toFloat()
+            )
+            drawLine(
+                color = Color.White,
+                start = start,
+                end = end,
+                strokeWidth = 6f
+            )
+        }
+
+        // Draw the arrow
+        val arrowAngle = Math.toRadians(windDirection.toDouble())
+        val arrowStart = Offset(
+            center.x + (radius - 20) * cos(arrowAngle).toFloat(),
+            center.y + (radius - 20) * sin(arrowAngle).toFloat()
+        )
+        drawLine(
+            color = Color.Red,
+            start = center,
+            end = arrowStart,
+            strokeWidth = 4f
+        )
+
+        // Draw the arrowhead
+        val arrowHeadSize = 10f
+        val arrowTip = Offset(
+            center.x + radius * cos(arrowAngle).toFloat(),
+            center.y + radius * sin(arrowAngle).toFloat()
+        )
+        drawCircle(
+            color = Color.Red,
+            radius = arrowHeadSize,
+            center = arrowTip
+        )
+    }
+}
+
+@Composable
+fun CardItem(icon: Int
+             , title: String = "dddd", value: String = "455"
+             ,brush:Brush
+) {
+    Box(
+        modifier = Modifier
+            .size(100.dp)
+            .background(brush = brush, shape = RoundedCornerShape(12.dp))
+
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 14.sp
+            )
+            Text(
+                text = value,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WeatherGrid(
+    brush: Brush = BackgroundMapper.getCardBackground("01d")
+    ,pressure : String = "100" , humidity:String = "20" ,visibility : String = "1000"
+) {
+    val items = listOf(
+        Triple(R.drawable.humidity_icon, stringResource(R.string.humidity), humidity),
+        Triple(R.drawable.air_icon, stringResource(R.string.air_pressure), pressure),
+        Triple(R.drawable.outline_visibility_24, "Visibility", visibility)
+    )
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(1),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(items) { (icon, title, value) ->
+            CardItem(icon = icon, title = title, value = value , brush)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WindCard(value: Double = 445.0 , degree:Float = 270f
+             ,brush:Brush = BackgroundMapper.getCardBackground("01d")
+) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(brush = brush, shape = RoundedCornerShape(12.dp))
+
+        ) {
+            val (directions , des , windIcon , windTitle) = createRefs()
+
+            Icon(
+                painter = painterResource(id = R.drawable.wind_icon),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier
+                    .size(32.dp)
+                    .constrainAs(windIcon) {
+                        start.linkTo(parent.start, 16.dp)
+                        top.linkTo(parent.top, 16.dp)
+                    }
+            )
+
+            Text(
+                text = stringResource(R.string.winds_speed_directions),
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(windTitle){
+                    start.linkTo(windIcon.end,8.dp)
+                    top.linkTo(windIcon.top)
+                    bottom.linkTo(windIcon.bottom)
+                }
+            )
+
+            Text(
+                text = "$value ${Constants.windUnit}",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.constrainAs(des){
+                    top.linkTo(windIcon.bottom)
+                    start.linkTo(windIcon.start)
+                    end.linkTo(windTitle.end)
+                    bottom.linkTo(directions.bottom)
+                }
+            )
+            WindDirectionIndicator(Modifier.constrainAs(directions){
+                end.linkTo(parent.end , 16.dp)
+
+            } ,degree)
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
