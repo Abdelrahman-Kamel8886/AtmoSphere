@@ -90,7 +90,8 @@ fun HomeScreen(viewModel: HomeViewModel , location: Location) {
     val loc = loc1
 
     LaunchedEffect(Unit) {
-        viewModel.getWeatherAndForecastLatLon(loc.first, loc.first)
+        /*viewModel.getWeatherAndForecastLatLon(loc.first, loc.first)*/
+        viewModel.getWeatherAndForecastLatLon(location.latitude, location.longitude)
     }
 
     val weatherDataState = viewModel.combinedWeatherData.collectAsStateWithLifecycle()

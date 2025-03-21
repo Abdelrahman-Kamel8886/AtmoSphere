@@ -20,10 +20,11 @@ import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
 import com.abdok.atmosphere.View.Screens.Locations.LocationsScreen
+import com.abdok.atmosphere.View.Screens.Map.MapScreen
 
 
 @Composable
-fun setupNavHost(navController: NavHostController , location: Location) {
+fun setupNavHost(navController: NavHostController, location: Location) {
 
     NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
 
@@ -36,16 +37,23 @@ fun setupNavHost(navController: NavHostController , location: Location) {
                 )
             )
             val viewModel: HomeViewModel = viewModel(factory = homeFactory)
-            HomeScreen(viewModel , location)
+            HomeScreen(viewModel, location)
         }
         composable<ScreenRoutes.LocationsRoute> {
-            LocationsScreen()
+            LocationsScreen(
+                onLocationClick = {
+                    navController.navigate(ScreenRoutes.MapRoute)
+                }
+            )
         }
         composable<ScreenRoutes.AlertsRoute> {
             AlertsScreen()
         }
         composable<ScreenRoutes.SettingsRoute> {
             SettingsScreen()
+        }
+        composable<ScreenRoutes.MapRoute> {
+            MapScreen()
         }
     }
 }
