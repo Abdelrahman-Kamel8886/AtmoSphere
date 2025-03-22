@@ -16,6 +16,11 @@ class Repository private constructor(private val remoteDataSource: RemoteDataSou
         units: String,
         lang: String) = remoteDataSource.getForecastLatLon(lat, lon, units, lang)
 
+    suspend fun getCityLocation(cityName: String) = remoteDataSource.getCityLocation(cityName)
+
+    suspend fun getCityName(lat: Double, lon: Double) = remoteDataSource.getCityName(lat, lon)
+
+
     companion object{
         private var instance: Repository? = null
         fun getInstance(remoteDataSource: RemoteDataSource): Repository {

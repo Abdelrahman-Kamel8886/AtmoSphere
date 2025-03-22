@@ -52,6 +52,7 @@ class LocationWorker(context: Context,
                 super.onLocationResult(locationResult)
                 Log.i("TAG", "onLocationResult: $locationResult")
                 mutableLiveLocation.postValue(Response.Success(locationResult.lastLocation!!))
+                fusedLocationClient.removeLocationUpdates(locationCallback)
             }
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper())

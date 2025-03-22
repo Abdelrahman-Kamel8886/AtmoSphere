@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.View.Screens.CurvedNavBar
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -37,6 +38,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun LocationsScreen(
     onLocationClick: () -> Unit
 ) {
+    CurvedNavBar.mutableNavBarState.value = true
     val context = LocalContext.current
     Scaffold(
         containerColor = Color.White,

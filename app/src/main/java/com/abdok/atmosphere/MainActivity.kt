@@ -176,25 +176,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(
-    location: Location
-) {
+fun MainScreen(location: Location) {
 
     val defaultBackground = Brush.linearGradient(
         listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
     )
 
     val navController = rememberNavController()
+    val isNavBarVisible = CurvedNavBar.mutableNavBarState.observeAsState()
     //var background = SharedModel.screenBackground.observeAsState()
     Scaffold(
         bottomBar = {
-            CurvedNavBar(navController)
+            when(isNavBarVisible.value){
+                true -> CurvedNavBar.ShowCurvedNavBar(navController)
+                false -> {}
+                null -> {}
+            }
         }
     ) { innerPadding ->
         Box(modifier = Modifier
-            .background(
-                defaultBackground
-            )
+            .background(defaultBackground)
         ) {
             setupNavHost(navController , location)
         }

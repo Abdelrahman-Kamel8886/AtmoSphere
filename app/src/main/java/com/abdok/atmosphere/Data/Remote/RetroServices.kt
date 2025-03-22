@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.Data.Remote
 
+import com.abdok.atmosphere.Data.Models.CityLocationResponseItem
 import com.abdok.atmosphere.Data.Models.ForecastResponse
 import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.Utils.Constants
@@ -23,4 +24,14 @@ interface RetroServices {
         @Query("units") units: String,
         @Query("lang") lang: String
         ): ForecastResponse
+
+    @GET(Constants.GEO_ENDPOINT)
+    suspend fun getCityLocation(
+        @Query("q") cityName: String)  : List<CityLocationResponseItem>
+
+    @GET(Constants.REVERSE_GEO_ENDPOINT)
+    suspend fun getCityName(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+    ) : List<CityLocationResponseItem>
 }

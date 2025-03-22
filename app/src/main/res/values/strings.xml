@@ -8,4 +8,5 @@
     <string name="winds_speed_directions"><![CDATA[Winds Speed & Directions]]></string>
     <string name="humidity">Humidity</string>
     <string name="air_pressure">Air pressure</string>
+    <string name="search_with_city_name">Search with City Name</string>
 </resources>

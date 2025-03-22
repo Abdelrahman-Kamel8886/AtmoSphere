@@ -14,6 +14,9 @@ object Constants {
     const val WEATHER_ENDPOINT = "data/2.5/weather"
     const val FORECAST_ENDPOINT = "data/2.5/forecast"
 
+    const val GEO_ENDPOINT = "geo/1.0/direct"
+    const val REVERSE_GEO_ENDPOINT = "geo/1.0/reverse"
+
     val degree = Units.METRIC.degree
     val unit = Units.METRIC.value
 

@@ -21,6 +21,8 @@ import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
 import com.abdok.atmosphere.View.Screens.Locations.LocationsScreen
 import com.abdok.atmosphere.View.Screens.Map.MapScreen
+import com.abdok.atmosphere.View.Screens.Map.MapViewModel
+import com.abdok.atmosphere.View.Screens.Map.MapViewModelFactory
 
 
 @Composable
@@ -53,7 +55,15 @@ fun setupNavHost(navController: NavHostController, location: Location) {
             SettingsScreen()
         }
         composable<ScreenRoutes.MapRoute> {
-            MapScreen()
+            val mapFactory = MapViewModelFactory(
+                Repository.getInstance(
+                    RemoteDataSource.getInstance(
+                        RetroConnection.retroServices
+                    )
+                )
+            )
+            val viewModel: MapViewModel = viewModel(factory = mapFactory)
+            MapScreen(viewModel)
         }
     }
 }

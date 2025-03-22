@@ -1,6 +1,9 @@
 package com.abdok.atmosphere.Data.DataSources
 
+import com.abdok.atmosphere.Data.Models.CityLocationResponseItem
 import com.abdok.atmosphere.Data.Remote.RetroServices
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class RemoteDataSource private constructor(val service: RetroServices) {
 
@@ -18,6 +21,19 @@ class RemoteDataSource private constructor(val service: RetroServices) {
         units: String,
         lang: String
     ) = service.getForecastLatLon(lat, lon, units, lang)
+
+
+    suspend fun getCityLocation(cityName: String) : Flow<List<CityLocationResponseItem>> {
+        return flow {
+            emit(service.getCityLocation(cityName))
+        }
+    }
+
+    suspend fun getCityName(lat: Double, lon: Double) : Flow<List<CityLocationResponseItem>> {
+        return flow {
+            emit(service.getCityName(lat, lon))
+        }
+    }
 
     companion object {
         private var instance: RemoteDataSource? = null
