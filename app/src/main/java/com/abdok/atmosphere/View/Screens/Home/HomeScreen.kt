@@ -371,7 +371,7 @@ fun SunriseSunsetView(
                     inactiveTrackColor = Color.Gray
                 ),
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(3.dp)
             )
         }
 

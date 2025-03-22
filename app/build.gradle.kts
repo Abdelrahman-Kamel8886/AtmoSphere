@@ -30,6 +30,8 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
+        buildConfigField("String", "MAP_API_KEY", properties.getProperty("MAP_API_KEY"))
+        resValue ("string", "maps_api_key", properties.getProperty("MAP_API_KEY"))
     }
 
     buildTypes {
@@ -130,6 +132,9 @@ dependencies {
 
     //workManger
     implementation("androidx.work:work-runtime:2.9.0")
+
+    //places
+    implementation("com.google.maps.android:places-compose:0.1.3")
 
 
 
