@@ -62,8 +62,6 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
     val tempDegree = weatherResponse.main.temp_min.toInt() to weatherResponse.main.temp_max.toInt()
     val conditionText = weatherResponse.weather.get(0).description
 
-
-
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,16 +184,16 @@ fun DeleteBackground(
     swipeDismissState: DismissState
 ) {
     val color = when (swipeDismissState.dismissDirection) {
-        DismissDirection.StartToEnd -> Color.Green
         DismissDirection.EndToStart -> Color.Red
-        null -> Color.Transparent
+        else -> Color.Transparent
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .background(color)
-            .padding(16.dp),
+                ,
         contentAlignment = Alignment.CenterEnd
     ) {
 

@@ -25,7 +25,7 @@ import com.abdok.atmosphere.R
 
 @Composable
 fun FavouriteLocationsView(
-    locations: List<FavouriteLocation>
+    locations: List<FavouriteLocation> , onDelete: (FavouriteLocation) -> Unit
 ) {
 
     Column(
@@ -45,7 +45,12 @@ fun FavouriteLocationsView(
         }
         Spacer(modifier = Modifier.height(16.dp))
         locations.forEach {
-            FavouriteLocationCard(it)
+            SwipeToDeleteContainer(
+                item = it, onDelete = {
+                    onDelete(it)
+                }) { location ->
+                FavouriteLocationCard(item = location)
+            }
         }
         Spacer(modifier = Modifier.height(100.dp))
 
