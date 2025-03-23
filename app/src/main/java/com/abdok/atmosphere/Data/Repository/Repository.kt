@@ -1,8 +1,13 @@
 package com.abdok.atmosphere.Data.Repository
 
+import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
+import com.abdok.atmosphere.Data.Models.FavouriteLocation
 
-class Repository private constructor(private val remoteDataSource: RemoteDataSource) {
+class Repository private constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
+) {
 
     suspend fun getWeatherLatLon(
         lat: Double,
@@ -21,11 +26,17 @@ class Repository private constructor(private val remoteDataSource: RemoteDataSou
     suspend fun getCityName(lat: Double, lon: Double) = remoteDataSource.getCityName(lat, lon)
 
 
+
+    suspend fun insertFavoriteLocation(favorite: FavouriteLocation) = localDataSource.insertFavoriteLocation(favorite)
+    suspend fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
+    suspend fun getFavoriteLocations() = localDataSource.getFavoriteLocations()
+
+
     companion object{
         private var instance: Repository? = null
-        fun getInstance(remoteDataSource: RemoteDataSource): Repository {
+        fun getInstance(remoteDataSource: RemoteDataSource , localDataSource: LocalDataSource): Repository {
             if (instance == null) {
-                instance = Repository(remoteDataSource)
+                instance = Repository(remoteDataSource , localDataSource)
             }
             return instance!!
         }

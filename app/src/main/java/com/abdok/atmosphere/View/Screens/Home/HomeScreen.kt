@@ -24,7 +24,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Nightlight
+import androidx.compose.material.icons.filled.NightlightRound
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -87,8 +93,6 @@ fun HomeScreen(viewModel: HomeViewModel , location: Location) {
     val loc4 = 60.666733 to 11.169271
     val loc5 = 4.666733 to 36.169271
 
-    val loc = loc1
-
     LaunchedEffect(Unit) {
         /*viewModel.getWeatherAndForecastLatLon(loc.first, loc.first)*/
         viewModel.getWeatherAndForecastLatLon(location.latitude, location.longitude)
@@ -118,12 +122,14 @@ fun HomeScreen(viewModel: HomeViewModel , location: Location) {
 @Composable
 fun DrawHome(combinedWeatherData:CombinedWeatherData){
     Box(modifier = Modifier.fillMaxSize()) {
-/*        // Background GIF
-        *//*RainEffectBackground(
+/*
+        // Background GIF
+        RainEffectBackground(
             modifier = Modifier
                 .matchParentSize()
                 .zIndex(0f) // Set background layer to lowest
-        )*/
+        )
+*/
 
         Column(
             modifier = Modifier
@@ -285,18 +291,7 @@ fun SunsetSunriseView(
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Slider(
-                value = progress,
-                onValueChange = { },
-                valueRange = 0f..1f,
-                colors = SliderDefaults.colors(
-                    thumbColor = Color.White,
-                    activeTrackColor = Color.White,
-                    inactiveTrackColor = Color.Gray
-                ),
-                modifier = Modifier
-                    .height(40.dp)
-            )
+            SunCycleSlider(progress)
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -361,18 +356,7 @@ fun SunriseSunsetView(
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Slider(
-                value = progress,
-                onValueChange = { },
-                valueRange = 0f..1f,
-                colors = SliderDefaults.colors(
-                    thumbColor = Color.White,
-                    activeTrackColor = Color.White,
-                    inactiveTrackColor = Color.Gray
-                ),
-                modifier = Modifier
-                    .height(3.dp)
-            )
+           SunCycleSlider(progress)
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -860,6 +844,22 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun SunCycleSlider(progress:Float = 0.2f){
+    Slider(
+        value = progress,
+        onValueChange = {},
+        valueRange = 0f..1f,
+        colors = SliderDefaults.colors(
+            thumbColor = Color.White,
+            activeTrackColor = Color.White,
+            inactiveTrackColor = Color.Gray
+        )
+        , modifier = Modifier.height(30.dp)
+    )
+}
 
 
 

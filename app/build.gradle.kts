@@ -112,9 +112,9 @@ dependencies {
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
 
     //Room Database
-    implementation ("androidx.room:room-runtime:2.6.1")
-    kapt ("androidx.room:room-compiler:2.6.1")
-    implementation ("androidx.room:room-ktx:2.6.1")
+    implementation ("androidx.room:room-runtime:2.5.2")
+    kapt ("androidx.room:room-compiler:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2")
 
     //LiveData & Compose
     val compose_version = "1.0.0"
@@ -138,11 +138,14 @@ dependencies {
     implementation("com.google.maps.android:places-compose:0.1.3")
 
 
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+    
+    implementation ("androidx.compose.material:material:1.5.4")
 
 
+}
 
-
-
-
-
+kapt {
+    correctErrorTypes = true
 }

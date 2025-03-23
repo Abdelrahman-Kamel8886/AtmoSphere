@@ -7,7 +7,6 @@ import java.util.Date
 import java.util.Locale
 
 fun ForecastResponse.getDaysForecast(): Map<Int, List<ForecastResponse.Item0>> {
-
     val forecastMap = mutableMapOf<Int, MutableList<ForecastResponse.Item0>>()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 

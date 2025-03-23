@@ -17,13 +17,10 @@ import com.abdok.atmosphere.Data.Models.ScreenMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 
-
 object CurvedNavBar{
 
     val mutableNavBarState = MutableLiveData(true)
-    private val activeIndex = MutableLiveData(0)
-
-
+    private var activeIndex = 0
 
     @Composable
     fun ShowCurvedNavBar(navController: NavHostController) {
@@ -42,9 +39,9 @@ object CurvedNavBar{
                             destinationId = screen.id
                         )
                     }
-                    setMenuItems(cbnMenuItems.toTypedArray(), activeIndex.value!!)
+                    setMenuItems(cbnMenuItems.toTypedArray(), activeIndex)
                     setOnMenuItemClickListener{ cbnMenuItem, i ->
-                        activeIndex.value = i
+                        activeIndex = i
                         navController.popBackStack()
                         navController.navigate(ScreenMenuItem.menuItems[i].route)
                     }

@@ -12,14 +12,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
+import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
 import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
+import com.abdok.atmosphere.View.Screens.Locations.LocationViewModelFactory
 import com.abdok.atmosphere.View.Screens.Locations.LocationsScreen
+import com.abdok.atmosphere.View.Screens.Locations.LocationsViewModel
 import com.abdok.atmosphere.View.Screens.Map.MapScreen
 import com.abdok.atmosphere.View.Screens.Map.MapViewModel
 import com.abdok.atmosphere.View.Screens.Map.MapViewModelFactory
@@ -30,19 +34,23 @@ fun setupNavHost(navController: NavHostController, location: Location) {
 
     NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
 
+        val repository = Repository.getInstance(
+            RemoteDataSource.getInstance(RetroConnection.retroServices),
+            LocalDataSource.getInstance(LocalDataBase.getInstance().localDao())
+        )
+
         composable<ScreenRoutes.HomeRoute> {
-            val homeFactory = HomeViewModelFactory(
-                Repository.getInstance(
-                    RemoteDataSource.getInstance(
-                        RetroConnection.retroServices
-                    )
-                )
-            )
+            val homeFactory = HomeViewModelFactory(repository)
             val viewModel: HomeViewModel = viewModel(factory = homeFactory)
             HomeScreen(viewModel, location)
         }
         composable<ScreenRoutes.LocationsRoute> {
+
+            val locationFactory = LocationViewModelFactory(repository)
+            val viewModel: LocationsViewModel = viewModel(factory = locationFactory)
+
             LocationsScreen(
+                viewModel,
                 onLocationClick = {
                     navController.navigate(ScreenRoutes.MapRoute)
                 }
@@ -55,15 +63,11 @@ fun setupNavHost(navController: NavHostController, location: Location) {
             SettingsScreen()
         }
         composable<ScreenRoutes.MapRoute> {
-            val mapFactory = MapViewModelFactory(
-                Repository.getInstance(
-                    RemoteDataSource.getInstance(
-                        RetroConnection.retroServices
-                    )
-                )
-            )
+            val mapFactory = MapViewModelFactory(repository)
             val viewModel: MapViewModel = viewModel(factory = mapFactory)
-            MapScreen(viewModel)
+            MapScreen(viewModel){
+                navController.popBackStack()
+            }
         }
     }
 }

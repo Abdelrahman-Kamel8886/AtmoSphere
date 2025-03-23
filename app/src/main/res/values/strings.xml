@@ -9,4 +9,6 @@
     <string name="humidity">Humidity</string>
     <string name="air_pressure">Air pressure</string>
     <string name="search_with_city_name">Search with City Name</string>
+    <string name="location_saved_successfully">Location Saved Successfully</string>
+    <string name="saved_locations">Saved Locations</string>
 </resources>

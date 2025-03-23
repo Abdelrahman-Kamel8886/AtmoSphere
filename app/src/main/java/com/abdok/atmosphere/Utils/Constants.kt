@@ -6,8 +6,13 @@ import com.abdok.atmosphere.Enums.Units
 
 object Constants {
 
+
+
     const val BASE_URL = "https://api.openweathermap.org/"
     const val API_KEY = BuildConfig.API_KEY
+
+    const val DATABASE_NAME = "local_db"
+    const val FAVOURITE_TABLE = "favourite_table"
 
     const val DEFAULT_LANG = "en"
 
@@ -19,6 +24,8 @@ object Constants {
 
     val degree = Units.METRIC.degree
     val unit = Units.METRIC.value
+
+
 
 
     val windUnit = "m/s"

@@ -1,0 +1,236 @@
+package com.abdok.atmosphere.View.Screens.Locations.components
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.R
+import com.abdok.atmosphere.Utils.Constants
+import com.abdok.atmosphere.Utils.CountryHelper
+import com.abdok.atmosphere.Utils.Dates.DateHelper
+import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
+import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
+import kotlinx.coroutines.delay
+
+
+@Composable
+fun FavouriteLocationCard(item: FavouriteLocation) {
+    val weatherResponse = item.combinedWeatherData.weatherResponse
+
+    val emojii = CountryHelper.getFlagEmoji(weatherResponse.sys.country)
+    val name = "${item.name.replace(", ", "\n$emojii ")}"
+
+    val condition = weatherResponse.weather.get(0).icon
+    val brush = BackgroundMapper.getCardBackground(condition)
+    val icon = IconsMapper.iconsMap.get(condition) ?: R.drawable.sun
+
+    val tempDegree = weatherResponse.main.temp_min.toInt() to weatherResponse.main.temp_max.toInt()
+    val conditionText = weatherResponse.weather.get(0).description
+
+
+
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(brush = brush, shape = RoundedCornerShape(16.dp))
+
+    ) {
+        val (directions, des, date, windIcon, windTitle) = createRefs()
+
+        Icon(
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier
+                .size(32.dp)
+                .constrainAs(windIcon) {
+                    start.linkTo(parent.start, 16.dp)
+                    top.linkTo(parent.top, 16.dp)
+                }
+        )
+
+        Text(
+            text = name,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.constrainAs(windTitle) {
+                start.linkTo(windIcon.end, 8.dp)
+                top.linkTo(windIcon.top)
+                bottom.linkTo(windIcon.bottom)
+            }
+        )
+
+        Text(
+            text = "$conditionText\n${tempDegree.first}°${Constants.degree} / ${tempDegree.second}°${Constants.degree}",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            modifier = Modifier.constrainAs(des) {
+                top.linkTo(windIcon.bottom, 16.dp)
+                start.linkTo(windIcon.start, 8.dp)
+            }
+        )
+
+        Text(
+            text = "Last Updated: ${DateHelper.getRelativeTime(weatherResponse.dt)}",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            modifier = Modifier.constrainAs(date) {
+                top.linkTo(des.bottom, 8.dp)
+                start.linkTo(des.start)
+                bottom.linkTo(parent.bottom, 8.dp)
+            }
+        )
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(100.dp)
+                .constrainAs(directions) {
+                    end.linkTo(parent.end, 16.dp)
+                }
+        )
+
+    }
+}
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun <T> SwipeToDeleteContainer(
+    item: T,
+    onDelete: (T) -> Unit,
+    animationDuration: Int = 500,
+    content: @Composable (T) -> Unit
+) {
+
+    var isRemoved by remember { mutableStateOf(false) }
+
+    val state = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToStart) {
+                isRemoved = true
+                true
+            } else false
+        }
+    )
+
+    LaunchedEffect(isRemoved) {
+        if (isRemoved) {
+            delay(animationDuration.toLong())
+            onDelete(item)
+        }
+    }
+
+
+    AnimatedVisibility(
+        visible = !isRemoved,
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = animationDuration),
+            shrinkTowards = Alignment.Top
+        ) + fadeOut()
+    ) {
+        SwipeToDismiss(state = state,
+            background = {
+                DeleteBackground(swipeDismissState = state)
+            },
+            dismissContent = { content(item) },
+            directions = setOf(DismissDirection.EndToStart)
+        )
+    }
+
+
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DeleteBackground(
+    swipeDismissState: DismissState
+) {
+    val color = when (swipeDismissState.dismissDirection) {
+        DismissDirection.StartToEnd -> Color.Green
+        DismissDirection.EndToStart -> Color.Red
+        null -> Color.Transparent
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color)
+            .padding(16.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = null,
+            tint = Color.White,
+        )
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
