@@ -11,4 +11,5 @@
     <string name="search_with_city_name">Search with City Name</string>
     <string name="location_saved_successfully">Location Saved Successfully</string>
     <string name="saved_locations">Saved Locations</string>
+    <string name="location_deleted_successfully">Location Deleted Successfully</string>
 </resources>

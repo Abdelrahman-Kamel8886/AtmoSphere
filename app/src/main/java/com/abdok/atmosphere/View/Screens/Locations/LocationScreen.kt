@@ -103,6 +103,8 @@ fun LocationsScreen(
                 val locations = (favouriteLocations.value as Response.Success).data
                 var list by remember { mutableStateOf(locations) }
 
+
+
                 Box(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -115,15 +117,16 @@ fun LocationsScreen(
                                 list = updatedList
 
                                 val snackbarResult = snackbarHostState.showSnackbar(
-                                    message = "Location Deleted Successfully",
+                                    message = context.getString(/* resId = */ R.string.location_deleted_successfully),
                                     actionLabel = "Undo",
                                     duration = SnackbarDuration.Short
                                 )
 
                                 if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                    list = updatedList.apply { add(location) }
+                                    list = list.toMutableList().apply { add(location) }
+                                    viewModel.getFavouriteLocations()
                                 } else {
-                                   // viewModel.deleteFavouriteLocation(location)
+                                    viewModel.deleteFavouriteLocation(location)
                                 }
                             }
                         }

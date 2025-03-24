@@ -27,6 +27,7 @@ class LocationsViewModel(private val repository: Repository) : ViewModel() {
     fun getFavouriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _favLocations.value = Response.Loading
                 repository.getFavoriteLocations()
                     .catch {
                         _favLocations.value = Response.Error(it.message.toString())
