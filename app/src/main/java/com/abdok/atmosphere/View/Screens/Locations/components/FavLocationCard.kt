@@ -53,7 +53,8 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
     val weatherResponse = item.combinedWeatherData.weatherResponse
 
     val emojii = CountryHelper.getFlagEmoji(weatherResponse.sys.country)
-    val name = "${item.name.replace(", ", "\n$emojii ")}"
+    val name = "${item.name.replace(", ", "\n")}"
+//    val name = item.name
 
     val condition = weatherResponse.weather.get(0).icon
     val brush = BackgroundMapper.getCardBackground(condition)
@@ -71,7 +72,7 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
     ) {
         val (directions, des, date, windIcon, windTitle) = createRefs()
 
-        Icon(
+/*        Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = null,
             tint = Color.White,
@@ -81,9 +82,20 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
                     start.linkTo(parent.start, 16.dp)
                     top.linkTo(parent.top, 16.dp)
                 }
+        )*/
+        Text(
+            text = emojii,
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.size(32.dp)
+                .constrainAs(windIcon) {
+                    start.linkTo(parent.start, 16.dp)
+                    top.linkTo(parent.top, 16.dp)
+                }
         )
 
-        Text(
+       Text(
             text = name,
             color = Color.White,
             fontSize = 14.sp,
@@ -94,7 +106,7 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
                 bottom.linkTo(windIcon.bottom)
             }
         )
-
+/*
         Text(
             text = "$conditionText\n${tempDegree.first}°${Constants.degree} / ${tempDegree.second}°${Constants.degree}",
             color = Color.White,
@@ -104,7 +116,7 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
                 top.linkTo(windIcon.bottom, 16.dp)
                 start.linkTo(windIcon.start, 8.dp)
             }
-        )
+        )*/
 
         Text(
             text = "Last Updated: ${DateHelper.getRelativeTime(weatherResponse.dt)}",
@@ -112,9 +124,9 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
             modifier = Modifier.constrainAs(date) {
-                top.linkTo(des.bottom, 8.dp)
-                start.linkTo(des.start)
-                bottom.linkTo(parent.bottom, 8.dp)
+                top.linkTo(windIcon.bottom)
+                start.linkTo(windIcon.start, 8.dp)
+                bottom.linkTo(parent.bottom)
             }
         )
         Image(
@@ -191,13 +203,15 @@ fun DeleteBackground(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(vertical = 8.dp)
+            .padding(start =24.dp)
             .background(color)
                 ,
         contentAlignment = Alignment.CenterEnd
     ) {
 
         Icon(
+            modifier = Modifier.padding(16.dp),
             imageVector = Icons.Default.Delete,
             contentDescription = null,
             tint = Color.White,

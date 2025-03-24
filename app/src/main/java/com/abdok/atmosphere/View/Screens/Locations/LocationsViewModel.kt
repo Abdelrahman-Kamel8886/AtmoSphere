@@ -27,7 +27,6 @@ class LocationsViewModel(private val repository: Repository) : ViewModel() {
     fun getFavouriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _favLocations.value = Response.Loading
                 repository.getFavoriteLocations()
                     .catch {
                         _favLocations.value = Response.Error(it.message.toString())
@@ -48,7 +47,6 @@ class LocationsViewModel(private val repository: Repository) : ViewModel() {
                 val result = repository.deleteFavoriteLocation(favoriteLocation)
                 if (result > 0) {
                     _message.emit("Location Deleted Successfully")
-                    getFavouriteLocations()
                 } else {
                     _message.emit("Something went wrong")
                 }

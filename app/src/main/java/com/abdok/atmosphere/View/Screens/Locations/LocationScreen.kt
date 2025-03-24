@@ -15,9 +15,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +37,9 @@ import com.abdok.atmosphere.View.Screens.CurvedNavBar
 import com.abdok.atmosphere.View.Screens.Locations.components.FavouriteLocationCard
 import com.abdok.atmosphere.View.Screens.Locations.components.FavouriteLocationsView
 import com.abdok.atmosphere.View.Screens.Locations.components.SwipeToDeleteContainer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LocationsScreen(
@@ -42,19 +51,26 @@ fun LocationsScreen(
 
     val snackbarHostState = remember { SnackbarHostState()}
 
+    val  scope = rememberCoroutineScope()
+
+    //val message : MutableState<String?> = remember { mutableStateOf(null) }
+
     LaunchedEffect(Unit) {
         viewModel.getFavouriteLocations()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.message.collect { message ->
-            snackbarHostState.showSnackbar(
-                message = message,
+    /*LaunchedEffect(message.value) {
+        message.value?.let {
+          val snackbarResult =  snackbarHostState.showSnackbar(
+                message = it,
                 actionLabel = "Undo"
                 , duration = SnackbarDuration.Short
             )
+
+            if (snackbarResult == SnackbarResult.ActionPerformed){
+            }
         }
-    }
+    }*/
 
     CurvedNavBar.mutableNavBarState.value = true
     val context = LocalContext.current
@@ -85,14 +101,33 @@ fun LocationsScreen(
 
             is Response.Success -> {
                 val locations = (favouriteLocations.value as Response.Success).data
+                var list by remember { mutableStateOf(locations) }
+
                 Box(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
                 ) {
-                     FavouriteLocationsView(locations = locations){
-                         viewModel.deleteFavouriteLocation(it)
-                     }
+                    FavouriteLocationsView(
+                        locations = list,
+                        onDelete = { location ->
+                            scope.launch {
+                                val updatedList = list.toMutableList().apply { remove(location) }
+                                list = updatedList
+
+                                val snackbarResult = snackbarHostState.showSnackbar(
+                                    message = "Location Deleted Successfully",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Short
+                                )
+
+                                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                                    list = updatedList.apply { add(location) }
+                                } else {
+                                   // viewModel.deleteFavouriteLocation(location)
+                                }
+                            }
+                        }
+                    )
 
 
                 }

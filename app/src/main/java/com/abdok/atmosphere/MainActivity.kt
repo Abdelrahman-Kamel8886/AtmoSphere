@@ -37,11 +37,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.core.app.ActivityCompat
+import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Response
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -51,8 +53,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
+        applyLanguage()
+
+        enableEdgeToEdge()
         if(checkLocationPermission()){
             if(isLocationEnabled()){
                 scheduleLocationWorker()
@@ -100,6 +104,17 @@ class MainActivity : ComponentActivity() {
 
            
         }
+    }
+
+    private fun applyLanguage(){
+        val sharedPreferences = SharedPreferencesImpl.getInstance(this@MainActivity)
+        val language = sharedPreferences.fetchData("language" , "en")
+
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
 

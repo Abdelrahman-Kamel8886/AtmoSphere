@@ -14,7 +14,7 @@ object Constants {
     const val DATABASE_NAME = "local_db"
     const val FAVOURITE_TABLE = "favourite_table"
 
-    const val DEFAULT_LANG = "en"
+    const val DEFAULT_LANG = "ar"
 
     const val WEATHER_ENDPOINT = "data/2.5/weather"
     const val FORECAST_ENDPOINT = "data/2.5/forecast"

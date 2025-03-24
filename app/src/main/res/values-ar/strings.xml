@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AtmoSphere</string>
+    <string name="sunset">الشروق</string>
+    <string name="sunrise">الغروب</string>
+    <string name="today">اليوم</string>
+    <string name="_5_days_forecast">الطقس</string>
+    <string name="saved_locations">المواقع المحفوظه</string>
+</resources>

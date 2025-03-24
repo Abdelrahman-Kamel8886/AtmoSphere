@@ -27,6 +27,7 @@ import com.abdok.atmosphere.View.Screens.Locations.LocationsViewModel
 import com.abdok.atmosphere.View.Screens.Map.MapScreen
 import com.abdok.atmosphere.View.Screens.Map.MapViewModel
 import com.abdok.atmosphere.View.Screens.Map.MapViewModelFactory
+import com.abdok.atmosphere.View.Screens.Settings.SettingsScreen
 
 
 @Composable
@@ -81,13 +82,3 @@ fun AlertsScreen() {
         Text(text = "Alerts Screen", fontSize = 24.sp)
     }
 }
-
-@Composable
-fun SettingsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Settings Screen", fontSize = 24.sp)
-    }
-}
-
-
-

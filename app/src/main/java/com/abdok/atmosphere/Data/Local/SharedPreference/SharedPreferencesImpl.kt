@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.location.Location
 import com.google.gson.Gson
 
-class ISharedPreferencesImpl private constructor(context: Context) : ISharedPreferences {
+class SharedPreferencesImpl private constructor(context: Context) : ISharedPreferences {
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
@@ -14,11 +14,11 @@ class ISharedPreferencesImpl private constructor(context: Context) : ISharedPref
     companion object{
 
         @Volatile
-        private var INSTANCE: ISharedPreferencesImpl? = null
+        private var INSTANCE: SharedPreferencesImpl? = null
 
-        fun getInstance(context: Context): ISharedPreferencesImpl {
+        fun getInstance(context: Context): SharedPreferencesImpl {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ISharedPreferencesImpl(context.applicationContext).also {
+                INSTANCE ?: SharedPreferencesImpl(context.applicationContext).also {
                     INSTANCE = it
                 }
             }
