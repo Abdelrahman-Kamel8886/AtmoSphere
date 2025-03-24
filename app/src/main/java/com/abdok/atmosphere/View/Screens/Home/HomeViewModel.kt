@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Data.Response
+import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -36,7 +37,7 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
         lat: Double,
         lon: Double,
         units: String = Constants.unit,
-        lang: String = Constants.DEFAULT_LANG
+        lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
         viewModelScope.launch(Dispatchers.IO) {
             try {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.util.Log
 import com.abdok.atmosphere.MainActivity
+import com.abdok.atmosphere.View.Screens.CurvedNavBar
 import java.util.Locale
 
 object LanguageManager {
@@ -37,6 +38,7 @@ object LanguageManager {
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
         (context as? Activity)?.finish()
+        CurvedNavBar.activeIndex.value = 0
     }
 
 /*    private fun applyLanguage(languageCode: String) {

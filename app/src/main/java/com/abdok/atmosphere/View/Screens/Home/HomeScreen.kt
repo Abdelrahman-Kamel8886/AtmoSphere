@@ -768,7 +768,8 @@ fun WeatherGrid(
     val items = listOf(
         Triple(R.drawable.humidity_icon, stringResource(R.string.humidity), humidity),
         Triple(R.drawable.air_icon, stringResource(R.string.air_pressure), pressure),
-        Triple(R.drawable.outline_visibility_24, "Visibility", visibility)
+        Triple(R.drawable.outline_visibility_24, stringResource(R.string.visibility)
+            , visibility)
     )
 
     LazyHorizontalGrid(

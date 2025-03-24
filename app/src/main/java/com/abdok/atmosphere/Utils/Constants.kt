@@ -1,6 +1,7 @@
 package com.abdok.atmosphere.Utils
 
 import com.abdok.atmosphere.BuildConfig
+import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Enums.Units
 
 
@@ -14,7 +15,7 @@ object Constants {
     const val DATABASE_NAME = "local_db"
     const val FAVOURITE_TABLE = "favourite_table"
 
-    const val DEFAULT_LANG = "ar"
+    const val DEFAULT_LANG  = "en"
 
     const val WEATHER_ENDPOINT = "data/2.5/weather"
     const val FORECAST_ENDPOINT = "data/2.5/forecast"
@@ -24,6 +25,12 @@ object Constants {
 
     val degree = Units.METRIC.degree
     val unit = Units.METRIC.value
+
+
+    //shared preference
+
+    const val SHARED_PREFERENCE_NAME = "shared_preference"
+    const val LANGUAGE_CODE = "language_code"
 
 
 

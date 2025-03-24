@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,24 +30,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
+import com.abdok.atmosphere.R
+import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.LanguageManager
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    viewModel: SettingsViewModel
+) {
     val context = LocalContext.current
 
     var selectedTemperature by remember { mutableStateOf(Units.METRIC.degree) }
     var selectedWindSpeed by remember { mutableStateOf(Speeds.METERS_PER_SECOND.degree) }
-    var selectedLanguage by remember { mutableStateOf(Languages.ENGLISH.value) }
+    val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
     var selectedLocation by remember { mutableStateOf(Locations.Gps.value) }
+
 
     Column(
         modifier = Modifier
@@ -55,18 +64,21 @@ fun SettingsScreen() {
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         SegmentedControlSection(
-            title = "Language",
+            title = stringResource(R.string.language),
             options = listOf(
                 Languages.ENGLISH.value,
                 Languages.ARABIC.value,
                 Languages.SPANISH.value
             ),
             selectedOption = selectedLanguage,
-            onOptionSelected = { selectedLanguage = it }
+            onOptionSelected = {
+                viewModel.updateLanguage(it)
+                LanguageManager.restartActivity(context)
+            }
         )
         Spacer(modifier = Modifier.height(32.dp))
         SegmentedControlSection(
-            title = "Temperature",
+            title = stringResource(R.string.temperature_unit),
             options = listOf(Units.METRIC.degree, Units.IMPERIAL.degree, Units.STANDARD.degree),
             selectedOption = selectedTemperature,
             onOptionSelected = {
@@ -85,7 +97,7 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         SegmentedControlSection(
-            title = "Location",
+            title = stringResource(R.string.location),
             options = listOf(Locations.Gps.value, Locations.Map.value),
             selectedOption = selectedLocation,
             onOptionSelected = { selectedLocation = it }
@@ -93,7 +105,7 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         SegmentedControlSection(
-            title = "Wind speed",
+            title = stringResource(R.string.wind_speed_unit),
             options = listOf(Speeds.METERS_PER_SECOND.degree, Speeds.MILES_PER_HOUR.degree),
             selectedOption = selectedWindSpeed,
             onOptionSelected = { selectedWindSpeed = it }
@@ -149,10 +161,4 @@ fun SegmentedControlSection(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSettingsScreen() {
-    SettingsScreen()
 }

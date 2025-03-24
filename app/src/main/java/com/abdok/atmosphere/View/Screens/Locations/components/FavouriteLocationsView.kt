@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationCity
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,7 +44,7 @@ fun FavouriteLocationsView(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.LocationCity,
+                imageVector = Icons.Default.LocationOn,
                 tint = Color.DarkGray,
                 contentDescription = null
             )

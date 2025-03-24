@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
+import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
 import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Data.Repository.Repository
@@ -28,6 +29,8 @@ import com.abdok.atmosphere.View.Screens.Map.MapScreen
 import com.abdok.atmosphere.View.Screens.Map.MapViewModel
 import com.abdok.atmosphere.View.Screens.Map.MapViewModelFactory
 import com.abdok.atmosphere.View.Screens.Settings.SettingsScreen
+import com.abdok.atmosphere.View.Screens.Settings.SettingsViewModel
+import com.abdok.atmosphere.View.Screens.Settings.SettingsViewModelFactory
 
 
 @Composable
@@ -37,7 +40,7 @@ fun setupNavHost(navController: NavHostController, location: Location) {
 
         val repository = Repository.getInstance(
             RemoteDataSource.getInstance(RetroConnection.retroServices),
-            LocalDataSource.getInstance(LocalDataBase.getInstance().localDao())
+            LocalDataSource.getInstance(LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance())
         )
 
         composable<ScreenRoutes.HomeRoute> {
@@ -61,19 +64,19 @@ fun setupNavHost(navController: NavHostController, location: Location) {
             AlertsScreen()
         }
         composable<ScreenRoutes.SettingsRoute> {
-            SettingsScreen()
+            val settingsFactory = SettingsViewModelFactory(repository)
+            val viewModel: SettingsViewModel = viewModel(factory = settingsFactory)
+            SettingsScreen(viewModel)
         }
         composable<ScreenRoutes.MapRoute> {
             val mapFactory = MapViewModelFactory(repository)
             val viewModel: MapViewModel = viewModel(factory = mapFactory)
-            MapScreen(viewModel){
+            MapScreen(viewModel) {
                 navController.popBackStack()
             }
         }
     }
 }
-
-
 
 
 @Composable

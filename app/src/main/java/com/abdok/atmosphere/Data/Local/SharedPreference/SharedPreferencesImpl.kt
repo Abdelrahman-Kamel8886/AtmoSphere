@@ -10,20 +10,19 @@ class SharedPreferencesImpl private constructor(context: Context) : ISharedPrefe
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
 
-
     companion object{
-
         @Volatile
         private var INSTANCE: SharedPreferencesImpl? = null
 
-        fun getInstance(context: Context): SharedPreferencesImpl {
-            return INSTANCE ?: synchronized(this) {
+        fun initSharedPreferences(context: Context) {
+            INSTANCE ?: synchronized(this) {
                 INSTANCE ?: SharedPreferencesImpl(context.applicationContext).also {
                     INSTANCE = it
                 }
             }
         }
 
+        fun getInstance() = INSTANCE!!
     }
 
     override fun <T> saveData(key: String, value: T) {

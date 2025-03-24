@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AtmoSphere</string>
-    <string name="sunset">الشروق</string>
-    <string name="sunrise">الغروب</string>
-    <string name="today">اليوم</string>
-    <string name="_5_days_forecast">الطقس</string>
+    <string name="sunset">الغروب</string>
+    <string name="sunrise">الشروق</string>
+    <string name="today">تفاصيل باقي اليوم</string>
+    <string name="_5_days_forecast">طقس الايام القادمه</string>
+    <string name="winds_speed_directions">سرعه و اتجاه الرياح</string>
+    <string name="humidity">الرطوبه</string>
+    <string name="air_pressure">ضغط الهواء</string>
+    <string name="search_with_city_name">ابحث باسم المدينه</string>
+    <string name="location_saved_successfully">تمت الموقع بنجاح</string>
     <string name="saved_locations">المواقع المحفوظه</string>
+    <string name="location_deleted_successfully">تم حذف الموقع بنجاح</string>
+    <string name="location">تحديد الموقع</string>
+    <string name="wind_speed_unit">وحده سرعه الرياح</string>
+    <string name="temperature_unit">وحده درجه الحراره</string>
+    <string name="language">اللغه</string>
+    <string name="visibility">الرؤيه</string>
 </resources>
