@@ -23,20 +23,19 @@ object Constants {
     const val GEO_ENDPOINT = "geo/1.0/direct"
     const val REVERSE_GEO_ENDPOINT = "geo/1.0/reverse"
 
-    val degree = Units.METRIC.degree
-    val unit = Units.METRIC.value
-
-
     //shared preference
 
     const val SHARED_PREFERENCE_NAME = "shared_preference"
     const val LANGUAGE_CODE = "language_code"
+    const val TEMPERATURE_UNIT = "temperature_unit"
+    const val WIND_SPEED_UNIT = "wind_speed_unit"
+    const val LOCATION = "location"
+
 
 
 
 
     val windUnit = "m/s"
-    val visibilityUnit = "m"
 
 
 }

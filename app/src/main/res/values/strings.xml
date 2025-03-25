@@ -3,7 +3,7 @@
     <string name="title_activity_splash" translatable="false">SplashActivity</string>
     <string name="sunset">Sunset</string>
     <string name="sunrise">Sunrise</string>
-    <string name="today">Today</string>
+    <string name="today">Today Details</string>
     <string name="_5_days_forecast">5-Days Forecast</string>
     <string name="winds_speed_directions"><![CDATA[Winds Speed & Directions]]></string>
     <string name="humidity">Humidity</string>
@@ -17,4 +17,18 @@
     <string name="temperature_unit">Temperature Unit</string>
     <string name="language">Language</string>
     <string name="visibility">Visibility</string>
+    <string name="today0">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="now">now</string>
+    <string name="a_minute_ago">a minute ago</string>
+    <string name="an_hour_ago">an hour ago</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="last_updated">Last Updated:</string>
+    <string name="days_ago">%1$s days ago</string>
+    <string name="hours_ago">%1$s hours ago</string>
+    <string name="minutes_ago">%1$s minutes ago</string>
+    <string name="m">m</string>
+    <string name="hpa">hpa</string>
+    <string name="feels_like">Feels Like</string>
+    <string name="undo">Undo</string>
 </resources>

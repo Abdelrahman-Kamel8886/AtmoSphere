@@ -33,7 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +65,8 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
     val tempDegree = weatherResponse.main.temp_min.toInt() to weatherResponse.main.temp_max.toInt()
     val conditionText = weatherResponse.weather.get(0).description
 
+    val context = LocalContext.current
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,7 +92,8 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
             color = Color.White,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier
+                .size(32.dp)
                 .constrainAs(windIcon) {
                     start.linkTo(parent.start, 16.dp)
                     top.linkTo(parent.top, 16.dp)
@@ -119,7 +124,7 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
         )*/
 
         Text(
-            text = "Last Updated: ${DateHelper.getRelativeTime(weatherResponse.dt)}",
+            text = "${stringResource(id = R.string.last_updated)} ${DateHelper.getRelativeTime(weatherResponse.dt, context)}",
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
@@ -204,7 +209,7 @@ fun DeleteBackground(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 8.dp)
-            .padding(start =24.dp)
+            .padding(start = 24.dp)
             .background(color)
                 ,
         contentAlignment = Alignment.CenterEnd

@@ -9,7 +9,9 @@ import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
+import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
+import com.abdok.atmosphere.Utils.SharedModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,18 +19,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
+    var unit : String
 
-    /*private var mutableWeatherData: MutableLiveData<WeatherResponse> = MutableLiveData()
-    val weatherData: LiveData<WeatherResponse> = mutableWeatherData
-
-    private var mutableForecastData: MutableLiveData<ForecastResponse> = MutableLiveData()
-    val forecastData: LiveData<ForecastResponse> = mutableForecastData*/
+    init {
+         unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)
+         SharedModel.currentDegree = Units.getDegreeByValue(unit)
+    }
 
     private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)
     val combinedWeatherData = mutableCombinedWeatherData.asStateFlow()
-
-   /* private var mutableCombinedWeatherData: MutableLiveData<CombinedWeatherData> = MutableLiveData()
-    val combinedWeatherData: LiveData<CombinedWeatherData> = mutableCombinedWeatherData*/
 
     private var mutableError :MutableLiveData<String> = MutableLiveData()
     val error: LiveData<String> = mutableError
@@ -36,7 +35,7 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     fun getWeatherAndForecastLatLon(
         lat: Double,
         lon: Double,
-        units: String = Constants.unit,
+        units: String = unit,
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
         viewModelScope.launch(Dispatchers.IO) {
@@ -51,44 +50,10 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
 
             }catch (exception : Exception){
                 mutableCombinedWeatherData.value = Response.Error(exception.message.toString())
-                //mutableError.postValue(exception.message)
             }
         }
     }
 
-
-
-
-   /* fun getWeatherLatLon(
-        lat: Double,
-        lon: Double,
-        units: String = Units.METRIC.value,
-        lang: String = Consts.DEFAULT_LANG
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = repository.getWeatherLatLon(lat , lon , units , lang)
-                mutableWeatherData.postValue(response)
-            }catch (exception : Exception){
-                mutableError.postValue(exception.message)
-            }
-        }
-    }
-
-    fun getForecastLatLon(
-        lat: Double,
-        lon: Double,
-        units: String = Units.METRIC.value,
-        lang: String = Consts.DEFAULT_LANG
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = repository.getForecastLatLon(lat , lon , units , lang)
-                mutableForecastData.postValue(response)
-            }catch (exception : Exception){
-                mutableError.postValue(exception.message)
-        }
-    }*/
 }
 
 class HomeViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {

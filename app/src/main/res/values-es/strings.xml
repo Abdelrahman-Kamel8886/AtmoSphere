@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AtmoSphere</string>
+    <string name="sunset">Atardecer</string>
+    <string name="sunrise">Amanecer</string>
+    <string name="today">Detalles de hoy</string>
+    <string name="_5_days_forecast">Pronóstico de 5 días</string>
+    <string name="winds_speed_directions">Velocidad del viento</string>
+    <string name="humidity">Humedad</string>
+    <string name="air_pressure">Presión</string>
+    <string name="search_with_city_name">Buscar con nombre de ciudad</string>
+    <string name="location_saved_successfully">Ubicación guardada exitosamente</string>
+    <string name="saved_locations">Ubicaciones guardadas</string>
+    <string name="location_deleted_successfully">Ubicación eliminada exitosamente</string>
+    <string name="location">Ubicación</string>
+    <string name="wind_speed_unit">Unidad de velocidad del viento</string>
+    <string name="temperature_unit">Unidad de temperatura</string>
+    <string name="language">Idioma</string>
+    <string name="visibility">Visibilidad</string>
+    <string name="today0">Hoy</string>
+    <string name="tomorrow">Mañana</string>
+    <string name="yesterday">Ayer</string>
+    <string name="an_hour_ago">hace una hora</string>
+    <string name="a_minute_ago">hace un minuto</string>
+    <string name="now">ahora</string>
+    <string name="last_updated">Última actualización:</string>
+    <string name="days_ago">%1$s hace días</string>
+    <string name="hours_ago">%1$s hace horas</string>
+    <string name="minutes_ago">%1$s hace minutos</string>
+    <string name="m">m</string>
+    <string name="hpa">hpa</string>
+    <string name="feels_like">se siente como</string>
+    <string name="undo">Deshacer</string>
 </resources>

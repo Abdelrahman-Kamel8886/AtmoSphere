@@ -1,9 +1,5 @@
 package com.abdok.atmosphere.View.Screens.Settings
 
-import android.app.Activity
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,8 +34,8 @@ import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.LanguageManager
+
 
 @Composable
 fun SettingsScreen(
@@ -50,11 +43,10 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
-    var selectedTemperature by remember { mutableStateOf(Units.METRIC.degree) }
+    val selectedTemperature by viewModel.temperature.collectAsStateWithLifecycle()
     var selectedWindSpeed by remember { mutableStateOf(Speeds.METERS_PER_SECOND.degree) }
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
     var selectedLocation by remember { mutableStateOf(Locations.Gps.value) }
-
 
     Column(
         modifier = Modifier
@@ -79,20 +71,11 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
         SegmentedControlSection(
             title = stringResource(R.string.temperature_unit),
-            options = listOf(Units.METRIC.degree, Units.IMPERIAL.degree, Units.STANDARD.degree),
+            options = listOf(Units.getDegreeByValue(Units.METRIC.value),
+                Units.getDegreeByValue(Units.STANDARD.value),
+                Units.getDegreeByValue(Units.IMPERIAL.value)),
             selectedOption = selectedTemperature,
-            onOptionSelected = {
-                Log.i("languageCode", "SettingsScreen: $it")
-                selectedTemperature = it
-                when (it) {
-                    Languages.ENGLISH.value -> LanguageManager.setLocale(context, Languages.ENGLISH.code)
-                    Languages.ARABIC.value -> LanguageManager.setLocale(context, Languages.ARABIC.code)
-                    Languages.SPANISH.value -> LanguageManager.setLocale(context, Languages.SPANISH.code)
-                }
-                Handler(Looper.getMainLooper()).post {
-                    (context as? Activity)?.recreate()
-                }
-            }
+            onOptionSelected = viewModel::updateTemperature
         )
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -127,7 +110,7 @@ fun SegmentedControlSection(
             text = title,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
-            color = Color.Gray
+            color = Color.DarkGray
         )
         Spacer(modifier = Modifier.height(8.dp))
 

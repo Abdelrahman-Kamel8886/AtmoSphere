@@ -193,11 +193,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(location: Location) {
-
     val defaultBackground = Brush.linearGradient(
         listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
     )
-
     val navController = rememberNavController()
     val isNavBarVisible = CurvedNavBar.mutableNavBarState.observeAsState()
     //var background = SharedModel.screenBackground.observeAsState()

@@ -112,8 +112,8 @@ fun MapScreen(viewModel: MapViewModel , onBackClick: () -> Unit) {
     val placesClient = Places.createClient(context)
 
     val bias: LocationBias = RectangularBounds.newInstance(
-        LatLng(39.9, -105.5), // SW lat, lng
-        LatLng(40.1, -105.0) // NE lat, lng
+        LatLng(39.9, -105.5),
+        LatLng(40.1, -105.0)
     )
 
     val searchTextFlow = MutableStateFlow("")

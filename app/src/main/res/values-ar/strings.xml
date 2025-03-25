@@ -17,4 +17,18 @@
     <string name="temperature_unit">وحده درجه الحراره</string>
     <string name="language">اللغه</string>
     <string name="visibility">الرؤيه</string>
+    <string name="today0">اليوم</string>
+    <string name="tomorrow">غدا</string>
+    <string name="now">الان</string>
+    <string name="a_minute_ago">منذ دقيقه واحده</string>
+    <string name="an_hour_ago">منذ ساعه واحده</string>
+    <string name="yesterday">الامس</string>
+    <string name="last_updated">"اخر تحديث : "</string>
+    <string name="days_ago">منذ %1$s ايام</string>
+    <string name="hours_ago">منذ %1$s ساعه</string>
+    <string name="minutes_ago">منذ %1$s دقيقه</string>
+    <string name="m">م</string>
+    <string name="hpa">ه.ب</string>
+    <string name="feels_like">يبدو انها</string>
+    <string name="undo">تراجع</string>
 </resources>

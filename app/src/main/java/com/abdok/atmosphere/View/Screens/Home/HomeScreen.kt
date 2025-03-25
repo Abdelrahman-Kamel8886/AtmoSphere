@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -76,6 +77,7 @@ import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
 import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.Dates.SunCycleModel
+import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.getDaysForecast
@@ -157,9 +159,9 @@ fun DrawHome(combinedWeatherData:CombinedWeatherData){
                     WindCard(brush = cardBrush , value = it.wind.speed , degree = it.wind.deg.toFloat())
                     Spacer(modifier = Modifier.height(8.dp))
                     WeatherGrid(cardBrush
-                        , humidity = "${it.main.humidity}%"
-                        , visibility = "${it.visibility} ${Constants.visibilityUnit}"
-                        , pressure = "${it.main.pressure} hpa"
+                        , humidity = "${it.main.humidity} %"
+                        , visibility = "${it.visibility} ${stringResource(R.string.m)}"
+                        , pressure = "${it.main.pressure} ${stringResource(R.string.hpa)}"
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     SunCycleView(
@@ -384,8 +386,9 @@ fun SunriseSunsetView(
 @Composable
 fun WeatherCard(weather: WeatherResponse) {
 
-    val description = "Feels Like ${weather.main.feels_like.toInt()}°${Constants.degree}"
+    val description = "${stringResource(R.string.feels_like)} ${weather.main.feels_like.toInt()} ${SharedModel.currentDegree}"
     val tempDegree = "${weather.main.temp.toInt()}"
+    val context = LocalContext.current
 
     ConstraintLayout(
         modifier = Modifier
@@ -427,7 +430,8 @@ fun WeatherCard(weather: WeatherResponse) {
             }
         )
         Text(
-            text = "Last Updated: ${DateHelper.getRelativeTime(weather.dt)}",
+
+            text = "${stringResource(R.string.last_updated)} ${DateHelper.getRelativeTime(weather.dt,context)}",
             color = ColorTextSecondary,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(lastUpdate) {
@@ -448,7 +452,7 @@ fun WeatherCard(weather: WeatherResponse) {
             ) {
                 Row {
                     Text(
-                        text = tempDegree,
+                        text = LanguageManager.formatNumberBasedOnLanguage(tempDegree),
                         letterSpacing = 0.sp,
                         style = TextStyle(
                             brush = Brush.verticalGradient(
@@ -460,7 +464,7 @@ fun WeatherCard(weather: WeatherResponse) {
                         )
                     )
                     Text(
-                        text = "°${Constants.degree}",
+                        text = " ${SharedModel.currentDegree}",
                         style = TextStyle(
                             brush = Brush.verticalGradient(
                                 0f to Color.White,
@@ -474,7 +478,7 @@ fun WeatherCard(weather: WeatherResponse) {
                 }
             }
             Text(
-                text = description,
+                text = LanguageManager.formatNumberBasedOnLanguage(description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = ColorTextSecondaryVariant,
                 fontSize = 16.sp,
@@ -554,8 +558,10 @@ fun HourlyColumn(
     hour : ForecastResponse.Item0
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val h = "${DateHelper.getHourFormTime(hour.dt.toLong())}"
+        val temp = "${hour.main.temp.toInt()} ${SharedModel.currentDegree}"
         Text(
-            text = "${DateHelper.getHourFormTime(hour.dt.toLong())}",
+            text = LanguageManager.formatNumberBasedOnLanguage(h) ,
             color = Color.Gray,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -566,7 +572,7 @@ fun HourlyColumn(
             contentDescription = "Sunset",
             modifier = Modifier.size(48.dp)
         )
-        Text(text = "${hour.main.temp.toInt()}°${Constants.degree}", color = Color.DarkGray, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = LanguageManager.formatNumberBasedOnLanguage(temp) , color = Color.DarkGray, fontSize = 14.sp, fontWeight = FontWeight.Bold)
 
     }
 
@@ -602,7 +608,9 @@ fun DayRow(
     daylist: List<ForecastResponse.Item0>
 ) {
 
-    val date = DateHelper.getDayFormTimestamp(daylist.get(0).dt.toLong())
+    val context = LocalContext.current
+
+    val date = DateHelper.getDayFormTimestamp(daylist.get(0).dt.toLong() , context)
     val icon = daylist.first().weather.get(0).icon.replace("n","d")
 
     var min = daylist.get(0).main.temp_min.toInt()
@@ -627,7 +635,7 @@ fun DayRow(
             bottom.linkTo(parent.bottom)
         }) {
             Text(
-                text = "${date}",
+                text = "${LanguageManager.formatNumberBasedOnLanguage(date)}",
                 color = Color.White,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
@@ -648,8 +656,8 @@ fun DayRow(
                 }
         )
 
-
-        Text(text = "${min}°${Constants.degree} / ${max}°${Constants.degree}",
+        val temp = "${min} ${SharedModel.currentDegree} / ${max} ${SharedModel.currentDegree}"
+        Text(text = LanguageManager.formatNumberBasedOnLanguage(temp),
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -766,10 +774,12 @@ fun WeatherGrid(
     ,pressure : String = "100" , humidity:String = "20" ,visibility : String = "1000"
 ) {
     val items = listOf(
-        Triple(R.drawable.humidity_icon, stringResource(R.string.humidity), humidity),
-        Triple(R.drawable.air_icon, stringResource(R.string.air_pressure), pressure),
+        Triple(R.drawable.humidity_icon, stringResource(R.string.humidity),
+            LanguageManager.formatNumberBasedOnLanguage(humidity)),
+        Triple(R.drawable.air_icon, stringResource(R.string.air_pressure),
+            LanguageManager.formatNumberBasedOnLanguage(pressure)),
         Triple(R.drawable.outline_visibility_24, stringResource(R.string.visibility)
-            , visibility)
+            , LanguageManager.formatNumberBasedOnLanguage(visibility))
     )
 
     LazyHorizontalGrid(
@@ -824,9 +834,9 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
                     bottom.linkTo(windIcon.bottom)
                 }
             )
-
+            val speed = "$value ${Constants.windUnit}"
             Text(
-                text = "$value ${Constants.windUnit}",
+                text = LanguageManager.formatNumberBasedOnLanguage(speed),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,

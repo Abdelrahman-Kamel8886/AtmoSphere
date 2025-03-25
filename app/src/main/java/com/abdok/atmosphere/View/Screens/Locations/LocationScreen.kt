@@ -118,12 +118,10 @@ fun LocationsScreen(
 
                                 val snackbarResult = snackbarHostState.showSnackbar(
                                     message = context.getString(/* resId = */ R.string.location_deleted_successfully),
-                                    actionLabel = "Undo",
+                                    actionLabel = context.getString(R.string.undo),
                                     duration = SnackbarDuration.Short
                                 )
-
                                 if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                    list = list.toMutableList().apply { add(location) }
                                     viewModel.getFavouriteLocations()
                                 } else {
                                     viewModel.deleteFavouriteLocation(location)
