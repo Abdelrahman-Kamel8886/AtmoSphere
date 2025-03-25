@@ -29,7 +29,7 @@ object BackgroundMapper {
     )
 
     val screenBackgroundMap = mapOf(
-        "01d" to Brush.verticalGradient(listOf(Color(0xFFFFF3E0), Color(0xFFFFE082))), // Clear sky (day)
+            "01d" to Brush.verticalGradient(listOf(Color(0xFFFFF3E0), Color(0xFFFFE082))), // Clear sky (day)
         "02d" to Brush.verticalGradient(listOf(Color(0xFFD3CBB8), Color(0xFF606c88))), // Few clouds (day)
         "03d" to Brush.verticalGradient(listOf(Color(0xFFa1c4fd), Color(0xFFc2e9fb))), // Scattered clouds (day)
         "04d" to Brush.verticalGradient(listOf(Color(0xFF667db6), Color(0xFF0082c8))), // Broken clouds (day)
@@ -50,10 +50,19 @@ object BackgroundMapper {
         "50n" to Brush.verticalGradient(listOf(Color(0xFFbdc3c7), Color(0xFF2c3e50)))  // Mist (night)
     )
 
+    val textMap = mapOf(
+        "01d" to Color.DarkGray
+    )
+
+
     fun getCardBackground(condition: String): Brush {
         return cardBackgroundMap[condition] ?: Brush.linearGradient(listOf(Color(0xFF000000), Color(0xFF434343))) // Default background
     }
     fun getScreenBackground(condition: String): Brush {
         return screenBackgroundMap[condition] ?: Brush.linearGradient(listOf(Color(0xFF000000), Color(0xFF434343))) // Default background
+    }
+
+    fun getTextColor(condition: String): Color {
+        return textMap[condition] ?: Color.White
     }
 }

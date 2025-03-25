@@ -9,6 +9,7 @@ import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
+import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.SharedModel
@@ -19,11 +20,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
+
     var unit : String
+    var speed : String
 
     init {
-         unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)
+        unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)
          SharedModel.currentDegree = Units.getDegreeByValue(unit)
+
+        speed = repository.fetchPreferenceData(Constants.WIND_SPEED_UNIT , Speeds.METERS_PER_SECOND.degree)
+        SharedModel.currentSpeed = Speeds.getDegree(speed)
+
+
     }
 
     private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)

@@ -24,7 +24,6 @@ object Constants {
     const val REVERSE_GEO_ENDPOINT = "geo/1.0/reverse"
 
     //shared preference
-
     const val SHARED_PREFERENCE_NAME = "shared_preference"
     const val LANGUAGE_CODE = "language_code"
     const val TEMPERATURE_UNIT = "temperature_unit"

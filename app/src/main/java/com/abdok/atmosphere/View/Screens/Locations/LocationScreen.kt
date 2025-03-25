@@ -73,7 +73,7 @@ fun LocationsScreen(
     }*/
 
     CurvedNavBar.mutableNavBarState.value = true
-    val context = LocalContext.current
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState ,
             modifier = Modifier.wrapContentHeight(align = Alignment.Top)) },
@@ -109,28 +109,14 @@ fun LocationsScreen(
                     modifier = Modifier
                         .padding(innerPadding)
                 ) {
+
                     FavouriteLocationsView(
                         locations = list,
-                        onDelete = { location ->
-                            scope.launch {
-                                val updatedList = list.toMutableList().apply { remove(location) }
-                                list = updatedList
-
-                                val snackbarResult = snackbarHostState.showSnackbar(
-                                    message = context.getString(/* resId = */ R.string.location_deleted_successfully),
-                                    actionLabel = context.getString(R.string.undo),
-                                    duration = SnackbarDuration.Short
-                                )
-                                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                    viewModel.getFavouriteLocations()
-                                } else {
-                                    viewModel.deleteFavouriteLocation(location)
-                                }
-                            }
+                        snackbarHostState = snackbarHostState,
+                        onDelete = {
+                            viewModel.deleteFavouriteLocation(it)
                         }
                     )
-
-
                 }
             }
         }

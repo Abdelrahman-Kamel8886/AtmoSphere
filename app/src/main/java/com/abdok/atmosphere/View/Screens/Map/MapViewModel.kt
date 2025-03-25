@@ -38,13 +38,23 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
 
     fun getCityLocation(cityName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCityLocation(cityName).catch {
-                _addressLocation.value = Response.Error(it.message.toString())
-            }.collect {
-                _addressLocation.value = Response.Success(it[0] to true)
+            viewModelScope.launch(Dispatchers.IO) {
+                var secondTry = false
+                repository.getCityLocation(cityName).catch {
+                    _addressLocation.value = Response.Error(it.message.toString())
+                }.collect {
+                    if (it.isEmpty() ) {
+                        if (secondTry){
+                            _addressLocation.value = Response.Error("No result found")
+                        }
+                        else{
+                            getCityLocation(cityName.substringBefore(","))
+                            secondTry = true
+                        }
+                    }else
+                    _addressLocation.value = Response.Success(it[0] to true)
+                }
             }
-        }
     }
 
     fun getCityName(latLng: LatLng) {

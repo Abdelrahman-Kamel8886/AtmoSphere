@@ -3,7 +3,9 @@ package com.abdok.atmosphere.View.Screens.Locations.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,7 +24,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -148,61 +157,86 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun <T> SwipeToDeleteContainer(
     item: T,
     onDelete: (T) -> Unit,
+    onRestore: (T) -> Unit = {},
     animationDuration: Int = 500,
+    snackbarHostState:SnackbarHostState,
     content: @Composable (T) -> Unit
 ) {
 
-    var isRemoved by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    val state = rememberDismissState(
-        confirmStateChange = {
-            if (it == DismissValue.DismissedToStart) {
+    var isRemoved by remember { mutableStateOf(false) }
+    var canSwipe by remember { mutableStateOf(true) }
+
+    val state = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue ->
+            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
                 isRemoved = true
+                canSwipe = false
                 true
-            } else false
+            } else {
+                false
+            }
         }
     )
-
     LaunchedEffect(isRemoved) {
         if (isRemoved) {
-            delay(animationDuration.toLong())
-            onDelete(item)
+            val result = snackbarHostState.showSnackbar(
+                message = context.getString(R.string.location_deleted_successfully),
+                actionLabel = context.getString(R.string.undo),
+                duration = SnackbarDuration.Short
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onRestore(item)
+                canSwipe = true
+                isRemoved = false
+            } else {
+//                delay(animationDuration.toLong())
+                onDelete(item)
+            }
         }
     }
+
 
 
     AnimatedVisibility(
         visible = !isRemoved,
         exit = shrinkVertically(
-            animationSpec = tween(durationMillis = animationDuration),
-            shrinkTowards = Alignment.Top
+            shrinkTowards = Alignment.Top,
+            animationSpec = tween(durationMillis = animationDuration)
         ) + fadeOut()
     ) {
-        SwipeToDismiss(state = state,
-            background = {
-                DeleteBackground(swipeDismissState = state)
-            },
-            dismissContent = { content(item) },
-            directions = setOf(DismissDirection.EndToStart)
-        )
+        if (canSwipe){
+            SwipeToDismissBox(
+                state = state,
+                backgroundContent = { DeleteBackground(state) },
+                enableDismissFromStartToEnd = false
+            ) {
+                content(item)
+            }
+        }else{
+            LaunchedEffect(Unit) {
+                state.snapTo(SwipeToDismissBoxValue.Settled)
+            }
+            content(item)
+        }
     }
 
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DeleteBackground(
-    swipeDismissState: DismissState
+    swipeDismissState: SwipeToDismissBoxState
 ) {
-    val color = when (swipeDismissState.dismissDirection) {
-        DismissDirection.EndToStart -> Color.Red
-        else -> Color.Transparent
+    val color = if (swipeDismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+        Color.Red
+    } else {
+        Color.Transparent
     }
 
     Box(

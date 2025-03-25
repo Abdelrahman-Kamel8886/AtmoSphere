@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import com.abdok.atmosphere.R
 @Composable
 fun FavouriteLocationsView(
     locations: List<FavouriteLocation>,
+    snackbarHostState: SnackbarHostState,
     onDelete: (FavouriteLocation) -> Unit
 ) {
 
@@ -61,7 +63,8 @@ fun FavouriteLocationsView(
             items(locations , key = {it.name}){
                     SwipeToDeleteContainer(
                         item = it,
-                        onDelete = { onDelete(it) }
+                        onDelete = { onDelete(it) },
+                        snackbarHostState = snackbarHostState
                     ) {
                         FavouriteLocationCard(item = it)
                     }

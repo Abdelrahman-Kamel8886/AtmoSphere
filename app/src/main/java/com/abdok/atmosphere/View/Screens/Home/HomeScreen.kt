@@ -86,6 +86,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 @Composable
 fun HomeScreen(viewModel: HomeViewModel , location: Location) {
 
@@ -140,8 +141,10 @@ fun DrawHome(combinedWeatherData:CombinedWeatherData){
                 .verticalScroll(rememberScrollState())
         ) {
             combinedWeatherData.weatherResponse?.let {
+
                 val cardBrush = BackgroundMapper.getCardBackground(it.weather[0].icon)
                 val screenBrush = BackgroundMapper.getScreenBackground(it.weather[0].icon)
+                ColorTextSecondary = BackgroundMapper.getTextColor(it.weather[0].icon)
                 SharedModel.screenBackground.value = screenBrush
 
                 Column {
@@ -834,7 +837,7 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
                     bottom.linkTo(windIcon.bottom)
                 }
             )
-            val speed = "$value ${Constants.windUnit}"
+            val speed = "$value ${SharedModel.currentSpeed}"
             Text(
                 text = LanguageManager.formatNumberBasedOnLanguage(speed),
                 color = Color.White,

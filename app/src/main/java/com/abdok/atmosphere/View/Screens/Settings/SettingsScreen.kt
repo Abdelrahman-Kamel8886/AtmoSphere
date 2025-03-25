@@ -1,6 +1,8 @@
 package com.abdok.atmosphere.View.Screens.Settings
 
+import android.telephony.CarrierConfigManager.Gps
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,14 +46,14 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     val selectedTemperature by viewModel.temperature.collectAsStateWithLifecycle()
-    var selectedWindSpeed by remember { mutableStateOf(Speeds.METERS_PER_SECOND.degree) }
+    val selectedWindSpeed by viewModel.windSpeed.collectAsStateWithLifecycle()
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
-    var selectedLocation by remember { mutableStateOf(Locations.Gps.value) }
+    val selectedLocation by viewModel.location.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp)
+            .padding(horizontal = 16.dp)
             .padding(top = 48.dp)
     ) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -81,17 +83,17 @@ fun SettingsScreen(
 
         SegmentedControlSection(
             title = stringResource(R.string.location),
-            options = listOf(Locations.Gps.value, Locations.Map.value),
+            options = listOf(Locations.getValue(Locations.Gps.value), Locations.getValue(Locations.Map.value)),
             selectedOption = selectedLocation,
-            onOptionSelected = { selectedLocation = it }
+            onOptionSelected = viewModel::updateLocation
         )
         Spacer(modifier = Modifier.height(32.dp))
 
         SegmentedControlSection(
             title = stringResource(R.string.wind_speed_unit),
-            options = listOf(Speeds.METERS_PER_SECOND.degree, Speeds.MILES_PER_HOUR.degree),
+            options = listOf(Speeds.getDegree(Speeds.METERS_PER_SECOND.degree), Speeds.getDegree(Speeds.MILES_PER_HOUR.degree)),
             selectedOption = selectedWindSpeed,
-            onOptionSelected = { selectedWindSpeed = it }
+            onOptionSelected = viewModel::updateWindSpeed
         )
 
 
@@ -118,7 +120,9 @@ fun SegmentedControlSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
-                .background(Color(0xFFF0F0F0)),
+                .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
+                //.background(Color(0xFFF0F0F0))
+            ,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             options.forEach { option ->
@@ -126,12 +130,13 @@ fun SegmentedControlSection(
                 Box(
                     modifier = Modifier
                         .weight(1f)
+                        .padding(4.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .background(if (isSelected) Color.Black else Color.Transparent)
                         .clickable {
                             onOptionSelected(option)
                         }
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

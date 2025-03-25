@@ -3,11 +3,12 @@ package com.abdok.atmosphere.Data.Local.SharedPreference
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import com.abdok.atmosphere.Utils.Constants
 import com.google.gson.Gson
 
 class SharedPreferencesImpl private constructor(context: Context) : ISharedPreferences {
 
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
 
 
     companion object{
