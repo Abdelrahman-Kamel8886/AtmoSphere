@@ -2,10 +2,13 @@ package com.abdok.atmosphere.View.Screens.Locations.Components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,12 +51,14 @@ import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
 
 
 @Composable
-fun FavouriteLocationCard(item: FavouriteLocation) {
+fun FavouriteLocationCard(item: FavouriteLocation , onSelected: (FavouriteLocation) -> Unit) {
+
+    val context = LocalContext.current
+
     val weatherResponse = item.combinedWeatherData.weatherResponse
 
     val emojii = CountryHelper.getFlagEmoji(weatherResponse.sys.country)
-    val name = "${item.name.replace(", ", "\n")}"
-//    val name = item.name
+    val name = "${CountryHelper.getLocalizedCityName(context , item.cityName)}\n${CountryHelper.getCountryNameFromCode(item.countryName)}"
 
     val condition = weatherResponse.weather.get(0).icon
     val brush = BackgroundMapper.getCardBackground(condition)
@@ -62,28 +67,19 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
     val tempDegree = weatherResponse.main.temp_min.toInt() to weatherResponse.main.temp_max.toInt()
     val conditionText = weatherResponse.weather.get(0).description
 
-    val context = LocalContext.current
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .background(brush = brush, shape = RoundedCornerShape(16.dp))
+            .clickable {
+                onSelected(item)
+            }
 
     ) {
         val (directions, des, date, windIcon, windTitle) = createRefs()
 
-/*        Icon(
-            imageVector = Icons.Default.LocationOn,
-            contentDescription = null,
-            tint = Color.White,
-            modifier = Modifier
-                .size(32.dp)
-                .constrainAs(windIcon) {
-                    start.linkTo(parent.start, 16.dp)
-                    top.linkTo(parent.top, 16.dp)
-                }
-        )*/
         Text(
             text = emojii,
             color = Color.White,
@@ -108,17 +104,6 @@ fun FavouriteLocationCard(item: FavouriteLocation) {
                 bottom.linkTo(windIcon.bottom)
             }
         )
-/*
-        Text(
-            text = "$conditionText\n${tempDegree.first}°${Constants.degree} / ${tempDegree.second}°${Constants.degree}",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
-            modifier = Modifier.constrainAs(des) {
-                top.linkTo(windIcon.bottom, 16.dp)
-                start.linkTo(windIcon.start, 8.dp)
-            }
-        )*/
 
         Text(
             text = "${stringResource(id = R.string.last_updated)} ${DateHelper.getRelativeTime(weatherResponse.dt, context)}",
@@ -171,12 +156,14 @@ fun <T> SwipeToDeleteContainer(
             }
         }
     )
+
     LaunchedEffect(isRemoved) {
         if (isRemoved) {
             val result = snackbarHostState.showSnackbar(
                 message = context.getString(R.string.location_deleted_successfully),
                 actionLabel = context.getString(R.string.undo),
-                duration = SnackbarDuration.Short
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
             )
             if (result == SnackbarResult.ActionPerformed) {
                 onRestore(item)

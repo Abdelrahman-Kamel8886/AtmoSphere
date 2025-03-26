@@ -1,5 +1,8 @@
 package com.abdok.atmosphere.Utils
 
+import android.content.Context
+import android.location.Geocoder
+import java.io.IOException
 import java.util.Locale
 
 object CountryHelper {
@@ -17,5 +20,22 @@ object CountryHelper {
             flag.appendCodePoint(127397 + c.code)
         }
         return flag.toString()
+    }
+
+    fun getLocalizedCityName(context: Context, cityName: String): String {
+        val locale = Locale.getDefault()
+        val geocoder = Geocoder(context, locale)
+        return try {
+            val addresses = geocoder.getFromLocationName(cityName, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val address = addresses[0]
+                (address.locality)
+            } else {
+                cityName
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            cityName
+        }
     }
 }

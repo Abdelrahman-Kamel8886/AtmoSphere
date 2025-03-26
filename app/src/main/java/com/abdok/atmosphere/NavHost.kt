@@ -17,10 +17,13 @@ import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
+import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
 import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Enums.MapSelection
+import com.abdok.atmosphere.Utils.TypeConverter.GsonTypeConverter
+import com.abdok.atmosphere.View.Screens.Details.DetailsScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
@@ -59,6 +62,9 @@ fun setupNavHost(navController: NavHostController, location: Location) {
                 viewModel,
                 onLocationClick = {
                     navController.navigate(ScreenRoutes.MapRoute(MapSelection.FAVOURITE))
+                },
+                onItemSelected = {
+                    navController.navigate(ScreenRoutes.DetailsRoute(it))
                 }
             )
         }
@@ -74,12 +80,17 @@ fun setupNavHost(navController: NavHostController, location: Location) {
         }
         composable<ScreenRoutes.MapRoute> {
             val args : ScreenRoutes.MapRoute = it.toRoute()
-
             val mapFactory = MapViewModelFactory(repository)
             val viewModel: MapViewModel = viewModel(factory = mapFactory)
             MapScreen(viewModel , args.mapSelection) {
                 navController.popBackStack()
             }
+        }
+
+        composable<ScreenRoutes.DetailsRoute> {
+            val args : ScreenRoutes.DetailsRoute = it.toRoute()
+            val favLocationModel = FavouriteLocation.fromJson(args.favouriteLocation)
+            DetailsScreen(favLocationModel)
         }
     }
 }

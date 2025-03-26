@@ -22,4 +22,7 @@ sealed class ScreenRoutes(val route: String) {
     @Serializable
     data class MapRoute(val mapSelection: MapSelection) : ScreenRoutes("map")
 
+    @Serializable
+    data class DetailsRoute(val favouriteLocation: String) : ScreenRoutes("details")
+
 }

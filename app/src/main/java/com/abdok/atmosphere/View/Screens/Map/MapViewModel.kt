@@ -13,13 +13,11 @@ import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
-import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -126,7 +124,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         combinedData: CombinedWeatherData
     ) {
         val favorite = FavouriteLocation(
-            name = cityName
+            cityName = cityName
+            , countryName =combinedData.weatherResponse.sys.country
             , location = latLng
             , combinedWeatherData = combinedData
         )

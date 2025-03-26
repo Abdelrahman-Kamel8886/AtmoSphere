@@ -2,6 +2,7 @@ package com.abdok.atmosphere.Utils.TypeConverter
 
 import androidx.room.TypeConverter
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
+import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -33,5 +34,13 @@ class GsonTypeConverter {
         return value?.let {
             gson.fromJson(it, object : TypeToken<CombinedWeatherData>() {}.type)
         }
+    }
+
+    fun toJson(location: FavouriteLocation): String {
+        return gson.toJson(location)
+    }
+
+    fun fromJson(json: String): FavouriteLocation {
+        return gson.fromJson(json, FavouriteLocation::class.java)
     }
 }

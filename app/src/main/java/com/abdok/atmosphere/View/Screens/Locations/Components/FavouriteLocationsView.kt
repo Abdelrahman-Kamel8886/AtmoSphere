@@ -29,7 +29,8 @@ import com.abdok.atmosphere.R
 fun FavouriteLocationsView(
     locations: List<FavouriteLocation>,
     snackbarHostState: SnackbarHostState,
-    onDelete: (FavouriteLocation) -> Unit
+    onDelete: (FavouriteLocation) -> Unit,
+    onSelected: (FavouriteLocation) -> Unit
 ) {
 
     Column(
@@ -56,13 +57,14 @@ fun FavouriteLocationsView(
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(locations , key = {it.name}){
+            items(locations , key = {it.cityName}){
                     SwipeToDeleteContainer(
                         item = it,
                         onDelete = { onDelete(it) },
-                        snackbarHostState = snackbarHostState
+                        snackbarHostState = snackbarHostState,
+
                     ) {
-                        FavouriteLocationCard(item = it)
+                        FavouriteLocationCard(item = it , onSelected = onSelected)
                     }
             }
         }

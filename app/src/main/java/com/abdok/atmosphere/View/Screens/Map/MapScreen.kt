@@ -343,7 +343,7 @@ fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: Ma
 
                 else -> {
                     Button(onClick = {
-                        viewModel.selectLocation(address, latLng , mapSelection)
+                        viewModel.selectLocation(address.substringBefore(","), latLng , mapSelection)
                     }, modifier = Modifier.padding(top = 16.dp)) {
                         Text(text = "Select Location", color = Color.White)
                     }

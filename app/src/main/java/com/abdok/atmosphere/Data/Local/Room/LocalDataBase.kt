@@ -9,7 +9,7 @@ import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.TypeConverter.GsonTypeConverter
 
-@Database(entities = [FavouriteLocation::class], version = 3 )
+@Database(entities = [FavouriteLocation::class], version = 5 )
 @TypeConverters(GsonTypeConverter::class)
 abstract class LocalDataBase : RoomDatabase() {
 
