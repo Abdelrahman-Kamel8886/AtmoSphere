@@ -52,7 +52,6 @@ object DateHelper {
         return when {
             diff < TimeUnit.MINUTES.toMillis(1) -> context.getString(R.string.now)
             diff < TimeUnit.MINUTES.toMillis(2) -> context.getString(R.string.a_minute_ago)
-            
             diff < TimeUnit.HOURS.toMillis(1) ->
                 context.getString(
                     R.string.minutes_ago,
@@ -80,6 +79,12 @@ object DateHelper {
                 format.format(date)
             }
         }
+    }
+
+    fun getDayAndTimeFromTimestamp(timestamp: Long): String {
+        val date = Date(timestamp*1000)
+        val dateFormat = SimpleDateFormat("EEE d MMM HH:mm a", Locale.getDefault())
+        return dateFormat.format(date)
     }
 
 }

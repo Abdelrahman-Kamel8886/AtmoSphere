@@ -6,7 +6,7 @@ import java.util.Locale
 enum class Units(val value: String , val degree:String , val arDegree:String)  {
 
     STANDARD("standard","°K","°ك"),
-    METRIC("metric","°C","°س"),
+    METRIC("metric","°C","°م"),
     IMPERIAL("imperial","°F","°ف");
 
     companion object{

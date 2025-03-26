@@ -2,6 +2,7 @@ package com.abdok.atmosphere.View.Screens.Home.Components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,10 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.abdok.atmosphere.Data.Models.WeatherResponse
+import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.Dates.DateHelper
 import com.abdok.atmosphere.Utils.LanguageManager
@@ -35,12 +38,13 @@ import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
 import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import java.util.Locale
 
 @Composable
 fun WeatherCard(weather: WeatherResponse) {
 
-    val description =
-        "${stringResource(R.string.feels_like)} ${weather.main.feels_like.toInt()} ${SharedModel.currentDegree}"
+
+    val description = "${stringResource(R.string.feels_like)} ${weather.main.feels_like.toInt()} ${SharedModel.currentDegree}"
     val tempDegree = "${weather.main.temp.toInt()}"
     val context = LocalContext.current
 
@@ -50,7 +54,7 @@ fun WeatherCard(weather: WeatherResponse) {
             .wrapContentHeight()
             .padding(horizontal = 8.dp)
     ) {
-        val (backgroundCard, title, lastUpdate, weatherImage, degree) = createRefs()
+        val (backgroundCard, title, weatherImage, degree) = createRefs()
         CardBackground(modifier = Modifier.constrainAs(backgroundCard) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
@@ -67,42 +71,48 @@ fun WeatherCard(weather: WeatherResponse) {
                 modifier = Modifier
                     .size(175.dp)
                     .constrainAs(weatherImage) {
-                        absoluteLeft.linkTo(backgroundCard.absoluteLeft)
+                        start.linkTo(backgroundCard.start)
                         top.linkTo(backgroundCard.top)
                     }
             )
         }
 
-        Text(
-            text = weather.weather[0].description,
-            style = MaterialTheme.typography.titleLarge,
-            color = ColorTextSecondary,
-            fontWeight = FontWeight.Medium,
+        Column(
             modifier = Modifier.constrainAs(title) {
-                start.linkTo(anchor = weatherImage.start, margin = 24.dp)
+                start.linkTo(anchor = backgroundCard.start)
                 top.linkTo(anchor = weatherImage.bottom)
-            }
-        )
-        Text(
+            }.padding(start = 32.dp).fillMaxWidth()
+            , horizontalAlignment = Alignment.CenterHorizontally
+            , verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = weather.weather[0].description,
+                style = MaterialTheme.typography.titleLarge,
+                color = ColorTextSecondary,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
 
-            text = "${stringResource(R.string.last_updated)} ${
-                DateHelper.getRelativeTime(
-                    weather.dt,
-                    context
-                )
-            }",
-            color = ColorTextSecondary,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.constrainAs(lastUpdate) {
-                start.linkTo(anchor = title.start)
-                top.linkTo(anchor = title.bottom, margin = 4.dp)
-            }
-        )
+            )
+            val lastUpdated = "${stringResource(R.string.last_updated)} ${
+            DateHelper.getRelativeTime(
+                weather.dt,
+                context)
+            }"
+
+            val date = DateHelper.getDayAndTimeFromTimestamp(weather.dt.toLong())
+            Text(text = date ,
+                color = ColorTextSecondary,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            )
+        }
         Column(
             modifier = Modifier.constrainAs(degree) {
                 top.linkTo(anchor = weatherImage.top)
                 bottom.linkTo(anchor = weatherImage.bottom)
-                absoluteRight.linkTo(anchor = parent.absoluteRight, margin = 24.dp)
+                end.linkTo(anchor = parent.end, margin = 24.dp)
             }, horizontalAlignment = Alignment.End
         ) {
             Box(
@@ -149,12 +159,12 @@ fun WeatherCard(weather: WeatherResponse) {
 
 @Composable
 fun CardBackground(
-    modifier: Modifier = Modifier, height: Int = 250,
-    condition: String = "02d"
+    modifier: Modifier = Modifier,
+    height: Int = 250,
+    condition: String = "02d",
 ) {
-
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height.dp)
             .padding(8.dp)
@@ -163,32 +173,48 @@ fun CardBackground(
         val cornerRadius = 36.dp.toPx()
         val topHeight = size.height * topHeightRatio
 
+        val isRtl = (Locale.getDefault().language == Languages.ARABIC.code)
+
         val path = Path().apply {
-            moveTo(0f + cornerRadius, topHeight)
-            quadraticBezierTo(0f, topHeight, 0f, topHeight + cornerRadius)
-            lineTo(0f, size.height - cornerRadius)
-            quadraticBezierTo(0f, size.height, cornerRadius, size.height)
-            lineTo(size.width - cornerRadius, size.height)
-            quadraticBezierTo(size.width, size.height, size.width, size.height - cornerRadius)
-            lineTo(size.width, size.height * 0.1f + cornerRadius)
-            quadraticBezierTo(
-                size.width,
-                size.height * 0.1f,
-                size.width - cornerRadius,
-                size.height * 0.1f
-            )
-            lineTo(cornerRadius, topHeight)
-            close()
+            if (isRtl) {
+                // Mirror horizontally for RTL layout
+                moveTo(size.width - cornerRadius, topHeight)
+                quadraticBezierTo(size.width, topHeight, size.width, topHeight + cornerRadius)
+                lineTo(size.width, size.height - cornerRadius)
+                quadraticBezierTo(size.width, size.height, size.width - cornerRadius, size.height)
+                lineTo(cornerRadius, size.height)
+                quadraticBezierTo(0f, size.height, 0f, size.height - cornerRadius)
+                lineTo(0f, size.height * 0.1f + cornerRadius)
+                quadraticBezierTo(
+                    0f,
+                    size.height * 0.1f,
+                    cornerRadius,
+                    size.height * 0.1f
+                )
+                lineTo(size.width - cornerRadius, topHeight)
+                close()
+            } else {
+                moveTo(0f + cornerRadius, topHeight)
+                quadraticBezierTo(0f, topHeight, 0f, topHeight + cornerRadius)
+                lineTo(0f, size.height - cornerRadius)
+                quadraticBezierTo(0f, size.height, cornerRadius, size.height)
+                lineTo(size.width - cornerRadius, size.height)
+                quadraticBezierTo(size.width, size.height, size.width, size.height - cornerRadius)
+                lineTo(size.width, size.height * 0.1f + cornerRadius)
+                quadraticBezierTo(
+                    size.width,
+                    size.height * 0.1f,
+                    size.width - cornerRadius,
+                    size.height * 0.1f
+                )
+                lineTo(cornerRadius, topHeight)
+                close()
+            }
         }
 
         drawPath(
             path = path,
-            brush = BackgroundMapper.getCardBackground(condition)
-            /*brush = Brush.linearGradient(
-                0f to ColorGradient1,
-                0.5f to ColorGradient2,
-                1f to ColorGradient3
-            )*/,
+            brush = BackgroundMapper.getCardBackground(condition),
             style = Fill
         )
     }
