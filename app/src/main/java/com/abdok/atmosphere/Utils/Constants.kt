@@ -30,11 +30,14 @@ object Constants {
     const val WIND_SPEED_UNIT = "wind_speed_unit"
     const val LOCATION = "location"
 
+    const val LOC_LAT = "loc_lat"
+    const val LOC_LON = "loc_lon"
 
+    const val MAP_LAT = "map_lat"
+    const val MAP_LON = "map_lon"
 
-
-
-    val windUnit = "m/s"
+    const val DEFAULT_LAT = 30.0444
+    const val DEFAULT_LON = 31.2357
 
 
 }

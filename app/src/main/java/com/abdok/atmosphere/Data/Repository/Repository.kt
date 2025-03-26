@@ -3,6 +3,8 @@ package com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.Enums.Locations
+import com.abdok.atmosphere.Utils.Constants
 
 class Repository private constructor(
     private val remoteDataSource: RemoteDataSource,
@@ -31,6 +33,24 @@ class Repository private constructor(
 
     fun savePreferenceData(key: String, value: Any) = localDataSource.saveData(key, value)
     fun <T> fetchPreferenceData(key: String, defaultValue: T) = localDataSource.fetchData(key, defaultValue)
+
+    fun getLocation():Pair<Double , Double>{
+        val pref =fetchPreferenceData(Constants.LOCATION , Locations.Gps.value)
+        if(pref == Locations.Map.value){
+            return localDataSource.getMapLocation()
+        }
+        return localDataSource.getCurrentLocation()
+    }
+
+    fun saveLocation(locationType : Locations , lat: Double, lon: Double){
+        if(locationType == Locations.Gps){
+            localDataSource.saveCurrentLocation(lat, lon)
+        }
+        else{
+            localDataSource.saveMapLocation(lat, lon)
+        }
+    }
+
 
 
     companion object{

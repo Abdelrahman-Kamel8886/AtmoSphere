@@ -89,16 +89,14 @@ import kotlin.math.sin
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel , location: Location) {
-
     val loc1 = 30.666733 to 31.169271
     val loc2 = 50.666733 to 8.468946
     val loc3 = 4.666733 to 8.468946
     val loc4 = 60.666733 to 11.169271
     val loc5 = 4.666733 to 36.169271
-
     LaunchedEffect(Unit) {
-        /*viewModel.getWeatherAndForecastLatLon(loc.first, loc.first)*/
-        viewModel.getWeatherAndForecastLatLon(location.latitude, location.longitude)
+        viewModel.updateCurrentLocation(location.latitude, location.longitude)
+        viewModel.getWeatherAndForecastLatLon()
     }
 
     val weatherDataState = viewModel.combinedWeatherData.collectAsStateWithLifecycle()
@@ -125,14 +123,12 @@ fun HomeScreen(viewModel: HomeViewModel , location: Location) {
 @Composable
 fun DrawHome(combinedWeatherData:CombinedWeatherData){
     Box(modifier = Modifier.fillMaxSize()) {
-/*
         // Background GIF
-        RainEffectBackground(
+        /*RainEffectBackground(
             modifier = Modifier
                 .matchParentSize()
                 .zIndex(0f) // Set background layer to lowest
-        )
-*/
+        )*/
 
         Column(
             modifier = Modifier
@@ -187,6 +183,7 @@ fun DrawHome(combinedWeatherData:CombinedWeatherData){
 }
 
 
+@Preview
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RainEffectBackground(modifier: Modifier = Modifier) {
@@ -197,11 +194,11 @@ fun RainEffectBackground(modifier: Modifier = Modifier) {
         // Load the GIF
         GlideImage(
             contentScale = ContentScale.FillHeight,
-            model = R.drawable.ra, // Use the GIF in res/drawable
+            model = R.drawable.night, // Use the GIF in res/drawable
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(0.5f)
+
         )
     }
 }
@@ -275,7 +272,7 @@ fun SunsetSunriseView(
             Icon(
                 painter = painterResource(id = R.drawable.sunset),
                 contentDescription = "Sunset",
-                tint = Color.White
+                tint = ColorTextSecondary
             )
             Text(
                 text = stringResource(R.string.sunset),
@@ -284,7 +281,7 @@ fun SunsetSunriseView(
             )
             Text(
                 text = sunsetTime,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -303,7 +300,7 @@ fun SunsetSunriseView(
             Icon(
                 painter = painterResource(id = R.drawable.sunrise),
                 contentDescription = "Sunrise",
-                tint = Color.White
+                tint = ColorTextSecondary
             )
             Text(
                 text = stringResource(R.string.sunrise),
@@ -312,7 +309,7 @@ fun SunsetSunriseView(
             )
             Text(
                 text = sunriseTime,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -340,16 +337,16 @@ fun SunriseSunsetView(
             Icon(
                 painter = painterResource(id = R.drawable.sunrise),
                 contentDescription = "Sunrise",
-                tint = Color.White
+                tint = ColorTextSecondary
             )
             Text(
                 text = stringResource(R.string.sunrise),
-                color = colorSunText,
+                color = ColorTextSecondary.copy(alpha = 0.7f),
                 fontSize = 14.sp
             )
             Text(
                 text = sunriseTime,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -368,17 +365,17 @@ fun SunriseSunsetView(
             Icon(
                 painter = painterResource(id = R.drawable.sunset),
                 contentDescription = "Sunset",
-                tint = Color.White
+                tint = ColorTextSecondary
             )
             Text(
                 text = stringResource(R.string.sunset),
-                color = colorSunText,
+                color = ColorTextSecondary.copy(alpha = 0.7f),
                 fontSize = 14.sp,
 
                 )
             Text(
                 text = sunsetTime,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -459,8 +456,8 @@ fun WeatherCard(weather: WeatherResponse) {
                         letterSpacing = 0.sp,
                         style = TextStyle(
                             brush = Brush.verticalGradient(
-                                0f to Color.White,
-                                1f to Color.White.copy(alpha = 0.3f)
+                                0f to ColorTextSecondary,
+                                1f to ColorTextSecondary.copy(alpha = 0.3f)
                             ),
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Black
@@ -470,8 +467,8 @@ fun WeatherCard(weather: WeatherResponse) {
                         text = " ${SharedModel.currentDegree}",
                         style = TextStyle(
                             brush = Brush.verticalGradient(
-                                0f to Color.White,
-                                1f to Color.White.copy(alpha = 0.3f)
+                                0f to ColorTextSecondary,
+                                1f to ColorTextSecondary.copy(alpha = 0.3f)
                             ),
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Light,
@@ -482,8 +479,7 @@ fun WeatherCard(weather: WeatherResponse) {
             }
             Text(
                 text = LanguageManager.formatNumberBasedOnLanguage(description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = ColorTextSecondaryVariant,
+                color = ColorTextSecondary.copy(alpha = 0.7f),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -639,7 +635,7 @@ fun DayRow(
         }) {
             Text(
                 text = "${LanguageManager.formatNumberBasedOnLanguage(date)}",
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -661,7 +657,7 @@ fun DayRow(
 
         val temp = "${min} ${SharedModel.currentDegree} / ${max} ${SharedModel.currentDegree}"
         Text(text = LanguageManager.formatNumberBasedOnLanguage(temp),
-            color = Color.White,
+            color = ColorTextSecondary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(degree) {
@@ -697,7 +693,7 @@ fun WindDirectionIndicator(modifier: Modifier, windDirection: Float = 299f) {
                 center.y + radius * sin(angle).toFloat()
             )
             drawLine(
-                color = Color.White,
+                color = ColorTextSecondary,
                 start = start,
                 end = end,
                 strokeWidth = 6f
@@ -752,17 +748,17 @@ fun CardItem(icon: Int
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = null,
-                tint = Color.White,
+                tint = ColorTextSecondary,
                 modifier = Modifier.size(24.dp)
             )
             Text(
                 text = title,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 14.sp
             )
             Text(
                 text = value,
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
@@ -817,7 +813,7 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
             Icon(
                 painter = painterResource(id = R.drawable.wind_icon),
                 contentDescription = null,
-                tint = Color.White,
+                tint = ColorTextSecondary,
                 modifier = Modifier
                     .size(32.dp)
                     .constrainAs(windIcon) {
@@ -828,7 +824,7 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
 
             Text(
                 text = stringResource(R.string.winds_speed_directions),
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.constrainAs(windTitle){
@@ -840,7 +836,7 @@ fun WindCard(value: Double = 445.0 , degree:Float = 270f
             val speed = "$value ${SharedModel.currentSpeed}"
             Text(
                 text = LanguageManager.formatNumberBasedOnLanguage(speed),
-                color = Color.White,
+                color = ColorTextSecondary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.constrainAs(des){

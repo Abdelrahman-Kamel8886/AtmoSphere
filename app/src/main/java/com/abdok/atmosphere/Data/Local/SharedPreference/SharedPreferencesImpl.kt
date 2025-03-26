@@ -34,7 +34,7 @@ class SharedPreferencesImpl private constructor(context: Context) : ISharedPrefe
                 is Boolean -> putBoolean(key, value)
                 is Float -> putFloat(key, value)
                 is Long -> putLong(key, value)
-                is Location -> putString(key, Gson().toJson(value))
+                is Double -> putFloat(key, value.toFloat())
                 else -> throw IllegalArgumentException("Unsupported type")
             }
             apply()
@@ -48,7 +48,7 @@ class SharedPreferencesImpl private constructor(context: Context) : ISharedPrefe
             is Boolean -> sharedPreferences.getBoolean(key, defaultValue) as T
             is Float -> sharedPreferences.getFloat(key, defaultValue) as T
             is Long -> sharedPreferences.getLong(key, defaultValue) as T
-            is Location -> Gson().fromJson(sharedPreferences.getString(key, null), Location::class.java) as T
+            is Double -> sharedPreferences.getFloat(key, defaultValue.toFloat()).toDouble() as T
             else -> throw IllegalArgumentException("Unsupported type")
         }
     }

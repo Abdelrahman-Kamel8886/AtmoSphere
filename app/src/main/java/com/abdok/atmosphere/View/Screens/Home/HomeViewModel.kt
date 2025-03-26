@@ -9,6 +9,7 @@ import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
+import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
@@ -21,17 +22,19 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
 
-    var unit : String
-    var speed : String
+    private var unit : String
+    private var speed : String
+    var location : Pair<Double , Double>
 
     init {
         unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)
-         SharedModel.currentDegree = Units.getDegreeByValue(unit)
+        SharedModel.currentDegree = Units.getDegreeByValue(unit)
 
         speed = repository.fetchPreferenceData(Constants.WIND_SPEED_UNIT , Speeds.METERS_PER_SECOND.degree)
         SharedModel.currentSpeed = Speeds.getDegree(speed)
 
-
+        val loc = repository.getLocation()
+        location = Pair(loc.first , loc.second)
     }
 
     private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)
@@ -41,8 +44,8 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     val error: LiveData<String> = mutableError
 
     fun getWeatherAndForecastLatLon(
-        lat: Double,
-        lon: Double,
+        lat: Double = location.first,
+        lon: Double = location.second,
         units: String = unit,
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
@@ -61,6 +64,14 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
+
+    fun updateCurrentLocation(lat: Double, lon: Double){
+        repository.saveLocation(Locations.Gps , lat, lon)
+    }
+    fun updateMapLocation(lat: Double , lon: Double){
+        repository.saveLocation(Locations.Map , lat, lon)
+    }
+
 
 }
 
