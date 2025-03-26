@@ -100,7 +100,7 @@ val coordinates = MutableStateFlow<LatLng?>(null)
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(viewModel: MapViewModel , onBackClick: () -> Unit) {
+fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick: () -> Unit) {
 
     CurvedNavBar.mutableNavBarState.value = false
 
@@ -163,10 +163,8 @@ fun MapScreen(viewModel: MapViewModel , onBackClick: () -> Unit) {
                     scrolledContainerColor = Color.White
                 ),
                 title = {
-                    OutlinedTextField(
-                        value = searchText.value,
-                        onValueChange = {
-                            searchTextFlow.value = it
+                    OutlinedTextField(value = searchText.value, onValueChange = {
+                        searchTextFlow.value = it
                         },
                         singleLine = true,
                         modifier = Modifier
@@ -299,6 +297,7 @@ fun MapScreen(viewModel: MapViewModel , onBackClick: () -> Unit) {
                             "${data.first.name} , ${CountryHelper.getCountryNameFromCode(data.first.country)}",
                             locationMarkerState.value!!.position,
                             viewModel
+                            , mapSelection
                         ){onBackClick()}
                     }
                 }
@@ -312,7 +311,7 @@ fun MapScreen(viewModel: MapViewModel , onBackClick: () -> Unit) {
 
 
 @Composable
-fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: MapViewModel , onBackClick: () -> Unit) {
+fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: MapViewModel , mapSelection: MapSelection , onBackClick: () -> Unit) {
 
     val insertionState = viewModel.insertionState.collectAsStateWithLifecycle()
 
@@ -344,7 +343,7 @@ fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: Ma
 
                 else -> {
                     Button(onClick = {
-                        viewModel.selectLocation(address, latLng)
+                        viewModel.selectLocation(address, latLng , mapSelection)
                     }, modifier = Modifier.padding(top = 16.dp)) {
                         Text(text = "Select Location", color = Color.White)
                     }

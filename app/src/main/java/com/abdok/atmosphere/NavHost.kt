@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.abdok.atmosphere.Data.DataSources.LocalDataSource
 import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
@@ -19,6 +20,7 @@ import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
 import com.abdok.atmosphere.Data.Remote.RetroConnection
 import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
@@ -56,7 +58,7 @@ fun setupNavHost(navController: NavHostController, location: Location) {
             LocationsScreen(
                 viewModel,
                 onLocationClick = {
-                    navController.navigate(ScreenRoutes.MapRoute)
+                    navController.navigate(ScreenRoutes.MapRoute(MapSelection.FAVOURITE))
                 }
             )
         }
@@ -66,12 +68,16 @@ fun setupNavHost(navController: NavHostController, location: Location) {
         composable<ScreenRoutes.SettingsRoute> {
             val settingsFactory = SettingsViewModelFactory(repository)
             val viewModel: SettingsViewModel = viewModel(factory = settingsFactory)
-            SettingsScreen(viewModel)
+            SettingsScreen(viewModel){
+                navController.navigate(ScreenRoutes.MapRoute(MapSelection.LOCATION))
+            }
         }
         composable<ScreenRoutes.MapRoute> {
+            val args : ScreenRoutes.MapRoute = it.toRoute()
+
             val mapFactory = MapViewModelFactory(repository)
             val viewModel: MapViewModel = viewModel(factory = mapFactory)
-            MapScreen(viewModel) {
+            MapScreen(viewModel , args.mapSelection) {
                 navController.popBackStack()
             }
         }

@@ -3,8 +3,8 @@
     <string name="app_name">AtmoSphere</string>
     <string name="sunset">Atardecer</string>
     <string name="sunrise">Amanecer</string>
-    <string name="today">Detalles de hoy</string>
-    <string name="_5_days_forecast">Pronóstico de 5 días</string>
+    <string name="today">Pronóstico por hora</string>
+    <string name="_5_days_forecast">Pronóstico semanal</string>
     <string name="winds_speed_directions">Velocidad del viento</string>
     <string name="humidity">Humedad</string>
     <string name="air_pressure">Presión</string>

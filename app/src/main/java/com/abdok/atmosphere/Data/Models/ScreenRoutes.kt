@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.Data.Models
 
+import com.abdok.atmosphere.Enums.MapSelection
 import kotlinx.serialization.Serializable
 
 
@@ -19,6 +20,6 @@ sealed class ScreenRoutes(val route: String) {
     object SettingsRoute : ScreenRoutes("settings")
 
     @Serializable
-    object MapRoute : ScreenRoutes("map")
+    data class MapRoute(val mapSelection: MapSelection) : ScreenRoutes("map")
 
 }

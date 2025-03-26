@@ -9,6 +9,7 @@ import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
+import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
@@ -70,7 +71,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     fun selectLocation(
         cityName: String,
         latLng: LatLng,
-        mapSelection: MapSelection = MapSelection.FAVOURITE
+        mapSelection: MapSelection
     ) {
         _insertionState.value = Response.Loading
         when (mapSelection) {
@@ -80,8 +81,17 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
                     latLng
                 )
             }
+            MapSelection.LOCATION -> {
+                saveMapSelection(latLng)
+            }
+        }
+    }
 
-            MapSelection.LOCATION -> {}
+    fun saveMapSelection(latLng: LatLng) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveLocation(Locations.Map , latLng.latitude , latLng.longitude)
+            repository.savePreferenceData(Constants.LOCATION , Locations.Map.value)
+            _insertionState.value = Response.Success(true)
         }
     }
 

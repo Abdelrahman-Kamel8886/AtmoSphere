@@ -14,9 +14,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Air
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,13 +48,21 @@ import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.LanguageManager
+import com.abdok.atmosphere.View.Screens.CurvedNavBar
 
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    onMapSelected: () -> Unit
 ) {
     val context = LocalContext.current
+
+    CurvedNavBar.mutableNavBarState.value = true
+
+    LaunchedEffect(Unit) {
+        viewModel.refreshValues()
+    }
 
     val selectedTemperature by viewModel.temperature.collectAsStateWithLifecycle()
     val selectedWindSpeed by viewModel.windSpeed.collectAsStateWithLifecycle()
@@ -65,6 +84,7 @@ fun SettingsScreen(
                 Languages.SPANISH.value
             ),
             selectedOption = selectedLanguage,
+            icon = Icons.Default.Language,
             onOptionSelected = {
                 viewModel.updateLanguage(it)
                 LanguageManager.restartActivity(context)
@@ -77,6 +97,7 @@ fun SettingsScreen(
                 Units.getDegreeByValue(Units.STANDARD.value),
                 Units.getDegreeByValue(Units.IMPERIAL.value)),
             selectedOption = selectedTemperature,
+            icon = Icons.Default.Thermostat,
             onOptionSelected = viewModel::updateTemperature
         )
         Spacer(modifier = Modifier.height(32.dp))
@@ -85,7 +106,15 @@ fun SettingsScreen(
             title = stringResource(R.string.location),
             options = listOf(Locations.getValue(Locations.Gps.value), Locations.getValue(Locations.Map.value)),
             selectedOption = selectedLocation,
-            onOptionSelected = viewModel::updateLocation
+            icon = Icons.Default.LocationOn,
+            onOptionSelected = {
+
+                if (it == Locations.getValue(Locations.Map.value)) {
+                    onMapSelected()
+                }else{
+                    viewModel.updateLocation(it)
+                }
+            }
         )
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -93,27 +122,35 @@ fun SettingsScreen(
             title = stringResource(R.string.wind_speed_unit),
             options = listOf(Speeds.getDegree(Speeds.METERS_PER_SECOND.degree), Speeds.getDegree(Speeds.MILES_PER_HOUR.degree)),
             selectedOption = selectedWindSpeed,
+            icon = Icons.Default.Air,
             onOptionSelected = viewModel::updateWindSpeed
         )
 
 
     }
 }
-
 @Composable
 fun SegmentedControlSection(
-    title: String,
-    options: List<String>,
-    selectedOption: String,
+    title: String ,
+    options: List<String> ,
+    selectedOption: String ,
+    icon : ImageVector,
     onOptionSelected: (String) -> Unit
 ) {
     Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            color = Color.DarkGray
-        )
+        Row {
+            Icon(imageVector = icon,
+                tint = Color.Gray
+                , contentDescription = null)
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
+                color = Color.DarkGray
+                , modifier = Modifier.padding(start = 8.dp)
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
@@ -121,7 +158,7 @@ fun SegmentedControlSection(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
                 .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
-                //.background(Color(0xFFF0F0F0))
+                .background(Color(0xFFF0F0F0))
             ,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

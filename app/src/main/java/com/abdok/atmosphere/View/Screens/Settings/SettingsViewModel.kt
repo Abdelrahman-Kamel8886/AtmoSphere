@@ -26,7 +26,8 @@ class SettingsViewModel(private val repository: Repository) : ViewModel() {
     private val _windSpeed = MutableStateFlow(Speeds.METERS_PER_SECOND.degree)
     val windSpeed = _windSpeed.asStateFlow()
 
-    init {
+
+    fun refreshValues(){
         val code = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
         _language.value = Languages.getValueByCode(code)
 

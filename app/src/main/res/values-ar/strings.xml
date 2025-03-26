@@ -3,8 +3,8 @@
     <string name="app_name">AtmoSphere</string>
     <string name="sunset">الغروب</string>
     <string name="sunrise">الشروق</string>
-    <string name="today">تفاصيل باقي اليوم</string>
-    <string name="_5_days_forecast">طقس الايام القادمه</string>
+    <string name="today">توقعات الساعات القادمه</string>
+    <string name="_5_days_forecast">التوقعات الأسبوعية</string>
     <string name="winds_speed_directions">سرعه و اتجاه الرياح</string>
     <string name="humidity">الرطوبه</string>
     <string name="air_pressure">ضغط الهواء</string>
