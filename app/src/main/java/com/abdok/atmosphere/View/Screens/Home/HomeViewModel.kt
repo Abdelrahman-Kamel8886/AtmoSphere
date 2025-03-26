@@ -50,6 +50,7 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
         viewModelScope.launch(Dispatchers.IO) {
+            mutableCombinedWeatherData.value = Response.Loading
             try {
                 val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
                 val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
