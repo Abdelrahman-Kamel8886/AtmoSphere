@@ -1,9 +1,8 @@
 package com.abdok.atmosphere.View.Screens.Settings
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Enums.Speeds
@@ -11,6 +10,7 @@ import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Locale
 
 class SettingsViewModel(private val repository: Repository) : ViewModel() {
 
@@ -28,7 +28,7 @@ class SettingsViewModel(private val repository: Repository) : ViewModel() {
 
 
     fun refreshValues(){
-        val code = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
+        val code = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Locale.getDefault().language)
         _language.value = Languages.getValueByCode(code)
 
         val unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)

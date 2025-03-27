@@ -32,8 +32,15 @@ class LocationWorker(context: Context,
 
     override suspend fun doWork(): Result {
         return try {
-            getLocation()
-            Result.success()
+            if (isNetworkAvailable()) {
+                getLocation()
+                Result.success()
+            }
+            else{
+                mutableLiveLocation.postValue(Response.Error("No Internet Connection"))
+                Result.failure()
+            }
+
         } catch (e: Exception) {
             mutableLiveLocation.postValue(Response.Error("Failed to get location: ${e.message}"))
             Log.e("LocationWorker", "Failed to get location: ${e.message}")
@@ -56,6 +63,11 @@ class LocationWorker(context: Context,
             }
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper())
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+        return connectivityManager?.activeNetwork != null
     }
 
 }

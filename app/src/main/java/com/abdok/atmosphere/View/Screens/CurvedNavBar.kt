@@ -35,8 +35,6 @@ object CurvedNavBar {
             listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
         )
 
-
-
         AndroidView(
             factory = { context ->
                 CurvedBottomNavigationView(context).apply {

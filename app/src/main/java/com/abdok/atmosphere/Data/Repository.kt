@@ -1,8 +1,9 @@
-package com.abdok.atmosphere.Data.Repository
+package com.abdok.atmosphere.Data
 
-import com.abdok.atmosphere.Data.DataSources.LocalDataSource
-import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
+import com.abdok.atmosphere.Data.Local.LocalDataSource
+import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.Data.Models.HomeLocation
 import com.abdok.atmosphere.Enums.Locations
 import com.abdok.atmosphere.Utils.Constants
 
@@ -32,6 +33,9 @@ class Repository private constructor(
     suspend fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
     suspend fun updateFavoriteLocation(favorite: FavouriteLocation) = localDataSource.updateFavoriteLocation(favorite)
 
+    suspend fun updateHomeLocation(homeLocation: HomeLocation) = localDataSource.updateHomeLocation(homeLocation)
+    fun getHomeLocation() = localDataSource.getHomeLocation()
+
     fun savePreferenceData(key: String, value: Any) = localDataSource.saveData(key, value)
     fun <T> fetchPreferenceData(key: String, defaultValue: T) = localDataSource.fetchData(key, defaultValue)
 
@@ -56,7 +60,7 @@ class Repository private constructor(
 
     companion object{
         private var instance: Repository? = null
-        fun getInstance(remoteDataSource: RemoteDataSource , localDataSource: LocalDataSource): Repository {
+        fun getInstance(remoteDataSource: RemoteDataSource, localDataSource: LocalDataSource): Repository {
             if (instance == null) {
                 instance = Repository(remoteDataSource , localDataSource)
             }

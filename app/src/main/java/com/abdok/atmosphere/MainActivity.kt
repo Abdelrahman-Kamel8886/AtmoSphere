@@ -31,6 +31,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +52,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LiveData
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Utils.Constants
@@ -92,15 +96,14 @@ class MainActivity : ComponentActivity() {
 
         setContent{
             var locationState = LocationWorker.mutableLiveLocation.observeAsState()
-            LaunchedEffect(Unit) {
-            }
 
             when(locationState.value){
                 is Response.Error -> {
-                    val message = (locationState.value as Response.Error).exception
+                    /*val message = (locationState.value as Response.Error).exception
                     Box (Modifier.fillMaxSize() , contentAlignment = Alignment.Center){
                         Text(text = message)
-                    }
+                    }*/
+                    MainScreen(null)
                 }
                 Response.Loading -> {
                     Box (Modifier.fillMaxSize() , contentAlignment = Alignment.Center){
@@ -215,32 +218,23 @@ class MainActivity : ComponentActivity() {
 
 
 
-    fun scheduleLocationWorker() {
-        val workRequest = PeriodicWorkRequestBuilder<LocationWorker>(15, java.util.concurrent.TimeUnit.MINUTES)
+    fun scheduleLocationWorker(context: Context = applicationContext) {
+        val workRequest = OneTimeWorkRequestBuilder<LocationWorker>()
             .setConstraints(
                 Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED) // Only fetch when the network is available
                     .build()
             )
             .build()
 
-        WorkManager.getInstance(applicationContext)
-            .enqueueUniquePeriodicWork(
-                "LocationWorker",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest
-            )
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueue(workRequest)
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun MainScreen(location: Location) {
+    fun MainScreen(location: Location?) {
 
         val networkStateObserver = remember { NetworkStateObserver(this@MainActivity) }
         val isConnected by networkStateObserver.isConnected.observeAsState(true)

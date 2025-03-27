@@ -13,16 +13,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.abdok.atmosphere.Data.DataSources.LocalDataSource
-import com.abdok.atmosphere.Data.DataSources.RemoteDataSource
+import com.abdok.atmosphere.Data.Local.LocalDataSource
+import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
-import com.abdok.atmosphere.Data.Remote.RetroConnection
-import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Remote.Retrofit.RetroConnection
+import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.MapSelection
-import com.abdok.atmosphere.Utils.TypeConverter.GsonTypeConverter
 import com.abdok.atmosphere.View.Screens.Details.DetailsScreen
 import com.abdok.atmosphere.View.Screens.Details.DetailsViewModel
 import com.abdok.atmosphere.View.Screens.Details.DetailsViewModelFactory
@@ -41,7 +40,7 @@ import com.abdok.atmosphere.View.Screens.Settings.SettingsViewModelFactory
 
 
 @Composable
-fun setupNavHost(navController: NavHostController, location: Location) {
+fun setupNavHost(navController: NavHostController, location: Location?) {
 
     NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
 

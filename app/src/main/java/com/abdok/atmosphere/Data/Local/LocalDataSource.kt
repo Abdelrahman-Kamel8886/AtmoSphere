@@ -1,10 +1,9 @@
-package com.abdok.atmosphere.Data.DataSources
+package com.abdok.atmosphere.Data.Local
 
-import androidx.compose.ui.unit.Constraints
 import com.abdok.atmosphere.Data.Local.Room.LocalDao
 import com.abdok.atmosphere.Data.Local.SharedPreference.ISharedPreferences
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
-import com.abdok.atmosphere.Enums.Locations
+import com.abdok.atmosphere.Data.Models.HomeLocation
 import com.abdok.atmosphere.Utils.Constants
 
 class LocalDataSource private constructor(val dao: LocalDao , val sharedPreferences: ISharedPreferences) {
@@ -14,6 +13,9 @@ class LocalDataSource private constructor(val dao: LocalDao , val sharedPreferen
     suspend fun deleteFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.deleteFavouriteLocation(favoriteLocation)
     suspend fun updateFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.updateFavouriteLocation(favoriteLocation)
     fun getFavoriteLocations() = dao.getAllFavouriteLocations()
+
+    suspend fun updateHomeLocation(homeLocation: HomeLocation) = dao.updateHomeLocation(homeLocation)
+    fun getHomeLocation() = dao.getHomeLocation()
 
     //SharedPreferences
     fun saveData(key: String, value: Any) = sharedPreferences.saveData(key, value)

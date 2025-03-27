@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
-import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Enums.Speeds

@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
-import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Data.Response
-import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

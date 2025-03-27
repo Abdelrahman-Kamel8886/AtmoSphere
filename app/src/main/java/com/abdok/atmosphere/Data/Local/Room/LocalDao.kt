@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.Data.Models.HomeLocation
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,4 +24,10 @@ interface LocalDao {
 
     @Update
     fun updateFavouriteLocation(favouriteLocation: FavouriteLocation) : Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun updateHomeLocation(homeLocation: HomeLocation) : Long
+
+    @Query("SELECT * FROM home_location_table where id = 0")
+    fun getHomeLocation(): Flow<HomeLocation>
 }

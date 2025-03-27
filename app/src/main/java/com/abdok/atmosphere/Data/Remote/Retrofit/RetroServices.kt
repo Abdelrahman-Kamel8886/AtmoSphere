@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Data.Remote
+package com.abdok.atmosphere.Data.Remote.Retrofit
 
 import com.abdok.atmosphere.Data.Models.CityLocationResponseItem
 import com.abdok.atmosphere.Data.Models.ForecastResponse

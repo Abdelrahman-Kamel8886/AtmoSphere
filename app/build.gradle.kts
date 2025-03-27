@@ -111,10 +111,15 @@ dependencies {
     //WorkManager
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
 
+
+    //
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+
     //Room Database
-    implementation ("androidx.room:room-runtime:2.5.2")
-    kapt ("androidx.room:room-compiler:2.5.2")
-    implementation ("androidx.room:room-ktx:2.5.2")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
 
     //LiveData & Compose
     val compose_version = "1.0.0"

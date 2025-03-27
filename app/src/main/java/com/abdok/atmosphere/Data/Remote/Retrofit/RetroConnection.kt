@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.Data.Remote
+package com.abdok.atmosphere.Data.Remote.Retrofit
 
 import com.abdok.atmosphere.Utils.Constants
 import okhttp3.OkHttpClient

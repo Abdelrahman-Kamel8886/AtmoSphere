@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
-import com.abdok.atmosphere.Data.Repository.Repository
+import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.Data.Models.HomeLocation
+import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.Enums.Locations
@@ -14,11 +16,15 @@ import com.abdok.atmosphere.Enums.Speeds
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.SharedModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withTimeout
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
 
@@ -40,8 +46,9 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)
     val combinedWeatherData = mutableCombinedWeatherData.asStateFlow()
 
-    private var mutableError :MutableLiveData<String> = MutableLiveData()
-    val error: LiveData<String> = mutableError
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        getHomeLocation()
+    }
 
     fun getWeatherAndForecastLatLon(
         lat: Double = location.first,
@@ -49,19 +56,26 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
         units: String = unit,
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(exceptionHandler) {
             mutableCombinedWeatherData.value = Response.Loading
             try {
-                val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
-                val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
+                withTimeout(5000) {
+                    supervisorScope {
+                        val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
+                        val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
 
-                val weather = weatherDeferred.await()
-                val forecast = forecastDeferred.await()
+                        val weather = weatherDeferred.await()
+                        val forecast = forecastDeferred.await()
 
-                mutableCombinedWeatherData.value = Response.Success(CombinedWeatherData(weather , forecast))
+                        val data = CombinedWeatherData(weather, forecast)
 
-            }catch (exception : Exception){
-                mutableCombinedWeatherData.value = Response.Error(exception.message.toString())
+                        mutableCombinedWeatherData.value = Response.Success(data)
+                        updateHomeLocation(data)
+                    }
+                }
+            } catch (exception: Exception) {
+                getHomeLocation()
+
             }
         }
     }
@@ -69,8 +83,28 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     fun updateCurrentLocation(lat: Double, lon: Double){
         repository.saveLocation(Locations.Gps , lat, lon)
     }
-    fun updateMapLocation(lat: Double , lon: Double){
-        repository.saveLocation(Locations.Map , lat, lon)
+
+    private fun getHomeLocation(){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getHomeLocation()
+                .catch {
+                    mutableCombinedWeatherData.value = Response.Error(it.message.toString())
+                }
+                .collect{
+                    if (it != null){
+                        mutableCombinedWeatherData.value = Response.Success(it.combinedWeatherData)
+                    }
+                    else{
+                        mutableCombinedWeatherData.value = Response.Error("No Data Found")
+                    }
+            }
+        }
+    }
+
+    private fun updateHomeLocation(combinedWeatherData: CombinedWeatherData){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateHomeLocation(HomeLocation(combinedWeatherData = combinedWeatherData))
+        }
     }
 
 

@@ -1,7 +1,7 @@
-package com.abdok.atmosphere.Data.DataSources
+package com.abdok.atmosphere.Data.Remote
 
 import com.abdok.atmosphere.Data.Models.CityLocationResponseItem
-import com.abdok.atmosphere.Data.Remote.RetroServices
+import com.abdok.atmosphere.Data.Remote.Retrofit.RetroServices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
