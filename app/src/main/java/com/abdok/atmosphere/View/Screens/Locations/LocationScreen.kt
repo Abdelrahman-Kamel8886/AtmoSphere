@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -156,12 +157,15 @@ fun EmptyLocationsView(padding : PaddingValues) {
                 modifier = Modifier.size(300.dp)
             )
             Text(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.DarkGray,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.ExtraBold,
-                text = "It looks empty here. Save a location to get started!")
+                text = stringResource(R.string.it_looks_empty_here_save_a_location_to_get_started)
+            )
         }
     }
 }

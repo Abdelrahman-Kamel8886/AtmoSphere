@@ -57,8 +57,10 @@ fun FavouriteLocationCard(item: FavouriteLocation , onSelected: (FavouriteLocati
 
     val weatherResponse = item.combinedWeatherData.weatherResponse
 
+    //CountryHelper.getLocalizedCityName(context , item.cityName)
     val emojii = CountryHelper.getFlagEmoji(weatherResponse.sys.country)
-    val name = "${CountryHelper.getLocalizedCityName(context , item.cityName)}\n${CountryHelper.getCountryNameFromCode(item.countryName)}"
+
+    val name = "${item.cityName}\n${CountryHelper.getCountryNameFromCode(item.countryName)}"
 
     val condition = weatherResponse.weather.get(0).icon
     val brush = BackgroundMapper.getCardBackground(condition)

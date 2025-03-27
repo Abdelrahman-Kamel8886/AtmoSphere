@@ -24,6 +24,8 @@ import com.abdok.atmosphere.Data.Repository.Repository
 import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.Utils.TypeConverter.GsonTypeConverter
 import com.abdok.atmosphere.View.Screens.Details.DetailsScreen
+import com.abdok.atmosphere.View.Screens.Details.DetailsViewModel
+import com.abdok.atmosphere.View.Screens.Details.DetailsViewModelFactory
 import com.abdok.atmosphere.View.Screens.Home.HomeScreen
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModel
 import com.abdok.atmosphere.View.Screens.Home.HomeViewModelFactory
@@ -90,7 +92,9 @@ fun setupNavHost(navController: NavHostController, location: Location) {
         composable<ScreenRoutes.DetailsRoute> {
             val args : ScreenRoutes.DetailsRoute = it.toRoute()
             val favLocationModel = FavouriteLocation.fromJson(args.favouriteLocation)
-            DetailsScreen(favLocationModel)
+            val detailsFactory = DetailsViewModelFactory(repository)
+            val viewModel: DetailsViewModel = viewModel(factory = detailsFactory)
+            DetailsScreen(favLocationModel , viewModel)
         }
     }
 }

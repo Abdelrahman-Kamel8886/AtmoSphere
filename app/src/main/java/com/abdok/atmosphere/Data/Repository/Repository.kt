@@ -27,9 +27,10 @@ class Repository private constructor(
 
     suspend fun getCityName(lat: Double, lon: Double) = remoteDataSource.getCityName(lat, lon)
 
-    fun insertFavoriteLocation(favorite: FavouriteLocation) = localDataSource.insertFavoriteLocation(favorite)
-    fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
     fun getFavoriteLocations() = localDataSource.getFavoriteLocations()
+    suspend fun insertFavoriteLocation(favorite: FavouriteLocation) = localDataSource.insertFavoriteLocation(favorite)
+    suspend fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
+    suspend fun updateFavoriteLocation(favorite: FavouriteLocation) = localDataSource.updateFavoriteLocation(favorite)
 
     fun savePreferenceData(key: String, value: Any) = localDataSource.saveData(key, value)
     fun <T> fetchPreferenceData(key: String, defaultValue: T) = localDataSource.fetchData(key, defaultValue)

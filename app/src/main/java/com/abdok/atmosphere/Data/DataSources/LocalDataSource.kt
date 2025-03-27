@@ -10,8 +10,9 @@ import com.abdok.atmosphere.Utils.Constants
 class LocalDataSource private constructor(val dao: LocalDao , val sharedPreferences: ISharedPreferences) {
 
     //Room
-    fun insertFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.insertFavouriteLocation(favoriteLocation)
-    fun deleteFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.deleteFavouriteLocation(favoriteLocation)
+    suspend fun insertFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.insertFavouriteLocation(favoriteLocation)
+    suspend fun deleteFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.deleteFavouriteLocation(favoriteLocation)
+    suspend fun updateFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.updateFavouriteLocation(favoriteLocation)
     fun getFavoriteLocations() = dao.getAllFavouriteLocations()
 
     //SharedPreferences
