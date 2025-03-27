@@ -39,6 +39,7 @@ fun FavouriteLocationsView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 32.dp)
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

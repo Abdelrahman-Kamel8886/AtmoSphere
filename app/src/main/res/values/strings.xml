@@ -33,4 +33,5 @@
     <string name="undo">Undo</string>
     <string name="it_looks_empty_here_save_a_location_to_get_started">It looks empty here. Save a location to get started!</string>
     <string name="check_your_internet_connection">Check your internet connection</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
 </resources>

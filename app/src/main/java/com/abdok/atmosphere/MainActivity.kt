@@ -5,12 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -22,24 +20,42 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.abdok.atmosphere.View.Screens.CurvedNavBar
 import com.abdok.atmosphere.WorkManger.LocationWorker
-import com.google.android.gms.location.FusedLocationProviderClient
-import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Utils.Constants
+import com.abdok.atmosphere.Utils.Network.NetworkStateObserver
+import com.abdok.atmosphere.Utils.ViewHelpers.setAlarm
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -106,6 +122,35 @@ class MainActivity : ComponentActivity() {
            
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+/*        if (!Settings.canDrawOverlays(this)) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+            startActivity(intent)
+        }
+
+        createNotificationChannel()
+        setAlarm(this@MainActivity, 10000)*/
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "alarm_channel",
+                "Alarm Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Channel for Alarm Notifications"
+            }
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
 
     private fun applyLanguage(){
         val sharedPreferences = SharedPreferencesImpl.getInstance()
@@ -188,30 +233,57 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
 
-}
+    }
 
-@Composable
-fun MainScreen(location: Location) {
-    val defaultBackground = Brush.linearGradient(
-        listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
-    )
-    val navController = rememberNavController()
-    val isNavBarVisible = CurvedNavBar.mutableNavBarState.observeAsState()
-    //var background = SharedModel.screenBackground.observeAsState()
-    Scaffold(
-        bottomBar = {
-            when(isNavBarVisible.value){
-                true -> CurvedNavBar.ShowCurvedNavBar(navController)
-                false -> {}
-                null -> {}
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun MainScreen(location: Location) {
+
+        val networkStateObserver = remember { NetworkStateObserver(this@MainActivity) }
+        val isConnected by networkStateObserver.isConnected.observeAsState(true)
+
+        val defaultBackground = Brush.linearGradient(
+            listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
+        )
+        val navController = rememberNavController()
+        val isNavBarVisible = CurvedNavBar.mutableNavBarState.observeAsState()
+        //var background = SharedModel.screenBackground.observeAsState()
+        Scaffold(
+            bottomBar = {
+                when(isNavBarVisible.value){
+                    true -> CurvedNavBar.ShowCurvedNavBar(navController)
+                    false -> {}
+                    null -> {}
+                }
             }
-        }
-    ) { innerPadding ->
-        Box(modifier = Modifier
-            .background(defaultBackground)
-        ) {
-            setupNavHost(navController , location)
+        ) { innerPadding ->
+            Box(modifier = Modifier
+                .background(defaultBackground)
+            ) {
+
+                setupNavHost(navController , location)
+                if (!isConnected) {
+                    Row (Modifier.fillMaxWidth().padding(top = 40.dp)){
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .background(Color.Red, shape = RoundedCornerShape(4.dp))
+                                .padding(vertical = 4.dp)
+                            ,
+                            text = "Offline Mood",
+                            textAlign = TextAlign.Center,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
         }
     }
 }

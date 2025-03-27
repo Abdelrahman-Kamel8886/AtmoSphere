@@ -59,8 +59,6 @@ fun DetailsScreen(favouriteLocation: FavouriteLocation , viewModel: DetailsViewM
                 }
                 is Response.Error -> {
                     val message = (weatherDataState.value as Response.Error).exception
-                    Log.i("TAG", "DetailsScreen: $message")
-                    Toast.makeText(context, stringResource(R.string.check_your_internet_connection), Toast.LENGTH_SHORT).show()
                     DrawDetails(favouriteLocation.combinedWeatherData)
                 }
 
