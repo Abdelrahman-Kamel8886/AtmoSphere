@@ -14,11 +14,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.abdok.atmosphere.View.Screens.CurvedNavBar
+import com.abdok.atmosphere.View.CurvedNavBar
 import com.abdok.atmosphere.WorkManger.LocationWorker
 import android.app.Activity
 import android.app.NotificationChannel
@@ -28,10 +25,8 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,25 +36,22 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LiveData
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.Network.NetworkStateObserver
-import com.abdok.atmosphere.Utils.ViewHelpers.setAlarm
+import com.abdok.atmosphere.View.setupNavHost
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -197,16 +189,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 123) {
-            if (resultCode == Activity.RESULT_OK) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_LOCATION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
                 scheduleLocationWorker()
             } else {
-                // User denied enabling location
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     private fun isLocationEnabled() : Boolean {
         val locationManager : LocationManager =
@@ -260,16 +258,19 @@ class MainActivity : ComponentActivity() {
 
                 setupNavHost(navController , location)
                 if (!isConnected) {
-                    Row (Modifier.fillMaxWidth().padding(top = 40.dp)){
+                    Row (
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp)){
 
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
-                                .background(Color.Red, shape = RoundedCornerShape(4.dp))
-                                .padding(vertical = 4.dp)
+                                .background(Color.Gray, shape = RoundedCornerShape(4.dp))
+                                .padding(vertical = 8.dp)
                             ,
-                            text = "Offline Mood",
+                            text = stringResource(R.string.offline_mood),
                             textAlign = TextAlign.Center,
                             color = Color.White,
                             fontSize = 16.sp,

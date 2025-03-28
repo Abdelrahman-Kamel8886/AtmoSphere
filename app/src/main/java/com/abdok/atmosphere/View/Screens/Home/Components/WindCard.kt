@@ -24,7 +24,7 @@ import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 import kotlin.math.cos
 import kotlin.math.sin
 

@@ -37,7 +37,7 @@ import com.abdok.atmosphere.View.Screens.Home.Components.SunCycleView
 import com.abdok.atmosphere.View.Screens.Home.Components.WeatherCard
 import com.abdok.atmosphere.View.Screens.Home.Components.WeatherGrid
 import com.abdok.atmosphere.View.Screens.Home.Components.WindCard
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 import kotlinx.coroutines.launch
 
 
@@ -71,6 +71,7 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
         ) {
             when (weatherDataState.value) {
                 is Response.Loading -> {
+
                 }
 
                 is Response.Error -> {

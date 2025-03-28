@@ -4,8 +4,9 @@ import com.abdok.atmosphere.Data.Models.CityLocationResponseItem
 import com.abdok.atmosphere.Data.Remote.Retrofit.RetroServices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 
-class RemoteDataSource private constructor(val service: RetroServices) {
+class RemoteDataSource private constructor(private val service: RetroServices) {
 
 
     suspend fun getWeatherLatLon(
@@ -13,14 +14,14 @@ class RemoteDataSource private constructor(val service: RetroServices) {
         lon: Double,
         units: String,
         lang: String
-    ) = service.getWeatherLatLon(lat, lon, units, lang)
+    ) = flowOf(service.getWeatherLatLon(lat, lon, units, lang))
 
     suspend fun getForecastLatLon(
         lat: Double,
         lon: Double,
         units: String,
         lang: String
-    ) = service.getForecastLatLon(lat, lon, units, lang)
+    ) = flowOf(service.getForecastLatLon(lat, lon, units, lang))
 
 
     suspend fun getCityLocation(cityName: String) : Flow<List<CityLocationResponseItem>> {

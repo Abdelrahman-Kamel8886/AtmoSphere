@@ -1,27 +1,22 @@
-package com.abdok.atmosphere
+package com.abdok.atmosphere.View
 
 import android.location.Location
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.abdok.atmosphere.Data.Local.LocalDataSource
-import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.ScreenRoutes
+import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.Retrofit.RetroConnection
 import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.MapSelection
+import com.abdok.atmosphere.View.Screens.Alarm.AlertsScreen
 import com.abdok.atmosphere.View.Screens.Details.DetailsScreen
 import com.abdok.atmosphere.View.Screens.Details.DetailsViewModel
 import com.abdok.atmosphere.View.Screens.Details.DetailsViewModelFactory
@@ -99,9 +94,3 @@ fun setupNavHost(navController: NavHostController, location: Location?) {
 }
 
 
-@Composable
-fun AlertsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Alerts Screen", fontSize = 24.sp)
-    }
-}

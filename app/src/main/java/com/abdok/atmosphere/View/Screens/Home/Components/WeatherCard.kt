@@ -37,7 +37,7 @@ import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 import java.util.Locale
 
 @Composable

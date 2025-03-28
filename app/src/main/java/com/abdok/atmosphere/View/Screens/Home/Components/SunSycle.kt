@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.Dates.SunCycleModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 
 
 @Composable

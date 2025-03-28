@@ -3,11 +3,9 @@ package com.abdok.atmosphere.Utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.util.Log
 import com.abdok.atmosphere.Enums.Languages
 import com.abdok.atmosphere.MainActivity
-import com.abdok.atmosphere.View.Screens.CurvedNavBar
+import com.abdok.atmosphere.View.CurvedNavBar
 import java.util.Locale
 
 object LanguageManager {

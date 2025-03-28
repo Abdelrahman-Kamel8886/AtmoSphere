@@ -25,7 +25,7 @@ import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
 import com.abdok.atmosphere.Utils.getDaysForecast
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 
 @Composable
 fun DaysForecastList(

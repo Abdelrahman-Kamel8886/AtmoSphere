@@ -14,8 +14,8 @@ interface RetroServices {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") units: String,
-        @Query("lang") lang: String
-    ): WeatherResponse
+        @Query("lang") lang: String):
+            WeatherResponse
 
     @GET(Constants.FORECAST_ENDPOINT)
     suspend fun getForecastLatLon(

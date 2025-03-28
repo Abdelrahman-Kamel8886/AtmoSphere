@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.View.theme.ColorTextSecondary
+import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 
 @Composable
 fun CardItem(

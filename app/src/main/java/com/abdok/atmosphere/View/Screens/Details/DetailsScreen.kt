@@ -1,10 +1,7 @@
 package com.abdok.atmosphere.View.Screens.Details
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -23,7 +20,7 @@ import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.View.Screens.CurvedNavBar
+import com.abdok.atmosphere.View.CurvedNavBar
 import com.abdok.atmosphere.View.Screens.Home.DrawHome
 import kotlinx.coroutines.launch
 

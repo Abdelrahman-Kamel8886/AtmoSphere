@@ -1,4 +1,4 @@
-package com.abdok.atmosphere.View.theme
+package com.abdok.atmosphere.View.Theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

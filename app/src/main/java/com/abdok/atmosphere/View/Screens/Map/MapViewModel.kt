@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class MapViewModel(private val repository: Repository) : ViewModel() {
@@ -104,10 +105,14 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
                 val weatherDeferred = async { repository.getWeatherLatLon(latLng.latitude, latLng.longitude, units, lang) }
                 val forecastDeferred = async { repository.getForecastLatLon(latLng.latitude, latLng.longitude, units, lang) }
 
-                val weather = weatherDeferred.await()
-                val forecast = forecastDeferred.await()
+                val weather = weatherDeferred.await().firstOrNull()
+                val forecast = forecastDeferred.await().firstOrNull()
 
-                insertFavoriteLocation(cityName, latLng, CombinedWeatherData(weather , forecast))
+                if (weather != null && forecast != null) {
+                    insertFavoriteLocation(cityName, latLng, CombinedWeatherData(weather , forecast))
+                }
+
+
 
 
             } catch (exception: Exception) {

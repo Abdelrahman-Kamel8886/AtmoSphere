@@ -30,4 +30,5 @@ interface LocalDao {
 
     @Query("SELECT * FROM home_location_table where id = 0")
     fun getHomeLocation(): Flow<HomeLocation>
+
 }

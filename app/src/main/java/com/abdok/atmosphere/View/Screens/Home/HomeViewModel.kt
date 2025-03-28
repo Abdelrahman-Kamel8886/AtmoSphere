@@ -22,6 +22,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withTimeout
@@ -56,23 +57,26 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
         units: String = unit,
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             mutableCombinedWeatherData.value = Response.Loading
             try {
-                withTimeout(5000) {
-                    supervisorScope {
-                        val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
-                        val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
 
-                        val weather = weatherDeferred.await()
-                        val forecast = forecastDeferred.await()
+                val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
+                val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
 
-                        val data = CombinedWeatherData(weather, forecast)
+                val weather = weatherDeferred.await().firstOrNull()
+                val forecast = forecastDeferred.await().firstOrNull()
 
-                        mutableCombinedWeatherData.value = Response.Success(data)
-                        updateHomeLocation(data)
-                    }
+                if (weather != null && forecast != null) {
+                    val data = CombinedWeatherData(weather, forecast)
+                    mutableCombinedWeatherData.value = Response.Success(data)
+                    updateHomeLocation(data)
                 }
+                else{
+                    getHomeLocation()
+                }
+
+
             } catch (exception: Exception) {
                 getHomeLocation()
 

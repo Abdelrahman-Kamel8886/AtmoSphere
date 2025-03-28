@@ -20,7 +20,6 @@ class LocationWorker(context: Context,
                      workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-
     companion object{
         val mutableLiveLocation : MutableLiveData<Response<Location>> = MutableLiveData(Response.Loading)
     }
@@ -48,12 +47,9 @@ class LocationWorker(context: Context,
         }
     }
 
-
     @SuppressLint("MissingPermission")
     private fun getLocation() {
-
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0).build()
-
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)

@@ -33,4 +33,6 @@
     <string name="undo">تراجع</string>
     <string name="it_looks_empty_here_save_a_location_to_get_started">يبدو المكان فارغًا؟ احفظ موقعًا للبدء!</string>
     <string name="check_your_internet_connection">تحقق من اتصالك بالإنترنت</string>
+    <string name="offline_mood">غير متصل بالانترنت</string>
+    <string name="it_looks_empty_here_schedule_an_alarm_to_get_started">يبدو فارغا هنا. قم بجدولة منبه !</string>
 </resources>

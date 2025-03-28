@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.abdok.atmosphere.Data.Models.CombinedWeatherData
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.Languages
@@ -20,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withTimeout
@@ -59,26 +61,27 @@ class DetailsViewModel(val repository: Repository) : ViewModel() {
         units: String = unit,
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE, Languages.ENGLISH.code)
     ) {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             mutableCombinedWeatherData.value = Response.Loading
             try {
                 val lat = favouriteLocation.location.latitude
                 val lon = favouriteLocation.location.longitude
 
-                withTimeout(5000) {
-                    supervisorScope {
-                        val weatherDeferred = async { repository.getWeatherLatLon(lat, lon, units, lang) }
-                        val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
+                val weatherDeferred = async{ repository.getWeatherLatLon(lat, lon, units, lang) }
+                val forecastDeferred = async { repository.getForecastLatLon(lat, lon, units, lang) }
 
-                        val weather = weatherDeferred.await()
-                        val forecast = forecastDeferred.await()
+                val weather = weatherDeferred.await().firstOrNull()
+                val forecast = forecastDeferred.await().firstOrNull()
 
-                        val data = CombinedWeatherData(weather, forecast)
-
-                        mutableCombinedWeatherData.value = Response.Success(data)
-                        updateCurrentLocation(favouriteLocation.copy(combinedWeatherData = data))
-                    }
+                if(weather != null && forecast != null){
+                    val data = CombinedWeatherData(weather, forecast)
+                    mutableCombinedWeatherData.value = Response.Success(data)
+                    updateCurrentLocation(favouriteLocation.copy(combinedWeatherData = data))
                 }
+                else{
+                    mutableCombinedWeatherData.value = Response.Error("No Data Found")
+                }
+
             } catch (exception: Exception) {
                 mutableCombinedWeatherData.value = Response.Error(exception.message ?: "Unknown error occurred")
             }
