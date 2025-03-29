@@ -148,6 +148,8 @@ dependencies {
     
     implementation ("androidx.compose.material:material:1.5.4")
 
+    implementation ("androidx.lifecycle:lifecycle-service:2.8.1")
+
 
 }
 

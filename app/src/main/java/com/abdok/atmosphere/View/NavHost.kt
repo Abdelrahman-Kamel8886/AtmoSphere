@@ -37,7 +37,7 @@ import com.abdok.atmosphere.View.Screens.Settings.SettingsViewModelFactory
 @Composable
 fun setupNavHost(navController: NavHostController, location: Location?) {
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
+    NavHost(navController = navController, startDestination = ScreenRoutes.AlertsRoute) {
 
         val repository = Repository.getInstance(
             RemoteDataSource.getInstance(RetroConnection.retroServices),

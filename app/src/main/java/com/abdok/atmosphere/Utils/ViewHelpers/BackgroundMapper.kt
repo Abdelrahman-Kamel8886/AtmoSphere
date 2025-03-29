@@ -2,6 +2,7 @@ package com.abdok.atmosphere.Utils.ViewHelpers
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 
 object BackgroundMapper {
 
@@ -65,4 +66,8 @@ object BackgroundMapper {
     fun getTextColor(condition: String): Color {
         return textMap[condition] ?: Color.White
     }
+/*    fun getContrastingTextColor(bgColor: Color): Color {
+        val luminance = bgColor.luminance()
+        return if (luminance < 0.5) Color.White else Color.Black
+    }*/
 }
