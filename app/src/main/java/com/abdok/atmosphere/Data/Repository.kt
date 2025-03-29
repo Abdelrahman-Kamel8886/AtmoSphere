@@ -1,6 +1,7 @@
 package com.abdok.atmosphere.Data
 
 import com.abdok.atmosphere.Data.Local.LocalDataSource
+import com.abdok.atmosphere.Data.Models.AlertDTO
 import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.HomeLocation
@@ -29,12 +30,16 @@ class Repository private constructor(
     suspend fun getCityName(lat: Double, lon: Double) = remoteDataSource.getCityName(lat, lon)
 
     fun getFavoriteLocations() = localDataSource.getFavoriteLocations()
-    suspend fun insertFavoriteLocation(favorite: FavouriteLocation) = localDataSource.insertFavoriteLocation(favorite)
-    suspend fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
-    suspend fun updateFavoriteLocation(favorite: FavouriteLocation) = localDataSource.updateFavoriteLocation(favorite)
+    fun insertFavoriteLocation(favorite: FavouriteLocation) = localDataSource.insertFavoriteLocation(favorite)
+    fun deleteFavoriteLocation(favorite: FavouriteLocation) = localDataSource.deleteFavoriteLocation(favorite)
+    fun updateFavoriteLocation(favorite: FavouriteLocation) = localDataSource.updateFavoriteLocation(favorite)
 
-    suspend fun updateHomeLocation(homeLocation: HomeLocation) = localDataSource.updateHomeLocation(homeLocation)
+    fun updateHomeLocation(homeLocation: HomeLocation) = localDataSource.updateHomeLocation(homeLocation)
     fun getHomeLocation() = localDataSource.getHomeLocation()
+
+    fun insertAlert(alert: AlertDTO) = localDataSource.insertAlert(alert)
+    fun deleteAlert(alert: AlertDTO) = localDataSource.deleteAlert(alert)
+    fun getAlerts() = localDataSource.getAlerts()
 
     fun savePreferenceData(key: String, value: Any) = localDataSource.saveData(key, value)
     fun <T> fetchPreferenceData(key: String, defaultValue: T) = localDataSource.fetchData(key, defaultValue)

@@ -1,5 +1,8 @@
 package com.abdok.atmosphere.View.Screens.Alarm.Components
 
+import android.app.TimePickerDialog
+import android.content.Context
+import android.widget.TimePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,24 +37,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.abdok.atmosphere.Enums.Alert
+import com.abdok.atmosphere.Enums.AlertErrors
+import com.abdok.atmosphere.R
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import java.util.Calendar
 
 @Composable
-fun AlarmBottomSheet(onClose: () -> Unit) {
+fun AlarmBottomSheet(
+    onClose: () -> Unit,
+    onSaved: (
+        startDuration: String,
+        endDuration: String,
+        selectedOption: Alert
+    ) -> Unit
+) {
 
     val redColor = Color(0xFFE53935)
     val greenColor = Color(0xFF43A047)
 
     val context = LocalContext.current
 
-    // State to track the selected option
-    var selectedOption by remember { mutableStateOf("Alarm") }
+    var selectedOption by remember { mutableStateOf(Alert.ALARM.getLocalizedValue()) }
     var startDurationTimeState by remember { mutableStateOf("") }
     var endDurationTimeState by remember { mutableStateOf("") }
+    var errorState by remember { mutableStateOf("") }
+
+    val calendar = Calendar.getInstance()
 
 
     val startDurationSource = remember {
@@ -60,12 +77,21 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
                 extraBufferCapacity = 16,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
+
             override suspend fun emit(interaction: Interaction) {
                 if (interaction is PressInteraction.Release) {
-                    endDurationTimeState = "14:00 AM"
+                    showTimePicker(
+                        context,
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE)
+                    ) {
+                        startDurationTimeState = it
+                        errorState = ""
+                    }
                 }
                 interactions.emit(interaction)
             }
+
             override fun tryEmit(interaction: Interaction): Boolean {
                 return interactions.tryEmit(interaction)
             }
@@ -78,12 +104,32 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
                 extraBufferCapacity = 16,
                 onBufferOverflow = BufferOverflow.DROP_OLDEST,
             )
+
             override suspend fun emit(interaction: Interaction) {
                 if (interaction is PressInteraction.Release) {
-                    startDurationTimeState = "14:00 AM"
+
+                    if (startDurationTimeState.isNotEmpty()) {
+                        val parts = startDurationTimeState
+                            .split(":")
+                            .map { it.toInt() }
+                        val hour = parts[0]
+                        val minute = parts[1]
+
+                        showTimePicker(
+                            context,
+                            hour,
+                            minute
+                        ) { time ->
+                            endDurationTimeState = time
+                            errorState = ""
+                        }
+                    } else {
+                        errorState = context.getString(R.string.select_start_time_first)
+                    }
                 }
                 interactions.emit(interaction)
             }
+
             override fun tryEmit(interaction: Interaction): Boolean {
                 return interactions.tryEmit(interaction)
             }
@@ -97,30 +143,28 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Add New Alert",
+            text = stringResource(R.string.add_new_alert),
             fontSize = 20.sp,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
 
 
-
-
-        // 🕑 Start Duration
-        Text(text = "Start duration", style = MaterialTheme.typography.bodyMedium)
+        // Start Duration
+        Text(text = stringResource(R.string.start_duration), style = MaterialTheme.typography.bodyMedium)
         OutlinedTextField(
             value = startDurationTimeState,
             onValueChange = {},
             readOnly = true,
-            placeholder = { Text("Start duration") },
-            label = {Text("Start duration")},
+            placeholder = { Text(stringResource(R.string.start_duration)) },
+            label = { Text(stringResource(R.string.start_duration)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = "Start Time"
                 )
             },
-            interactionSource = startDurationSource ,
+            interactionSource = startDurationSource,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -128,26 +172,34 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ⏰ End Duration
-        Text(text = "End duration", style = MaterialTheme.typography.bodyMedium)
+        // End Duration
+        Text(text = stringResource(R.string.end_duration), style = MaterialTheme.typography.bodyMedium)
         OutlinedTextField(
             value = endDurationTimeState,
             onValueChange = { },
-            placeholder = { Text("End duration") },
-            label = {Text("End duration")},
+            placeholder = { Text(stringResource(R.string.end_duration)) },
+            label = { Text(stringResource(R.string.end_duration)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Timer,
                     contentDescription = "End Time"
                 )
             },
-            readOnly = true, // Make it read-only so the click event is not consumed internally
+            readOnly = true,
             interactionSource = endDurationSource,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (errorState.isNotEmpty()){
+            Text(text = errorState,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Red
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         // Radio Buttons
         Row(
@@ -156,33 +208,32 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = "Notify me by",
+                text = stringResource(R.string.notify_me_by),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Row {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { selectedOption = "Alarm" }
+                    modifier = Modifier.clickable { selectedOption = Alert.ALARM.getLocalizedValue() }
                 ) {
                     RadioButton(
-                        selected = selectedOption == "Alarm",
-                        onClick = { selectedOption = "Alarm" }
+                        selected = selectedOption == Alert.ALARM.getLocalizedValue(),
+                        onClick = { selectedOption = Alert.ALARM.getLocalizedValue() }
                     )
-                    Text(text = "Alarm", modifier = Modifier.padding(start = 4.dp))
+                    Text(text = Alert.ALARM.getLocalizedValue(), modifier = Modifier.padding(start = 4.dp))
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { selectedOption = "Notification" }
+                    modifier = Modifier.clickable { selectedOption = Alert.NOTIFICATION.getLocalizedValue() }
                 ) {
                     RadioButton(
-                        selected = selectedOption == "Notification",
-                        onClick = { selectedOption = "Notification" }
+                        selected = selectedOption == Alert.NOTIFICATION.getLocalizedValue(),
+                        onClick = { selectedOption = Alert.NOTIFICATION.getLocalizedValue() }
                     )
-                    Text(text = "Notification", modifier = Modifier.padding(start = 4.dp))
+                    Text(text = Alert.NOTIFICATION.getLocalizedValue(), modifier = Modifier.padding(start = 4.dp))
                 }
             }
         }
@@ -194,10 +245,35 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.weight(0.6f))
+            Spacer(modifier = Modifier.weight(0.5f))
 
             Button(
-                onClick = { onClose()},
+                onClick = {
+                    val result = validation(startDurationTimeState, endDurationTimeState)
+
+                    when (result) {
+                        AlertErrors.START_DURATION_EMPTY -> {
+                            errorState = context.getString(R.string.start_duration_is_empty)
+                        }
+                        AlertErrors.END_DURATION_EMPTY -> {
+                            errorState = context.getString(R.string.end_duration_is_empty)
+                        }
+                        AlertErrors.DURATION_IN_PAST -> {
+                            errorState = context.getString(R.string.duration_must_be_in_the_future)
+                        }
+                        AlertErrors.END_DURATION_BEFORE_START -> {
+                            errorState = context.getString(R.string.end_time_is_before_start_time)
+                        }
+                        AlertErrors.NO_ERROR -> {
+                                onSaved(
+                                    startDurationTimeState,
+                                    endDurationTimeState,
+                                    Alert.getAbsoluteValue(selectedOption)
+                                )
+                        }
+                    }
+                    
+                },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(greenColor),
                 modifier = Modifier.weight(3.2f)
@@ -207,10 +283,10 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
                     contentDescription = "Save"
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
 
-            Spacer(modifier = Modifier.weight(0.6f))
+            Spacer(modifier = Modifier.weight(0.5f))
 
             Button(
                 onClick = onClose,
@@ -223,18 +299,61 @@ fun AlarmBottomSheet(onClose: () -> Unit) {
                     contentDescription = "Close"
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
 
-            Spacer(modifier = Modifier.weight(0.6f))
+            Spacer(modifier = Modifier.weight(0.5f))
         }
     }
 }
 
+fun validation(startDuration: String, endDuration: String): AlertErrors {
+    val calendar = Calendar.getInstance()
+    val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+    val currentMinute = calendar.get(Calendar.MINUTE)
 
-@Preview
+    return when {
+        startDuration.isEmpty() -> AlertErrors.START_DURATION_EMPTY
+        endDuration.isEmpty() -> AlertErrors.END_DURATION_EMPTY
+
+        else -> {
+            val (startHour, startMinute) = startDuration.split(":").map { it.toInt() }
+            val (endHour, endMinute) = endDuration.split(":").map { it.toInt() }
+
+            when {
+                startHour < currentHour || (startHour == currentHour && startMinute < currentMinute) -> AlertErrors.DURATION_IN_PAST
+                endHour < currentHour || (endHour == currentHour && endMinute < currentMinute) -> AlertErrors.DURATION_IN_PAST
+                endHour < startHour || (endHour == startHour && endMinute < startMinute) -> AlertErrors.END_DURATION_BEFORE_START
+                else -> AlertErrors.NO_ERROR
+            }
+        }
+    }
+}
+
+fun showTimePicker(
+    context: Context,
+    initialHour: Int,
+    initialMinute: Int,
+    onTimeSelected: (String) -> Unit
+) {
+    val lightThemeContext =
+        android.view.ContextThemeWrapper(context, android.R.style.Theme_Holo_Light_Dialog)
+
+    TimePickerDialog(
+        lightThemeContext,
+        { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
+            onTimeSelected(String.format("%02d:%02d", selectedHour, selectedMinute))
+        },
+        initialHour,
+        initialMinute,
+        true
+    ).show()
+}
+
+
+@Preview(locale = "es" , showBackground = true , showSystemUi = true)
 @Composable
 fun PreviewAlarmBottomSheet() {
-    AlarmBottomSheet({})
+    AlarmBottomSheet({} , {s,e,se->})
 }
 

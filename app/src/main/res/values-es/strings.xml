@@ -11,7 +11,7 @@
     <string name="search_with_city_name">Buscar con nombre de ciudad</string>
     <string name="location_saved_successfully">Ubicación guardada exitosamente</string>
     <string name="saved_locations">Ubicaciones guardadas</string>
-    <string name="location_deleted_successfully">Ubicación eliminada exitosamente</string>
+    <string name="location_deleted_successfully">" eliminada exitosamente"</string>
     <string name="location">Ubicación</string>
     <string name="wind_speed_unit">Unidad de velocidad del viento</string>
     <string name="temperature_unit">Unidad de temperatura</string>
@@ -35,4 +35,16 @@
     <string name="check_your_internet_connection">Comprueba tu conexión a Internet</string>
     <string name="offline_mood">Modo sin conexión</string>
     <string name="it_looks_empty_here_schedule_an_alarm_to_get_started">Parece que está vacío. ¡Programa una alarma para empezar!</string>
+    <string name="notify_me_by">Notificar por</string>
+    <string name="start_duration">Duración de inicio</string>
+    <string name="end_duration">Duración final</string>
+    <string name="save">Ahorrar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add_new_alert">Agregar nueva alerta</string>
+    <string name="select_start_time_first">Seleccione el equipo inicial primero</string>
+    <string name="end_time_is_before_start_time">La duración final es anterior a la duración de inicio.</string>
+    <string name="duration_must_be_in_the_future">La duración debe ser en el futuro</string>
+    <string name="end_duration_is_empty">La duración final está vacía</string>
+    <string name="start_duration_is_empty">La duración de inicio está vacía</string>
+    <string name="scheduled_alerts">Alertas programadas</string>
 </resources>

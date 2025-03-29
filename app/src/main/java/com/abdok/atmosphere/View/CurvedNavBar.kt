@@ -19,7 +19,7 @@ import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 object CurvedNavBar {
 
     val mutableNavBarState = MutableLiveData(true)
-    val activeIndex: MutableLiveData<Int> = MutableLiveData(2)
+    val activeIndex: MutableLiveData<Int> = MutableLiveData(0)
 
 
     @Composable

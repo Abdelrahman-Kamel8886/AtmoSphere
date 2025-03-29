@@ -16,6 +16,8 @@ import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.Retrofit.RetroConnection
 import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.MapSelection
+import com.abdok.atmosphere.View.Screens.Alarm.AlarmViewModel
+import com.abdok.atmosphere.View.Screens.Alarm.AlarmViewModelFactory
 import com.abdok.atmosphere.View.Screens.Alarm.AlertsScreen
 import com.abdok.atmosphere.View.Screens.Details.DetailsScreen
 import com.abdok.atmosphere.View.Screens.Details.DetailsViewModel
@@ -37,7 +39,7 @@ import com.abdok.atmosphere.View.Screens.Settings.SettingsViewModelFactory
 @Composable
 fun setupNavHost(navController: NavHostController, location: Location?) {
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.AlertsRoute) {
+    NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
 
         val repository = Repository.getInstance(
             RemoteDataSource.getInstance(RetroConnection.retroServices),
@@ -65,7 +67,9 @@ fun setupNavHost(navController: NavHostController, location: Location?) {
             )
         }
         composable<ScreenRoutes.AlertsRoute> {
-            AlertsScreen()
+            val alertsFactory = AlarmViewModelFactory(repository)
+            val viewModel: AlarmViewModel = viewModel(factory = alertsFactory)
+            AlertsScreen(viewModel)
         }
         composable<ScreenRoutes.SettingsRoute> {
             val settingsFactory = SettingsViewModelFactory(repository)

@@ -8,10 +8,10 @@
     <string name="winds_speed_directions">سرعه و اتجاه الرياح</string>
     <string name="humidity">الرطوبه</string>
     <string name="air_pressure">ضغط الهواء</string>
-    <string name="search_with_city_name">ابحث باسم المدينه</string>
+    <string name="search_with_city_name">البحث باسم المدينه</string>
     <string name="location_saved_successfully">تمت الموقع بنجاح</string>
     <string name="saved_locations">المواقع المحفوظه</string>
-    <string name="location_deleted_successfully">تم حذف الموقع بنجاح</string>
+    <string name="location_deleted_successfully">تم الحذف بنجاح</string>
     <string name="location">تحديد الموقع</string>
     <string name="wind_speed_unit">وحده سرعه الرياح</string>
     <string name="temperature_unit">وحده درجه الحراره</string>
@@ -35,4 +35,16 @@
     <string name="check_your_internet_connection">تحقق من اتصالك بالإنترنت</string>
     <string name="offline_mood">غير متصل بالانترنت</string>
     <string name="it_looks_empty_here_schedule_an_alarm_to_get_started">يبدو فارغا هنا. قم بجدولة منبه !</string>
+    <string name="notify_me_by">إخطاري بواسطة</string>
+    <string name="start_duration">بدايه المدة</string>
+    <string name="end_duration">نهايه المدة</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="add_new_alert">إضافة منبه جديد</string>
+    <string name="select_start_time_first">حدد وقت البدء أولاً</string>
+    <string name="end_time_is_before_start_time">مدة النهاية تسبق مدة البداية</string>
+    <string name="duration_must_be_in_the_future">يجب أن تكون المدة في المستقبل</string>
+    <string name="end_duration_is_empty">مدة النهاية فارغة</string>
+    <string name="start_duration_is_empty">مدة البدء فارغة</string>
+    <string name="scheduled_alerts">التنبيهات المجدولة</string>
 </resources>

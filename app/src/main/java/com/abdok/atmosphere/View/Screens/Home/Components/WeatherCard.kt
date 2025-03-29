@@ -37,6 +37,7 @@ import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
+import com.abdok.atmosphere.Utils.translateWeatherCondition
 import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 import java.util.Locale
 
@@ -86,7 +87,7 @@ fun WeatherCard(weather: WeatherResponse) {
             , verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = weather.weather[0].description,
+                text = weather.weather[0].description.translateWeatherCondition(),
                 style = MaterialTheme.typography.titleLarge,
                 color = ColorTextSecondary,
                 fontWeight = FontWeight.Medium,

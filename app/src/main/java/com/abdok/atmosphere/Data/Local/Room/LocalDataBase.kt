@@ -5,12 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.abdok.atmosphere.Data.Models.AlertDTO
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.HomeLocation
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.TypeConverter.GsonTypeConverter
 
-@Database(entities = [FavouriteLocation::class , HomeLocation::class], version = 3,exportSchema = false)
+@Database(entities = [FavouriteLocation::class , HomeLocation::class , AlertDTO::class], version = 4,exportSchema = false)
 @TypeConverters(GsonTypeConverter::class)
 abstract class LocalDataBase : RoomDatabase() {
 

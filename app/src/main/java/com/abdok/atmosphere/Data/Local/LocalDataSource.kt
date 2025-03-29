@@ -2,19 +2,24 @@ package com.abdok.atmosphere.Data.Local
 
 import com.abdok.atmosphere.Data.Local.Room.LocalDao
 import com.abdok.atmosphere.Data.Local.SharedPreference.ISharedPreferences
+import com.abdok.atmosphere.Data.Models.AlertDTO
 import com.abdok.atmosphere.Data.Models.FavouriteLocation
 import com.abdok.atmosphere.Data.Models.HomeLocation
 import com.abdok.atmosphere.Utils.Constants
 
-class LocalDataSource private constructor(val dao: LocalDao , val sharedPreferences: ISharedPreferences) {
+class LocalDataSource private constructor(private val dao: LocalDao, private val sharedPreferences: ISharedPreferences) {
 
     //Room
-    suspend fun insertFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.insertFavouriteLocation(favoriteLocation)
-    suspend fun deleteFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.deleteFavouriteLocation(favoriteLocation)
-    suspend fun updateFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.updateFavouriteLocation(favoriteLocation)
+    fun insertFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.insertFavouriteLocation(favoriteLocation)
+    fun deleteFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.deleteFavouriteLocation(favoriteLocation)
+    fun updateFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.updateFavouriteLocation(favoriteLocation)
     fun getFavoriteLocations() = dao.getAllFavouriteLocations()
 
-    suspend fun updateHomeLocation(homeLocation: HomeLocation) = dao.updateHomeLocation(homeLocation)
+    fun insertAlert(alert: AlertDTO) = dao.insertAlert(alert)
+    fun deleteAlert(alert: AlertDTO) = dao.deleteAlert(alert)
+    fun getAlerts() = dao.getAllAlerts()
+
+    fun updateHomeLocation(homeLocation: HomeLocation) = dao.updateHomeLocation(homeLocation)
     fun getHomeLocation() = dao.getHomeLocation()
 
     //SharedPreferences

@@ -11,7 +11,7 @@
     <string name="search_with_city_name">Search with City Name</string>
     <string name="location_saved_successfully">Location Saved Successfully</string>
     <string name="saved_locations">Saved Locations</string>
-    <string name="location_deleted_successfully">Location Deleted Successfully</string>
+    <string name="location_deleted_successfully">item Deleted Successfully</string>
     <string name="location">Location</string>
     <string name="wind_speed_unit">Wind Speed Unit</string>
     <string name="temperature_unit">Temperature Unit</string>
@@ -33,7 +33,18 @@
     <string name="undo">Undo</string>
     <string name="it_looks_empty_here_save_a_location_to_get_started">It looks empty here. Save a location to get started!</string>
     <string name="check_your_internet_connection">Check your internet connection</string>
-    <string name="title_activity_alarm">AlarmActivity</string>
     <string name="offline_mood">Offline Mood</string>
     <string name="it_looks_empty_here_schedule_an_alarm_to_get_started">It looks empty here. Schedule an Alarm to get started!</string>
+    <string name="notify_me_by">Notify me by</string>
+    <string name="start_duration">Start duration</string>
+    <string name="end_duration">End duration</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_new_alert">Add New Alert</string>
+    <string name="select_start_time_first">Select start time first</string>
+    <string name="end_time_is_before_start_time">End duration is before start duration</string>
+    <string name="duration_must_be_in_the_future">Duration must be in the future</string>
+    <string name="end_duration_is_empty">End duration is empty</string>
+    <string name="start_duration_is_empty">Start duration is empty</string>
+    <string name="scheduled_alerts">Scheduled Alerts</string>
 </resources>
