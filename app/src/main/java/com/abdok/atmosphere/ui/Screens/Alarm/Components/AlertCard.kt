@@ -22,11 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.abdok.atmosphere.Data.Models.AlertDTO
-import com.abdok.atmosphere.Enums.Alert
+import com.abdok.atmosphere.data.models.AlertDTO
+import com.abdok.atmosphere.enums.Alert
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.Utils.convertNumbersBasedOnLanguage
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.convertNumbersBasedOnLanguage
 
 @Composable
 fun AlertCard(item: AlertDTO) {

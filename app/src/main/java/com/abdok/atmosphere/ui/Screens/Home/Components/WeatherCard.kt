@@ -29,16 +29,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.abdok.atmosphere.Data.Models.WeatherResponse
-import com.abdok.atmosphere.Enums.Languages
+import com.abdok.atmosphere.data.models.WeatherResponse
+import com.abdok.atmosphere.enums.Languages
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.Dates.DateHelper
-import com.abdok.atmosphere.Utils.LanguageManager
-import com.abdok.atmosphere.Utils.SharedModel
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
-import com.abdok.atmosphere.Utils.convertNumbersBasedOnLanguage
-import com.abdok.atmosphere.Utils.translateWeatherCondition
+import com.abdok.atmosphere.utils.dates.DateHelper
+import com.abdok.atmosphere.utils.localization.LanguageManager
+import com.abdok.atmosphere.utils.SharedModel
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
+import com.abdok.atmosphere.utils.convertNumbersBasedOnLanguage
+import com.abdok.atmosphere.utils.translateWeatherCondition
 import com.abdok.atmosphere.ui.Theme.ColorTextSecondary
 import java.util.Locale
 

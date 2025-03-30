@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.LanguageManager
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.localization.LanguageManager
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.ui.Theme.ColorTextSecondary
 
 @Composable

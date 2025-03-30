@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abdok.atmosphere.Data.Response
-import com.abdok.atmosphere.Enums.MapSelection
+import com.abdok.atmosphere.data.Response
+import com.abdok.atmosphere.enums.MapSelection
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.Screens.Map.MapViewModel
 import com.airbnb.lottie.compose.LottieAnimation

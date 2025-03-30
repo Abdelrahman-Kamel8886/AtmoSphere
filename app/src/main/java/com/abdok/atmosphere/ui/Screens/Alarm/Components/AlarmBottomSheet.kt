@@ -41,8 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abdok.atmosphere.Enums.Alert
-import com.abdok.atmosphere.Enums.AlertErrors
+import com.abdok.atmosphere.enums.Alert
+import com.abdok.atmosphere.enums.AlertErrors
 import com.abdok.atmosphere.R
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

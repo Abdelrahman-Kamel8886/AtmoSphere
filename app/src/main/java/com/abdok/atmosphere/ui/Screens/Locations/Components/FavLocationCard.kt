@@ -40,12 +40,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.abdok.atmosphere.Data.Models.FavouriteLocation
+import com.abdok.atmosphere.data.models.FavouriteLocation
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.CountryHelper
-import com.abdok.atmosphere.Utils.Dates.DateHelper
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
-import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
+import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
+import com.abdok.atmosphere.utils.dates.DateHelper
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
 
 
 @Composable

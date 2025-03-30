@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.Dates.SunCycleModel
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
+import com.abdok.atmosphere.data.models.SunCycleModel
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.ui.Theme.ColorTextSecondary
 
 

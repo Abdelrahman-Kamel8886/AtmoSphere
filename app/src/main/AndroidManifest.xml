@@ -63,8 +63,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".BroadcastReceivers.AlarmReceiver" />
-        <receiver android:name=".BroadcastReceivers.StopAlarmReceiver" />
+        <receiver android:name=".receivers.AlarmReceiver" />
+        <receiver android:name=".receivers.StopAlarmReceiver" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

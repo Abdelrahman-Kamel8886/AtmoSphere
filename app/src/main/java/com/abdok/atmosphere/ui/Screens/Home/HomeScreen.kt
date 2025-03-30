@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abdok.atmosphere.Data.Models.CombinedWeatherData
-import com.abdok.atmosphere.Data.Response
+import com.abdok.atmosphere.data.models.CombinedWeatherData
+import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.CountryHelper
-import com.abdok.atmosphere.Utils.SharedModel
-import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
+import com.abdok.atmosphere.utils.SharedModel
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.ui.Screens.Home.Components.DaysForecastList
 import com.abdok.atmosphere.ui.Screens.Home.Components.HourlyForecastList
 import com.abdok.atmosphere.ui.Screens.Home.Components.SunCycleView

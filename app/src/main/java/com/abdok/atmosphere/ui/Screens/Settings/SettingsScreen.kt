@@ -35,12 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abdok.atmosphere.Enums.Languages
-import com.abdok.atmosphere.Enums.Locations
-import com.abdok.atmosphere.Enums.Speeds
-import com.abdok.atmosphere.Enums.Units
+import com.abdok.atmosphere.enums.Languages
+import com.abdok.atmosphere.enums.Locations
+import com.abdok.atmosphere.enums.Speeds
+import com.abdok.atmosphere.enums.Units
 import com.abdok.atmosphere.R
-import com.abdok.atmosphere.Utils.LanguageManager
+import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.ui.CurvedNavBar
 
 

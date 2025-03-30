@@ -2,12 +2,12 @@ package com.abdok.atmosphere.ui.Screens.Settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.abdok.atmosphere.Data.Repository
-import com.abdok.atmosphere.Enums.Languages
-import com.abdok.atmosphere.Enums.Locations
-import com.abdok.atmosphere.Enums.Speeds
-import com.abdok.atmosphere.Enums.Units
-import com.abdok.atmosphere.Utils.Constants
+import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.enums.Languages
+import com.abdok.atmosphere.enums.Locations
+import com.abdok.atmosphere.enums.Speeds
+import com.abdok.atmosphere.enums.Units
+import com.abdok.atmosphere.utils.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale

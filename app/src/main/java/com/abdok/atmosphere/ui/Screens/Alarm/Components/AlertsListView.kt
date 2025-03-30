@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.abdok.atmosphere.Data.Models.AlertDTO
+import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.Screens.Locations.Components.SwipeToDeleteContainer
 

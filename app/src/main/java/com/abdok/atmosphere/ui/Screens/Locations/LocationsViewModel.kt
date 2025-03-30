@@ -3,9 +3,9 @@ package com.abdok.atmosphere.ui.Screens.Locations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.abdok.atmosphere.Data.Models.FavouriteLocation
-import com.abdok.atmosphere.Data.Repository
-import com.abdok.atmosphere.Data.Response
+import com.abdok.atmosphere.data.models.FavouriteLocation
+import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

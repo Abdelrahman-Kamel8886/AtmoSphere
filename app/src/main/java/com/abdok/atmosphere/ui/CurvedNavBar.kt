@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
-import com.abdok.atmosphere.Data.Models.ScreenMenuItem
+import com.abdok.atmosphere.data.models.ScreenMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 

@@ -24,8 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abdok.atmosphere.Data.Models.FavouriteLocation.Companion.toJson
-import com.abdok.atmosphere.Data.Response
+import com.abdok.atmosphere.data.models.FavouriteLocation.Companion.toJson
+import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.ui.Screens.Locations.Components.EmptyLocationsView

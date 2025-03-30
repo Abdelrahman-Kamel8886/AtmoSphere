@@ -3,9 +3,9 @@ package com.abdok.atmosphere.ui.Screens.Alarm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.abdok.atmosphere.Data.Models.AlertDTO
-import com.abdok.atmosphere.Data.Repository
-import com.abdok.atmosphere.Data.Response
+import com.abdok.atmosphere.data.models.AlertDTO
+import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

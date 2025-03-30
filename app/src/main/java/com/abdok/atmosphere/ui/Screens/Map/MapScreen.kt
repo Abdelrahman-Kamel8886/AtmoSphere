@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.BuildConfig
-import com.abdok.atmosphere.Data.Response
-import com.abdok.atmosphere.Enums.MapSelection
+import com.abdok.atmosphere.data.Response
+import com.abdok.atmosphere.enums.MapSelection
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.ui.Screens.Map.Components.AddressCard
