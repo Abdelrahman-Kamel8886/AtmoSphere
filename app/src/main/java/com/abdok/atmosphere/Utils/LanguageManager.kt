@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.abdok.atmosphere.Enums.Languages
-import com.abdok.atmosphere.MainActivity
-import com.abdok.atmosphere.View.CurvedNavBar
+import com.abdok.atmosphere.ui.MainActivity
+import com.abdok.atmosphere.ui.CurvedNavBar
 import java.util.Locale
 
 object LanguageManager {

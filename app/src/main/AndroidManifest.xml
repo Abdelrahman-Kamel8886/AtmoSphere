@@ -39,7 +39,7 @@
 
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AtmoSphere"></activity>
@@ -52,7 +52,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AtmoSphere">

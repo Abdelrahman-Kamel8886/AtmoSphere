@@ -5,9 +5,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.SystemClock
+import android.util.Log
 import com.abdok.atmosphere.BroadcastReceivers.AlarmReceiver
 import com.abdok.atmosphere.Data.Models.ForecastResponse
+import com.google.android.gms.location.LocationServices
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalTime
@@ -222,6 +225,39 @@ fun String.getWeatherNotification(): String {
     val language = Locale.getDefault().language
     return notifications[this]?.get(language) ?: "Weather update not available."
 }
+
+
+
+
+
+
+@SuppressLint("MissingPermission")
+fun Context.getGpsLocation(onLocationReceived: (location: Location) -> Unit){
+    val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+    fusedLocationProviderClient.lastLocation
+        .addOnSuccessListener {
+            Log.i("TAG", "getGpsLocation: ")
+            if (it != null) {
+                Log.i("TAG", "getGpsLocation: 111 ${it.latitude} ${it.longitude}")
+                onLocationReceived(it)
+            }
+        }.addOnFailureListener {
+            Log.i("TAG", "getGpsLocation: 222 ${it.message}")
+            it.printStackTrace()
+        }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

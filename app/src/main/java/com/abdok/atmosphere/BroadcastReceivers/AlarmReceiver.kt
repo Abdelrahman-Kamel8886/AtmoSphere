@@ -19,7 +19,7 @@ import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.Retrofit.RetroConnection
 import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.Units
-import com.abdok.atmosphere.MainActivity
+import com.abdok.atmosphere.ui.MainActivity
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
