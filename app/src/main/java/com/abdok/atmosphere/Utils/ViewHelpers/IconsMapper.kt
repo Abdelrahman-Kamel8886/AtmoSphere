@@ -26,4 +26,8 @@ object IconsMapper {
         "50n" to R.drawable.mist_night
     )
 
+    fun getIcon(iconCode: String): Int {
+        return iconsMap[iconCode] ?: R.drawable.clear_sky_day
+    }
+
 }

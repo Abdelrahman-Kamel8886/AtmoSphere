@@ -39,5 +39,10 @@ object Constants {
     const val DEFAULT_LAT = 30.0444
     const val DEFAULT_LON = 31.2357
 
+    const val ALARM_ID = "alarm_id"
+
+
+    //
+
 
 }

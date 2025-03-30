@@ -38,6 +38,9 @@ interface LocalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAlert(alertDTO: AlertDTO) : Long
 
-    @Delete
+    @Delete()
     fun deleteAlert(alertDTO: AlertDTO) : Int
+
+    @Query("DELETE FROM alerts_table WHERE id = :id")
+    fun deleteAlertById(id: Int) : Int
 }

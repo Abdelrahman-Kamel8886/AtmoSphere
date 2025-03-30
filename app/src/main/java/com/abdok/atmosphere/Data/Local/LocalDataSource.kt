@@ -17,6 +17,7 @@ class LocalDataSource private constructor(private val dao: LocalDao, private val
 
     fun insertAlert(alert: AlertDTO) = dao.insertAlert(alert)
     fun deleteAlert(alert: AlertDTO) = dao.deleteAlert(alert)
+    fun deleteAlert(id: Int) = dao.deleteAlertById(id)
     fun getAlerts() = dao.getAllAlerts()
 
     fun updateHomeLocation(homeLocation: HomeLocation) = dao.updateHomeLocation(homeLocation)

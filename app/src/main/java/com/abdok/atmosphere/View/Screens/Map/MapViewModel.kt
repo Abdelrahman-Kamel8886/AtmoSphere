@@ -57,6 +57,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             }
     }
 
+
     fun getCityName(latLng: LatLng) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCityName(latLng.latitude, latLng.longitude).catch {

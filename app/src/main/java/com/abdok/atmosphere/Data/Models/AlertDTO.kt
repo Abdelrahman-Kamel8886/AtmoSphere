@@ -6,8 +6,8 @@ import com.abdok.atmosphere.Enums.Alert
 
 @Entity(tableName = "alerts_table")
 data class AlertDTO(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: Int,
     val startDuration: String,
     val endDuration: String,
     val selectedOption: Alert

@@ -11,18 +11,23 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.ViewModelProvider
 import com.abdok.atmosphere.Data.Local.LocalDataSource
 import com.abdok.atmosphere.Data.Local.Room.LocalDataBase
 import com.abdok.atmosphere.Data.Local.SharedPreference.SharedPreferencesImpl
+import com.abdok.atmosphere.Data.Models.WeatherResponse
 import com.abdok.atmosphere.Data.Remote.RemoteDataSource
 import com.abdok.atmosphere.Data.Remote.Retrofit.RetroConnection
 import com.abdok.atmosphere.Data.Repository
 import com.abdok.atmosphere.Enums.Units
+import com.abdok.atmosphere.MainActivity
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.Constants
+import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
+import com.abdok.atmosphere.Utils.getWeatherNotification
+import com.abdok.atmosphere.Utils.translateWeatherCondition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -42,24 +47,54 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-
-    @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
         createNotificationChannel(context)
 
-        GlobalScope.launch(Dispatchers.IO){
-           val data =  RetroConnection.retroServices
-                .getWeatherLatLon(
-                    Constants.DEFAULT_LAT ,
-                    Constants.DEFAULT_LON ,
-                    Units.METRIC.value
-                    , Locale.getDefault().language)
+        val id = intent.getIntExtra(Constants.ALARM_ID , -1)
+        Log.i("TAG", "onReceive: $id")
 
-            data?.let {
-                Log.i("TAG", "onReceive: ${data.name} ${data.weather[0].description}")
-            }
+        val repository = Repository.getInstance(
+            RemoteDataSource.getInstance(RetroConnection.retroServices),
+            LocalDataSource.getInstance(
+                LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance()
+            )
+        )
+        removeAlarm(id , repository)
+        getData(context , repository)
+    }
+
+    private fun removeAlarm(id: Int , repository: Repository){
+        val result = repository.deleteAlert(id)
+        Log.i("TAG", "removeAlarm: $result")
+    }
+
+    private fun getData(context: Context , repository: Repository){
+        GlobalScope.launch(Dispatchers.IO) {
+            repository
+                .getWeatherLatLon(
+                    Constants.DEFAULT_LAT,
+                    Constants.DEFAULT_LON,
+                    Units.METRIC.value, Locale.getDefault().language
+                )
+                .catch {
+                    Log.i("TAG", "onReceive: ")
+                }
+                .collect {
+                    if (it != null) {
+                        showNotification(context, it)
+                    }
+                }
 
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showNotification(context: Context, weatherResponse: WeatherResponse) {
+        val condition = weatherResponse.weather[0].icon
+
+        val icon = IconsMapper.getIcon(condition)
+        val title = weatherResponse.weather[0].description.translateWeatherCondition()
+        val message = condition.getWeatherNotification()
 
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(context, R.raw.alarm1)
@@ -67,19 +102,36 @@ class AlarmReceiver : BroadcastReceiver() {
             mediaPlayer?.start()
         }
 
+        val myIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val activityPendingIntent = PendingIntent.getActivity(
+            context, 1, myIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val stopIntent = Intent(context, StopAlarmReceiver::class.java)
         val stopPendingIntent = PendingIntent.getBroadcast(
-            context, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context,
+            0,
+            stopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.few_clouds_day) // Add your alarm icon in res/drawable
-            .setContentTitle("Alarm")
-            .setContentText("Tap STOP to turn off the alarm")
+            .setContentIntent(activityPendingIntent)
+            .setSmallIcon(icon)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("$message \n${context.getString(R.string.tap_stop_to_turn_off_the_alarm)}")
+            )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
-            .addAction(R.drawable.few_clouds_night, "STOP", stopPendingIntent)
+            .addAction(R.drawable.few_clouds_night, context.getString(R.string.stop), stopPendingIntent
+            )
             .build()
+
 
         with(NotificationManagerCompat.from(context)) {
             notify(1, notification)

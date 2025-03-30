@@ -39,6 +39,7 @@ class Repository private constructor(
 
     fun insertAlert(alert: AlertDTO) = localDataSource.insertAlert(alert)
     fun deleteAlert(alert: AlertDTO) = localDataSource.deleteAlert(alert)
+    fun deleteAlert(id: Int) = localDataSource.deleteAlert(id)
     fun getAlerts() = localDataSource.getAlerts()
 
     fun savePreferenceData(key: String, value: Any) = localDataSource.saveData(key, value)

@@ -3,18 +3,14 @@ package com.abdok.atmosphere.View.Screens.Map
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,14 +29,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -49,8 +42,12 @@ import com.abdok.atmosphere.BuildConfig
 import com.abdok.atmosphere.Data.Response
 import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.Utils.Constants
 import com.abdok.atmosphere.Utils.CountryHelper
 import com.abdok.atmosphere.View.CurvedNavBar
+import com.abdok.atmosphere.View.Screens.Map.Components.AddressCard
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -64,12 +61,11 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlin.time.Duration.Companion.milliseconds
-
-
-val coordinates = MutableStateFlow<LatLng?>(null)
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,6 +75,8 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
     CurvedNavBar.mutableNavBarState.value = false
 
     val cityLocationState = viewModel.addressLocation.collectAsStateWithLifecycle()
+
+
 
     val context = LocalContext.current
 
@@ -94,14 +92,25 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
     val searchText = searchTextFlow.collectAsStateWithLifecycle()
     var predictions = remember { mutableStateOf(emptyList<AutocompletePrediction>()) }
 
-    val locationMarkerState: MutableState<MarkerState?> = remember { mutableStateOf(null) }
-    
+    val locationMarkerState = rememberMarkerState(position = LatLng(0.0, 0.0))
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(40.0, 10.0), 2f)
+    }
+
+
     val snackbarHostState = remember { SnackbarHostState() }
     val insertError = viewModel.insertionState.collectAsStateWithLifecycle()
 
-    val scope = rememberCoroutineScope()
 
-
+    LaunchedEffect(locationMarkerState.position) {
+        if (locationMarkerState.position != LatLng(0.0, 0.0)) {
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(locationMarkerState.position , 8f),
+                durationMs = 1000
+            )
+        }
+    }
 
 
     LaunchedEffect(searchTextFlow) {
@@ -128,22 +137,22 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
         snackbarHost = {SnackbarHost(snackbarHostState)}
         ,topBar = {
             TopAppBar(
-                modifier = Modifier.padding(16.dp),
                 colors = TopAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = Color.Transparent,
                     navigationIconContentColor = Color.Black,
                     actionIconContentColor = Color.Black,
-                    scrolledContainerColor = Color.White
-                ),
+                    scrolledContainerColor = Color.White),
                 title = {
                     OutlinedTextField(value = searchText.value, onValueChange = {
                         searchTextFlow.value = it
                         },
                         singleLine = true,
                         modifier = Modifier
+                            .padding(end = 16.dp)
                             .fillMaxWidth()
-                            .background(Color.White, shape = RoundedCornerShape(8.dp)),
+                            .background(Color.White, shape = RoundedCornerShape(50.dp))
+                        ,
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.search_with_city_name),
@@ -151,7 +160,19 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                                 fontSize = 12.sp
                             )
                         },
+
+                        shape = RoundedCornerShape(50.dp)
+                        ,
+
                         textStyle = TextStyle(color = Color.DarkGray, fontSize = 14.sp),
+                        leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Search",
+                                    tint = Color.DarkGray
+                                )
+
+                        },
                         trailingIcon = {
                             if (searchText.value.isNotEmpty()) {
                                 IconButton(onClick = { searchTextFlow.value = "" }) {
@@ -166,14 +187,14 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
 
                     DropdownMenu(
                         expanded = predictions.value.isNotEmpty(),
-                        onDismissRequest = { predictions.value = emptyList() }
+                        onDismissRequest = { predictions.value = emptyList()
+                        }
                     ) {
                         predictions.value.forEach { autocompletePlace ->
                             DropdownMenuItem(
-
                                 text = {
                                     Text(
-                                        text = autocompletePlace.getFullText(null).toString()
+                                        text = autocompletePlace.getFullText(null).toString(),
                                     )
                                 },
                                 onClick = {
@@ -187,6 +208,13 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                                         "TAG",
                                         "MapScreen 2 : ${autocompletePlace.getPrimaryText(null)}"
                                     )
+
+                                    Log.i(
+                                        "TAG",
+                                        "MapScreen 2 : ${autocompletePlace.getFullText(null)}"
+                                    )
+
+
                                     viewModel.getCityLocation(
                                         autocompletePlace.getFullText(null).toString()
                                     )
@@ -210,6 +238,7 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
             val (map, card) = createRefs()
 
             GoogleMap(
+                cameraPositionState = cameraPositionState,
                 modifier = Modifier
                     .fillMaxSize()
                     .constrainAs(map) {
@@ -219,7 +248,7 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                         end.linkTo(parent.end)
                     },
                 onMapClick = {
-                    locationMarkerState.value = MarkerState(position = it)
+                    locationMarkerState.position = it
                     viewModel.getCityName(it)
                 },
                 properties = MapProperties(
@@ -232,11 +261,11 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                     mapToolbarEnabled = false
                 )
             ) {
-                locationMarkerState.value?.let {
+                if (locationMarkerState.position != LatLng(0.0, 0.0)) {
                     Marker(
-                        state = it,
+                        state = locationMarkerState,
                         /*  title = "New Location",
-                          snippet = "Updated Marker Position"*/
+                      snippet = "Updated Marker Position"*/
                     )
                 }
 
@@ -263,13 +292,12 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                     is Response.Success -> {
                         val data = (cityLocationState.value as Response.Success).data
                         if (data.second) {
-                            locationMarkerState.value =
-                                MarkerState(position = LatLng(data.first.lat, data.first.lon))
+                            locationMarkerState.position = LatLng(data.first.lat, data.first.lon)
 
                         }
                         AddressCard(
                             "${data.first.name} , ${CountryHelper.getCountryNameFromCode(data.first.country)}",
-                            locationMarkerState.value!!.position,
+                            locationMarkerState.position,
                             viewModel
                             , mapSelection
                         ){onBackClick()}
@@ -278,52 +306,8 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
             }
 
         }
-        
+
     }
     
 }
 
-
-@Composable
-fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: MapViewModel , mapSelection: MapSelection , onBackClick: () -> Unit) {
-
-    val insertionState = viewModel.insertionState.collectAsStateWithLifecycle()
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(64.dp)
-            .background(color = Color.Gray, shape = RoundedCornerShape(12.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = address, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.White
-            )
-
-            when (insertionState.value) {
-                is Response.Loading -> {
-                    CircularProgressIndicator(color = Color.White)
-                }
-
-                is Response.Success -> {
-                    onBackClick()
-                }
-
-                else -> {
-                    Button(onClick = {
-                        viewModel.selectLocation(address.substringBefore(","), latLng , mapSelection)
-                    }, modifier = Modifier.padding(top = 16.dp)) {
-                        Text(text = "Select Location", color = Color.White)
-                    }
-                }
-            }
-        }
-
-    }
-}

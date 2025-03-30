@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -21,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -31,6 +34,7 @@ import com.abdok.atmosphere.R
 import com.abdok.atmosphere.Utils.CountryHelper
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
+import com.abdok.atmosphere.Utils.getWeatherNotification
 import com.abdok.atmosphere.View.Screens.Home.Components.DaysForecastList
 import com.abdok.atmosphere.View.Screens.Home.Components.HourlyForecastList
 import com.abdok.atmosphere.View.Screens.Home.Components.SunCycleView
@@ -121,7 +125,9 @@ fun DrawHome(combinedWeatherData: CombinedWeatherData) {
 
                 Column {
                     Spacer(modifier = Modifier.height(32.dp))
-                    TopView(it.name, CountryHelper.getCountryNameFromCode(it.sys.country) ?: "")
+                    TopView(it.name,
+                        CountryHelper.getCountryNameFromCode(it.sys.country) ?: ""
+                    ,it.weather[0].icon)
                     Spacer(modifier = Modifier.height(8.dp))
                     WeatherCard(it)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -170,11 +176,12 @@ fun DrawHome(combinedWeatherData: CombinedWeatherData) {
     }
 }
 
-
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TopView(
     city: String = "Zefta",
     country: String = "Egypt"
+    ,code:String = "03d"
 ) {
 
     Column(
@@ -192,6 +199,18 @@ fun TopView(
             text = country,
             fontWeight = FontWeight.SemiBold, fontSize = 30.sp
         )
+
+/*
+        Text(
+            text = code.getWeatherNotification(),
+            fontWeight = FontWeight.SemiBold, fontSize = 14.sp,
+            modifier = Modifier.padding(top = 32.dp).fillMaxWidth(),
+            textAlign = TextAlign.Center
+            )
+*/
+
+
+
 
 
     }
