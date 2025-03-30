@@ -6,9 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.abdok.atmosphere.data.Repository
 import com.abdok.atmosphere.data.models.CombinedWeatherData
 import com.abdok.atmosphere.data.models.FavouriteLocation
-import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.enums.Languages
 import com.abdok.atmosphere.enums.Speeds

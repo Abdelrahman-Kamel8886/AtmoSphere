@@ -2,7 +2,7 @@ package com.abdok.atmosphere.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.enums.Languages
 import com.abdok.atmosphere.enums.Locations
 import com.abdok.atmosphere.enums.Speeds
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 
-class SettingsViewModel(private val repository: Repository) : ViewModel() {
+class SettingsViewModel(private val repository: RepositoryImpl) : ViewModel() {
 
     private val _language = MutableStateFlow(Languages.ENGLISH.value)
     val language = _language.asStateFlow()
@@ -93,7 +93,7 @@ class SettingsViewModel(private val repository: Repository) : ViewModel() {
 
 }
 
-class SettingsViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory{
+class SettingsViewModelFactory(private val repository: RepositoryImpl) : ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(repository) as T
     }

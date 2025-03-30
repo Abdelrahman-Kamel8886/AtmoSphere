@@ -40,12 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.OneTimeWorkRequestBuilder
-import com.abdok.atmosphere.data.local.LocalDataSource
+import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
-import com.abdok.atmosphere.data.remote.RemoteDataSource
+import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
-import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.enums.Locations
 import com.abdok.atmosphere.R
@@ -70,11 +70,11 @@ class MainActivity : ComponentActivity() {
         CurvedNavBar.activeIndex.value = 0
 
         val factory = MainViewModelFactory(
-            Repository.getInstance(
-                RemoteDataSource.getInstance(
+            RepositoryImpl.getInstance(
+                RemoteDataSourceImpl.getInstance(
                     RetroConnection.retroServices
                 ),
-                LocalDataSource.getInstance(
+                LocalDataSourceImpl.getInstance(
                     LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance()
                 )
             )

@@ -7,14 +7,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.abdok.atmosphere.data.local.LocalDataSource
+import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.data.models.FavouriteLocation
 import com.abdok.atmosphere.data.models.ScreenRoutes
-import com.abdok.atmosphere.data.remote.RemoteDataSource
+import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
-import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.enums.MapSelection
 import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModel
 import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModelFactory
@@ -41,9 +41,9 @@ fun setupNavHost(navController: NavHostController, location: Location?) {
 
     NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
 
-        val repository = Repository.getInstance(
-            RemoteDataSource.getInstance(RetroConnection.retroServices),
-            LocalDataSource.getInstance(LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance())
+        val repository = RepositoryImpl.getInstance(
+            RemoteDataSourceImpl.getInstance(RetroConnection.retroServices),
+            LocalDataSourceImpl.getInstance(LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance())
         )
 
         composable<ScreenRoutes.HomeRoute> {

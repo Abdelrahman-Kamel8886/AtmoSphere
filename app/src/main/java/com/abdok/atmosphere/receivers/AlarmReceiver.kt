@@ -11,13 +11,13 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.abdok.atmosphere.data.local.LocalDataSource
+import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.data.models.WeatherResponse
-import com.abdok.atmosphere.data.remote.RemoteDataSource
+import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
-import com.abdok.atmosphere.data.Repository
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.enums.Units
 import com.abdok.atmosphere.ui.MainActivity
 import com.abdok.atmosphere.R
@@ -52,9 +52,9 @@ class AlarmReceiver : BroadcastReceiver() {
         val id = intent.getIntExtra(Constants.ALARM_ID, -1)
         Log.i("TAG", "onReceive: $id")
 
-        val repository = Repository.getInstance(
-            RemoteDataSource.getInstance(RetroConnection.retroServices),
-            LocalDataSource.getInstance(
+        val repository = RepositoryImpl.getInstance(
+            RemoteDataSourceImpl.getInstance(RetroConnection.retroServices),
+            LocalDataSourceImpl.getInstance(
                 LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance()
             )
         )
@@ -62,12 +62,12 @@ class AlarmReceiver : BroadcastReceiver() {
         getData(context, repository)
     }
 
-    private fun removeAlarm(id: Int, repository: Repository) {
+    private fun removeAlarm(id: Int, repository: RepositoryImpl) {
         val result = repository.deleteAlert(id)
         Log.i("TAG", "removeAlarm: $result")
     }
 
-    private fun getData(context: Context, repository: Repository) {
+    private fun getData(context: Context, repository: RepositoryImpl) {
         GlobalScope.launch(Dispatchers.IO) {
             repository
                 .getWeatherLatLon(

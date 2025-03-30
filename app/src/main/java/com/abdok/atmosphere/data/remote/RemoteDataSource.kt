@@ -1,49 +1,15 @@
 package com.abdok.atmosphere.data.remote
 
 import com.abdok.atmosphere.data.models.CityLocationResponseItem
-import com.abdok.atmosphere.data.remote.retrofit.RetroServices
+import com.abdok.atmosphere.data.models.ForecastResponse
+import com.abdok.atmosphere.data.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 
-class RemoteDataSource private constructor(private val service: RetroServices) {
+interface RemoteDataSource {
 
-
-    suspend fun getWeatherLatLon(
-        lat: Double,
-        lon: Double,
-        units: String,
-        lang: String
-    ) = flowOf(service.getWeatherLatLon(lat, lon, units, lang))
-
-    suspend fun getForecastLatLon(
-        lat: Double,
-        lon: Double,
-        units: String,
-        lang: String
-    ) = flowOf(service.getForecastLatLon(lat, lon, units, lang))
-
-
-    suspend fun getCityLocation(cityName: String) : Flow<List<CityLocationResponseItem>> {
-        return flow {
-            emit(service.getCityLocation(cityName))
-        }
-    }
-
-    suspend fun getCityName(lat: Double, lon: Double) : Flow<List<CityLocationResponseItem>> {
-        return flow {
-            emit(service.getCityName(lat, lon))
-        }
-    }
-
-    companion object {
-        private var instance: RemoteDataSource? = null
-        fun getInstance(service: RetroServices): RemoteDataSource {
-            if (instance == null) {
-                instance = RemoteDataSource(service)
-            }
-            return instance!!
-        }
-    }
+    suspend fun getWeatherLatLon(lat: Double, lon: Double, units: String, lang: String) : Flow<WeatherResponse>
+    suspend fun getForecastLatLon(lat: Double, lon: Double, units: String, lang: String) : Flow<ForecastResponse>
+    suspend fun getCityLocation(cityName: String) : Flow<List<CityLocationResponseItem>>
+    suspend fun getCityName(lat: Double, lon: Double) : Flow<List<CityLocationResponseItem>>
 
 }
