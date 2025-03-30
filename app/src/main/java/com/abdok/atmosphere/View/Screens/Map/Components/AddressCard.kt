@@ -66,12 +66,14 @@ fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: Ma
             Text(
                 text = address, fontWeight = FontWeight.Bold,
                 fontSize = 20.sp, color = Color.DarkGray
-                , modifier = Modifier.padding(top = 8.dp)
+                , modifier = Modifier.padding(top = 8.dp , bottom = 8.dp)
             )
 
             when (insertionState.value) {
                 is Response.Loading -> {
-                    CircularProgressIndicator(color = Color.Red)
+                    CircularProgressIndicator(
+                        color = Color.Red, modifier = Modifier.padding(16.dp)
+                    )
                 }
 
                 is Response.Success -> {
@@ -81,7 +83,7 @@ fun AddressCard(address: String = "Zefta , Egypt", latLng: LatLng, viewModel: Ma
                 else -> {
                     Button(onClick = {
                         viewModel.selectLocation(address.substringBefore(","), latLng , mapSelection)
-                    }, modifier = Modifier.padding(vertical = 16.dp) ,
+                    }, modifier = Modifier.padding(top = 8.dp , bottom = 16.dp) ,
                         colors = ButtonDefaults.buttonColors(Color(0xFF43A047))) {
                         Text(text = "Select Location", color = Color.White)
                     }

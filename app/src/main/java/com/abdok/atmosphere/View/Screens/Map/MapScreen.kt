@@ -1,6 +1,7 @@
 package com.abdok.atmosphere.View.Screens.Map
 
 import android.annotation.SuppressLint
+import android.location.Geocoder
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -65,6 +66,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
+import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("UnrememberedMutableState")
@@ -78,10 +80,14 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
 
 
 
+
     val context = LocalContext.current
 
     Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.MAP_API_KEY)
     val placesClient = Places.createClient(context)
+
+    val geocoder = Geocoder(context, Locale.getDefault())
+
 
     val bias: LocationBias = RectangularBounds.newInstance(
         LatLng(39.9, -105.5),
@@ -215,9 +221,7 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                                     )
 
 
-                                    viewModel.getCityLocation(
-                                        autocompletePlace.getFullText(null).toString()
-                                    )
+                                    viewModel.getLatLonByPlaceId(placesClient, autocompletePlace)
                                     searchTextFlow.value = ""
                                     predictions.value = emptyList()
                                 }
@@ -249,7 +253,7 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
                     },
                 onMapClick = {
                     locationMarkerState.position = it
-                    viewModel.getCityName(it)
+                    viewModel.getCityNameFromLatLng(geocoder,it)
                 },
                 properties = MapProperties(
                     isMyLocationEnabled = false,
@@ -296,7 +300,7 @@ fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick
 
                         }
                         AddressCard(
-                            "${data.first.name} , ${CountryHelper.getCountryNameFromCode(data.first.country)}",
+                            "${data.first.name}",
                             locationMarkerState.position,
                             viewModel
                             , mapSelection

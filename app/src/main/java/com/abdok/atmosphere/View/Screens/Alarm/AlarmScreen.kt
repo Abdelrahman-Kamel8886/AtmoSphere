@@ -1,6 +1,11 @@
 package com.abdok.atmosphere.View.Screens.Alarm
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -27,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.Data.Models.AlertDTO
 import com.abdok.atmosphere.Data.Response
@@ -52,6 +58,27 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
 
     val context = LocalContext.current
 
+    val permission = Manifest.permission.POST_NOTIFICATIONS
+    val permissionState = remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        permissionState.value = isGranted
+        if (isGranted) {
+            isSheetOpen = true
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.getAlerts()
     }
@@ -66,7 +93,11 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    isSheetOpen = true
+                    if (permissionState.value) {
+                        isSheetOpen = true
+                    } else {
+                        launcher.launch(permission)
+                    }
                 }, containerColor = Color.DarkGray,
                 modifier = Modifier.padding(bottom = 56.dp), shape = RoundedCornerShape(100.dp)
             ) {

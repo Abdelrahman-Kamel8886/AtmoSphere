@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.View.Screens.Map
 
+import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,12 @@ import com.abdok.atmosphere.Enums.MapSelection
 import com.abdok.atmosphere.Enums.Units
 import com.abdok.atmosphere.Utils.Constants
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Tasks
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.compose.autocomplete.models.AutocompletePlace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,8 +33,7 @@ import kotlinx.coroutines.launch
 
 class MapViewModel(private val repository: Repository) : ViewModel() {
 
-    private val _addressLocation =
-        MutableStateFlow<Response<Pair<CityLocationResponseItem, Boolean>>>(Response.Loading)
+    private val _addressLocation = MutableStateFlow<Response<Pair<CityLocationResponseItem, Boolean>>>(Response.Loading)
     val addressLocation = _addressLocation.asStateFlow()
 
     private val _insertionState = MutableStateFlow<Response<Boolean>?>(null)
@@ -35,7 +41,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     private var mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
-
 
     fun getCityLocation(cityName: String) {
             viewModelScope.launch(Dispatchers.IO) {
@@ -57,6 +62,32 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             }
     }
 
+    fun getLatLonByPlaceId(placesClient :PlacesClient , autocompletePlace: AutocompletePrediction) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val placeFields = listOf(Place.Field.LAT_LNG)
+                val request = FetchPlaceRequest.builder(autocompletePlace.placeId, placeFields).build()
+                val response = Tasks.await(placesClient.fetchPlace(request))
+
+                val latLng = response.place.latLng
+                if (latLng != null) {
+                    val cityInfo = CityLocationResponseItem(lat = latLng.latitude, lon = latLng.longitude,
+                        country = autocompletePlace.getSecondaryText(null).toString(),
+                        name = autocompletePlace.getFullText(null).toString(),
+                        local_names = null,
+                        state = autocompletePlace.getPrimaryText(null).toString()
+                    )
+                    _addressLocation.value = Response.Success(cityInfo to true)
+                } else {
+                    _addressLocation.value = Response.Error("No LatLng found for the place")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _addressLocation.value = Response.Error(e.message.toString())
+            }
+        }
+    }
+
 
     fun getCityName(latLng: LatLng) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,6 +96,20 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             }.collect {
                 _addressLocation.value = Response.Success(it[0] to false)
             }
+        }
+    }
+
+    fun getCityNameFromLatLng(geocoder: Geocoder , latLng: LatLng){
+        return try {
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            val cityInfo = CityLocationResponseItem(lat = latLng.latitude, lon = latLng.longitude,
+                country = addresses?.get(0)?.countryName.toString(), name = addresses?.get(0)?.locality.toString(),
+                local_names = null, state = addresses?.get(0)?.adminArea.toString()
+            )
+            _addressLocation.value = Response.Success(cityInfo to false)
+
+        } catch (e: Exception) {
+            _addressLocation.value = Response.Error(e.message.toString())
         }
     }
 
