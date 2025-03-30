@@ -1,7 +1,12 @@
 package com.abdok.atmosphere.View.Screens.Alarm
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -25,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.Data.Models.AlertDTO
@@ -44,6 +51,7 @@ import com.abdok.atmosphere.Utils.setAlarm
 import com.abdok.atmosphere.View.Screens.Alarm.Components.AlarmBottomSheet
 import com.abdok.atmosphere.View.Screens.Alarm.Components.AlertsListView
 import com.abdok.atmosphere.View.Screens.Alarm.Components.EmptyAlarmsView
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,20 +61,14 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
     var isSheetOpen by remember { mutableStateOf(false) }
 
     val alerts = viewModel.alerts.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
-
     val context = LocalContext.current
 
+    val scope = rememberCoroutineScope()
+
     val permission = Manifest.permission.POST_NOTIFICATIONS
-    val permissionState = remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
+    val permissionState = remember { mutableStateOf(isPermissionGranted(context, permission)) }
+    val permanentlyDenied = remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -75,31 +77,31 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
         if (isGranted) {
             isSheetOpen = true
         } else {
-            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+            permanentlyDenied.value = !shouldShowRequestPermissionRationale(context, permission)
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.permission_denied),
+                )
+            }
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getAlerts()
-    }
+    LaunchedEffect(Unit) { viewModel.getAlerts() }
 
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                snackbarHostState,
-                modifier = Modifier.wrapContentHeight(align = Alignment.Top)
-            )
-        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    if (permissionState.value) {
-                        isSheetOpen = true
-                    } else {
-                        launcher.launch(permission)
+                    when {
+                        permissionState.value -> isSheetOpen = true
+                        permanentlyDenied.value -> openAppSettings(context)
+                        else -> launcher.launch(permission)
                     }
-                }, containerColor = Color.DarkGray,
-                modifier = Modifier.padding(bottom = 56.dp), shape = RoundedCornerShape(100.dp)
+                },
+                containerColor = Color.DarkGray,
+                modifier = Modifier.padding(bottom = 56.dp),
+                shape = RoundedCornerShape(100.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.baseline_add_alert_24),
@@ -112,31 +114,17 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
     ) { innerPadding ->
 
         when (alerts.value) {
-            is Response.Error -> {
-                EmptyAlarmsView(padding = innerPadding)
-            }
-
-            Response.Loading -> {
-                CircularProgressIndicator()
-            }
-
+            is Response.Error -> EmptyAlarmsView(padding = innerPadding)
+            Response.Loading -> CircularProgressIndicator()
             is Response.Success -> {
-
                 val data = (alerts.value as Response.Success).data
                 var list by remember { mutableStateOf(data) }
 
                 if (data.isEmpty()) {
                     EmptyAlarmsView(padding = innerPadding)
                 } else {
-                    Box(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    ) {
-
-                        AlertsListView(
-                            alerts = list,
-                            snackbarHostState = snackbarHostState
-                        ){
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        AlertsListView(alerts = list, snackbarHostState = snackbarHostState) {
                             viewModel.deleteAlert(it)
                             list -= it
                             context.cancelAlarm(it.id)
@@ -146,33 +134,12 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
             }
         }
 
-
-        /*Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-            , contentAlignment = Alignment.Center
-        ){
-            Button(onClick = {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    val intent = Intent(context, FloatingWindowService::class.java)
-                    context.startService(intent)
-                }, 5000)
-            }) {
-                Text("Start Floating Window")
-            }
-        }*/
         if (isSheetOpen) {
             ModalBottomSheet(
                 onDismissRequest = { isSheetOpen = false },
                 sheetState = sheetState, containerColor = Color.White
-            )
-            {
-                AlarmBottomSheet(
-                    onClose = { isSheetOpen = false }
-                )
-                { startDuration, endDuration, selectedOption ->
-
+            ) {
+                AlarmBottomSheet(onClose = { isSheetOpen = false }) { startDuration, endDuration, selectedOption ->
                     val id = System.currentTimeMillis().toInt()
                     val alert = AlertDTO(
                         id = id,
@@ -184,7 +151,7 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                     Log.i("TAG", "Alert Scheduled within : $duration seconds")
                     viewModel.addAlert(alert)
                     viewModel.getAlerts()
-                    context.setAlarm(duration,id)
+                    context.setAlarm(duration, id)
                     isSheetOpen = false
                 }
             }
@@ -192,3 +159,17 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
     }
 }
 
+private fun isPermissionGranted(context: Context, permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun shouldShowRequestPermissionRationale(context: Context, permission: String): Boolean {
+    return ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)
+}
+
+private fun openAppSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    }
+    context.startActivity(intent)
+}
