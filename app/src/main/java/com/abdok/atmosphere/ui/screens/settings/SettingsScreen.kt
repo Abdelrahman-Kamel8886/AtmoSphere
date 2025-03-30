@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Air
+import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Thermostat
@@ -42,6 +43,8 @@ import com.abdok.atmosphere.enums.Units
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.ui.CurvedNavBar
+import com.abdok.atmosphere.ui.screens.settings.componnts.SegmentedControlSection
+import com.abdok.atmosphere.ui.screens.settings.componnts.SwitchSection
 
 
 @Composable
@@ -61,6 +64,7 @@ fun SettingsScreen(
     val selectedWindSpeed by viewModel.windSpeed.collectAsStateWithLifecycle()
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
     val selectedLocation by viewModel.location.collectAsStateWithLifecycle()
+    val isAnimation by viewModel.isAnimation.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -119,64 +123,14 @@ fun SettingsScreen(
             onOptionSelected = viewModel::updateWindSpeed
         )
 
+        Spacer(modifier = Modifier.height(32.dp))
 
-    }
-}
-@Composable
-fun SegmentedControlSection(
-    title: String ,
-    options: List<String> ,
-    selectedOption: String ,
-    icon : ImageVector,
-    onOptionSelected: (String) -> Unit
-) {
-    Column {
-        Row {
-            Icon(imageVector = icon,
-                tint = Color.Gray
-                , contentDescription = null)
+        SwitchSection(switchIcon =Icons.Default.Animation
+            , switchText = "Show Animated Background",
+            isSwitchChecked =isAnimation
+            , onSwitchToggled = viewModel::updateAnimation
+        )
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = Color.DarkGray
-                , modifier = Modifier.padding(start = 8.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
-                .background(Color(0xFFF0F0F0))
-            ,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            options.forEach { option ->
-                val isSelected = option == selectedOption
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(24.dp))
-                        .background(if (isSelected) Color.Black else Color.Transparent)
-                        .clickable {
-                            onOptionSelected(option)
-                        }
-                        .padding(vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = option,
-                        color = if (isSelected) Color.White else Color.Gray,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
     }
 }

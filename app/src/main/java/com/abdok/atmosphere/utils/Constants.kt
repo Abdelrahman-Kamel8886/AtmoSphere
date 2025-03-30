@@ -27,6 +27,7 @@ object Constants {
     const val TEMPERATURE_UNIT = "temperature_unit"
     const val WIND_SPEED_UNIT = "wind_speed_unit"
     const val LOCATION = "location"
+    const val IS_ANIMATION = "is_animation"
 
     const val LOC_LAT = "loc_lat"
     const val LOC_LON = "loc_lon"

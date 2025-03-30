@@ -26,6 +26,9 @@ class SettingsViewModel(private val repository: RepositoryImpl) : ViewModel() {
     private val _windSpeed = MutableStateFlow(Speeds.METERS_PER_SECOND.degree)
     val windSpeed = _windSpeed.asStateFlow()
 
+    private val _isAnimation = MutableStateFlow(false)
+    val isAnimation = _isAnimation.asStateFlow()
+
 
     fun refreshValues(){
         val code = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Locale.getDefault().language)
@@ -39,6 +42,8 @@ class SettingsViewModel(private val repository: RepositoryImpl) : ViewModel() {
 
         val speed = repository.fetchPreferenceData(Constants.WIND_SPEED_UNIT , Speeds.METERS_PER_SECOND.degree)
         _windSpeed.value = Speeds.getDegree(speed)
+
+        _isAnimation.value = repository.fetchPreferenceData(Constants.IS_ANIMATION , false)
     }
 
     fun updateLanguage(language: String) {
@@ -48,6 +53,11 @@ class SettingsViewModel(private val repository: RepositoryImpl) : ViewModel() {
     fun updateLocation(location: String) {
         _location.value = location
         repository.savePreferenceData(Constants.LOCATION , Locations.getEnglishValue(location))
+    }
+
+    fun updateAnimation(isAnimation: Boolean) {
+        _isAnimation.value = isAnimation
+        repository.savePreferenceData(Constants.IS_ANIMATION , isAnimation)
     }
 
     fun updateTemperature(temperature: String) {
