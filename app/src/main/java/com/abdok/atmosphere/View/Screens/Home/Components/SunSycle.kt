@@ -279,8 +279,8 @@ fun NightSlider(progress: Float = 0.7f) {
         icon = Icons.Default.NightlightRound,
         iconTint = Color.DarkGray,
         iconBackground = Color.White,
-        activeColor = Color.LightGray,
-        inactiveColor = Color.White,
+        activeColor = Color.White,
+        inactiveColor = Color.LightGray,
         width = 160.dp
     )
 }
@@ -293,8 +293,8 @@ fun DaySlider(progress: Float = 0.7f) {
         icon = Icons.Default.WbSunny,
         iconTint = Color(0xFFFF7043),
         iconBackground = Color.White,
-        activeColor = Color.LightGray,
-        inactiveColor = Color.White,
+        activeColor = Color.White,
+        inactiveColor = Color.LightGray,
         width = 160.dp
     )
 }

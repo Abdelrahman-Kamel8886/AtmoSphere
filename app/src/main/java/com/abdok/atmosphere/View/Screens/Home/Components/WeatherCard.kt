@@ -37,6 +37,7 @@ import com.abdok.atmosphere.Utils.LanguageManager
 import com.abdok.atmosphere.Utils.SharedModel
 import com.abdok.atmosphere.Utils.ViewHelpers.BackgroundMapper
 import com.abdok.atmosphere.Utils.ViewHelpers.IconsMapper
+import com.abdok.atmosphere.Utils.convertNumbersBasedOnLanguage
 import com.abdok.atmosphere.Utils.translateWeatherCondition
 import com.abdok.atmosphere.View.Theme.ColorTextSecondary
 import java.util.Locale
@@ -55,7 +56,7 @@ fun WeatherCard(weather: WeatherResponse) {
             .wrapContentHeight()
             .padding(horizontal = 8.dp)
     ) {
-        val (backgroundCard, title, weatherImage, degree) = createRefs()
+        val (backgroundCard, title, weatherImage, degree , clouds) = createRefs()
         CardBackground(modifier = Modifier.constrainAs(backgroundCard) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
@@ -79,10 +80,13 @@ fun WeatherCard(weather: WeatherResponse) {
         }
 
         Column(
-            modifier = Modifier.constrainAs(title) {
-                start.linkTo(anchor = backgroundCard.start)
-                top.linkTo(anchor = weatherImage.bottom)
-            }.padding(start = 32.dp).fillMaxWidth()
+            modifier = Modifier
+                .constrainAs(title) {
+                    start.linkTo(anchor = backgroundCard.start)
+                    top.linkTo(anchor = weatherImage.bottom)
+                }
+                .padding(start = 32.dp)
+                .fillMaxWidth()
             , horizontalAlignment = Alignment.CenterHorizontally
             , verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -106,7 +110,9 @@ fun WeatherCard(weather: WeatherResponse) {
                 color = ColorTextSecondary,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Start,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
         }
         Column(
@@ -153,6 +159,17 @@ fun WeatherCard(weather: WeatherResponse) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
+
+            Text(
+                text = "☁\uFE0F ${stringResource(R.string.clouds)} ${weather.clouds.all}%".convertNumbersBasedOnLanguage(),
+                color = ColorTextSecondary.copy(alpha = 0.7f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 8.dp),
+                textAlign = TextAlign.Start
+            )
+
+
         }
     }
 

@@ -49,4 +49,5 @@
     <string name="scheduled_alerts">Alertas programadas</string>
     <string name="tap_stop_to_turn_off_the_alarm">Pulse DETENER para apagar la alarma</string>
     <string name="stop">DETENER</string>
+    <string name="clouds">nubes</string>
 </resources>
