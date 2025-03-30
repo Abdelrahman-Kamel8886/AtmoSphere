@@ -16,24 +16,24 @@ import com.abdok.atmosphere.data.remote.RemoteDataSource
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
 import com.abdok.atmosphere.data.Repository
 import com.abdok.atmosphere.enums.MapSelection
-import com.abdok.atmosphere.ui.Screens.Alarm.AlarmViewModel
-import com.abdok.atmosphere.ui.Screens.Alarm.AlarmViewModelFactory
-import com.abdok.atmosphere.ui.Screens.Alarm.AlertsScreen
-import com.abdok.atmosphere.ui.Screens.Details.DetailsScreen
-import com.abdok.atmosphere.ui.Screens.Details.DetailsViewModel
-import com.abdok.atmosphere.ui.Screens.Details.DetailsViewModelFactory
-import com.abdok.atmosphere.ui.Screens.Home.HomeScreen
-import com.abdok.atmosphere.ui.Screens.Home.HomeViewModel
-import com.abdok.atmosphere.ui.Screens.Home.HomeViewModelFactory
-import com.abdok.atmosphere.ui.Screens.Locations.LocationViewModelFactory
-import com.abdok.atmosphere.ui.Screens.Locations.LocationsScreen
-import com.abdok.atmosphere.ui.Screens.Locations.LocationsViewModel
-import com.abdok.atmosphere.ui.Screens.Map.MapScreen
-import com.abdok.atmosphere.ui.Screens.Map.MapViewModel
-import com.abdok.atmosphere.ui.Screens.Map.MapViewModelFactory
-import com.abdok.atmosphere.ui.Screens.Settings.SettingsScreen
-import com.abdok.atmosphere.ui.Screens.Settings.SettingsViewModel
-import com.abdok.atmosphere.ui.Screens.Settings.SettingsViewModelFactory
+import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModel
+import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModelFactory
+import com.abdok.atmosphere.ui.screens.alarm.AlertsScreen
+import com.abdok.atmosphere.ui.screens.details.DetailsScreen
+import com.abdok.atmosphere.ui.screens.details.DetailsViewModel
+import com.abdok.atmosphere.ui.screens.details.DetailsViewModelFactory
+import com.abdok.atmosphere.ui.screens.home.HomeScreen
+import com.abdok.atmosphere.ui.screens.home.HomeViewModel
+import com.abdok.atmosphere.ui.screens.home.HomeViewModelFactory
+import com.abdok.atmosphere.ui.screens.Locations.LocationViewModelFactory
+import com.abdok.atmosphere.ui.screens.Locations.LocationsScreen
+import com.abdok.atmosphere.ui.screens.Locations.LocationsViewModel
+import com.abdok.atmosphere.ui.screens.map.MapScreen
+import com.abdok.atmosphere.ui.screens.map.MapViewModel
+import com.abdok.atmosphere.ui.screens.map.MapViewModelFactory
+import com.abdok.atmosphere.ui.screens.settings.SettingsScreen
+import com.abdok.atmosphere.ui.screens.settings.SettingsViewModel
+import com.abdok.atmosphere.ui.screens.settings.SettingsViewModelFactory
 
 
 @Composable
