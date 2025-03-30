@@ -32,12 +32,16 @@ import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
 import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.ui.screens.home.components.DaysForecastList
+import com.abdok.atmosphere.ui.screens.home.components.GifEffectBackground
 import com.abdok.atmosphere.ui.screens.home.components.HourlyForecastList
 import com.abdok.atmosphere.ui.screens.home.components.SunCycleView
 import com.abdok.atmosphere.ui.screens.home.components.TopView
 import com.abdok.atmosphere.ui.screens.home.components.WeatherCard
 import com.abdok.atmosphere.ui.screens.home.components.WeatherGrid
 import com.abdok.atmosphere.ui.screens.home.components.WindCard
+import com.abdok.atmosphere.ui.theme.ColorHourText
+import com.abdok.atmosphere.ui.theme.ColorTempText
+import com.abdok.atmosphere.ui.theme.ColorTextPrimary
 import com.abdok.atmosphere.ui.theme.ColorTextSecondary
 import kotlinx.coroutines.launch
 
@@ -100,13 +104,20 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
 
 @Composable
 fun DrawHome(combinedWeatherData: CombinedWeatherData) {
+
+    val animation = false
+    val condition = combinedWeatherData.weatherResponse.weather[0].icon
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Background GIF
-      /*  GifEffectBackground(
-            modifier = Modifier
-                .matchParentSize()
-                .zIndex(0f) // Set background layer to lowest
-        )*/
+        if (animation){
+            GifEffectBackground(
+                modifier = Modifier
+                    .matchParentSize()
+                    .zIndex(0f)
+                ,condition
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -115,23 +126,31 @@ fun DrawHome(combinedWeatherData: CombinedWeatherData) {
         ) {
             combinedWeatherData.weatherResponse?.let {
 
-                val cardBrush = BackgroundMapper.getCardBackground(it.weather[0].icon)
-                val screenBrush = BackgroundMapper.getScreenBackground(it.weather[0].icon)
-                ColorTextSecondary = BackgroundMapper.getTextColor(it.weather[0].icon)
+                //Prepare Colors & Brushes
+
+                val cardBrush = BackgroundMapper.getCardBackground(condition)
+                val screenBrush = BackgroundMapper.getScreenBackground(condition)
                 SharedModel.screenBackground.value = screenBrush
+
+                ColorTextSecondary = BackgroundMapper.getTextColor(condition)
+                if (animation) {
+                    ColorTextPrimary = BackgroundMapper.getMainTextColor(condition)
+                    ColorHourText = BackgroundMapper.getHourTempTextColor(condition).first
+                    ColorTempText = BackgroundMapper.getHourTempTextColor(condition).second
+                }
+
 
                 Column {
                     Spacer(modifier = Modifier.height(32.dp))
-                    TopView(it.name,
-                        CountryHelper.getCountryNameFromCode(it.sys.country) ?: ""
-                    ,it.weather[0].icon)
+                    TopView(it.name, CountryHelper.getCountryNameFromCode(it.sys.country) ?: "",condition)
                     Spacer(modifier = Modifier.height(8.dp))
-                    WeatherCard(it)
+                    WeatherCard(it , condition)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = stringResource(R.string.today), modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp), fontWeight = FontWeight.Bold, fontSize = 24.sp
+                        , color = ColorTextPrimary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     HourlyForecastList(combinedWeatherData?.forecastResponse!!)
@@ -159,6 +178,7 @@ fun DrawHome(combinedWeatherData: CombinedWeatherData) {
                         text = stringResource(R.string._5_days_forecast), modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp), fontWeight = FontWeight.Bold, fontSize = 24.sp
+                        , color = ColorTextPrimary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     DaysForecastList(

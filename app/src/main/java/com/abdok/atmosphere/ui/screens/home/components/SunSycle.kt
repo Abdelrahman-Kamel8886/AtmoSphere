@@ -173,7 +173,7 @@ fun SunsetSunriseView(
             )
             Text(
                 text = stringResource(R.string.sunset),
-                color = Color.LightGray,
+                color = ColorTextSecondary.copy(alpha = 0.7f),
                 fontSize = 14.sp
             )
             Text(
@@ -202,7 +202,7 @@ fun SunsetSunriseView(
             )
             Text(
                 text = stringResource(R.string.sunrise),
-                color = Color.LightGray,
+                color = ColorTextSecondary.copy(alpha = 0.7f),
                 fontSize = 14.sp
             )
             Text(

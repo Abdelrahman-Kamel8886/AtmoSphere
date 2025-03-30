@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.ui.theme.ColorTextPrimary
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -59,11 +60,13 @@ fun TopView(
                     text = "$city",
                     fontWeight = FontWeight.SemiBold, fontSize = 22.sp
                     , modifier = Modifier.padding(start = 8.dp)
+                    , color = ColorTextPrimary
                 )
                 Text(
                     text = country,
                     fontWeight = FontWeight.SemiBold, fontSize = 22.sp
                     , modifier = Modifier.padding(start = 8.dp)
+                    , color = ColorTextPrimary
                 )
             }
         }

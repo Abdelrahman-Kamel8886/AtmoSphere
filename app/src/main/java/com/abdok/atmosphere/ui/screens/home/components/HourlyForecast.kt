@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abdok.atmosphere.data.models.ForecastResponse
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.ui.theme.ColorHourText
+import com.abdok.atmosphere.ui.theme.ColorTempText
 import com.abdok.atmosphere.utils.dates.DateHelper
 import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.utils.SharedModel
@@ -49,7 +51,7 @@ fun HourlyColumn(
         val temp = "${hour.main.temp.toInt()} ${SharedModel.currentDegree}"
         Text(
             text = LanguageManager.formatNumberBasedOnLanguage(h),
-            color = Color.Gray,
+            color = ColorHourText,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 16.dp)
@@ -63,7 +65,7 @@ fun HourlyColumn(
         )
         Text(
             text = LanguageManager.formatNumberBasedOnLanguage(temp),
-            color = Color.DarkGray,
+            color = ColorTempText,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )

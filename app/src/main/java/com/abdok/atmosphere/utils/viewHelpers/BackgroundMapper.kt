@@ -2,8 +2,79 @@ package com.abdok.atmosphere.utils.viewHelpers
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 
 object BackgroundMapper {
+
+    private val lightColors = mapOf(
+        "01d" to Color(0xFFFFE082), // Clear sky (day)
+        "02d" to Color(0xFF304352), // Few clouds (day)
+        "03d" to Color(0xFFD7DDE8), // Scattered clouds (day)
+        "04d" to Color(0xFF4CA1AF), // Broken clouds (day)
+        "09d" to Color(0xFF00C6FB), // Shower rain (day)
+        "10d" to Color(0xFF90CAF9), // Rain (day)
+        "11d" to Color(0xFF434343), // Thunderstorm (day)
+        "13d" to Color(0xFFb6fbff), // Snow (day)
+        "50d" to Color(0xFF2c3e50), // Mist (day)
+
+        "01n" to Color(0xFF232526), // Clear sky (night)
+        "02n" to Color(0xFF2C5364), // Few clouds (night)
+        "03n" to Color(0xFF243B55),
+        "04n" to Color(0xFF4286F4),
+        "09n" to Color(0xFF00C6FB),
+        "10n" to Color(0xFF000000),
+        "11n" to Color(0xFF434343),
+        "13n" to Color(0xFFb6fbff),
+        "50n" to Color(0xFF2c3e50)
+
+    )
+
+    private val mainTextColorMap = mapOf(
+        "01d" to Color.White, // Clear sky (day)
+        "02d" to Color.DarkGray, // Few clouds (day)
+        "09d" to Color.White, // Shower rain (day)"
+        "10d" to Color.White, // Rain (day)
+        "11d" to Color.White, // Thunderstorm (day)
+
+
+
+        "01n" to Color.White, // Clear sky (Night)
+        "02n" to Color.White, // Few clouds (Night)
+        "03n" to Color.White, // Scattered clouds (Night)
+        "04n" to Color.White, // Broken clouds (Night)
+        "09n" to Color.White, // Shower rain (Night)
+        "10n" to Color.White, // Rain (Night)
+        "11n" to Color.White, // Thunderstorm (Night)
+        "13n" to Color.White, // Snow (Night)
+        "50n" to Color.White // Mist (Night)
+
+
+    )
+
+    private val HourTempTextColorMap = mapOf(
+        "01d" to (Color.DarkGray to Color.Black), // Clear sky (day)
+        "02d" to (Color.DarkGray to Color.Black), // Few clouds (day)
+        "03d" to (Color.DarkGray to Color.Black), // Scattered clouds (day)
+        "04d" to (Color.DarkGray to Color.Black), // Broken clouds (day)
+        "09d" to (Color.DarkGray to Color.Black), // Shower rain (day)
+        "10d" to (Color.DarkGray to Color.Black), // Rain (day)
+        "11d" to (Color.LightGray to Color.White), // Thunderstorm (day)
+        "13d" to (Color.DarkGray to Color.Black), // Snow (day)
+        "50d" to (Color.DarkGray to Color.Black), // Mist (day)
+
+
+        "01n" to (Color.LightGray to Color.White), // Clear sky (Night)
+        "02n" to (Color.LightGray to Color.White), // Few clouds (Night)
+        "03n" to (Color.LightGray to Color.White), // Scattered clouds (Night)
+        "04n" to (Color.LightGray to Color.White), // Broken clouds (Night)
+        "09n" to (Color.LightGray to Color.White), // Shower rain (Night)
+        "10n" to (Color.LightGray to Color.White), // Rain (Night)
+        "11n" to (Color.LightGray to Color.White), // Thunderstorm (Night)
+        "13n" to (Color.LightGray to Color.White), // Snow (Night)
+        "50n" to (Color.LightGray to Color.White) // Mist (Night)
+
+    )
+
 
     private val cardBackgroundMap = mapOf(
         "01d" to Brush.linearGradient(listOf(Color(0xFFFFE082), Color(0xFFFFCA28))), // Clear sky (day)
@@ -29,7 +100,7 @@ object BackgroundMapper {
     )
 
     private val screenBackgroundMap = mapOf(
-            "01d" to Brush.verticalGradient(listOf(Color(0xFFFFF3E0), Color(0xFFFFE082))), // Clear sky (day)
+        "01d" to Brush.verticalGradient(listOf(Color(0xFFFFF3E0), Color(0xFFFFE082))), // Clear sky (day)
         "02d" to Brush.verticalGradient(listOf(Color(0xFFD3CBB8), Color(0xFF606c88))), // Few clouds (day)
         "03d" to Brush.verticalGradient(listOf(Color(0xFFa1c4fd), Color(0xFFc2e9fb))), // Scattered clouds (day)
         "04d" to Brush.verticalGradient(listOf(Color(0xFF667db6), Color(0xFF0082c8))), // Broken clouds (day)
@@ -50,11 +121,6 @@ object BackgroundMapper {
         "50n" to Brush.verticalGradient(listOf(Color(0xFFbdc3c7), Color(0xFF2c3e50)))  // Mist (night)
     )
 
-    private val textMap = mapOf(
-        "01d" to Color.DarkGray
-    )
-
-
     fun getCardBackground(condition: String): Brush {
         return cardBackgroundMap[condition] ?: Brush.linearGradient(listOf(Color(0xFF000000), Color(0xFF434343))) // Default background
     }
@@ -63,10 +129,20 @@ object BackgroundMapper {
     }
 
     fun getTextColor(condition: String): Color {
-        return textMap[condition] ?: Color.White
+        val color = lightColors[condition] ?: Color.DarkGray
+        return getContrastingTextColor(color)
     }
-/*    fun getContrastingTextColor(bgColor: Color): Color {
+
+    fun getMainTextColor(condition: String): Color {
+        return mainTextColorMap[condition] ?: Color.DarkGray
+    }
+
+    fun getHourTempTextColor(condition: String): Pair<Color, Color> {
+        return HourTempTextColorMap[condition] ?: (Color.Gray to Color.DarkGray)
+    }
+
+    private fun getContrastingTextColor(bgColor: Color): Color {
         val luminance = bgColor.luminance()
-        return if (luminance < 0.5) Color.White else Color.Black
-    }*/
+        return if (luminance < 0.5) Color.White else Color.DarkGray
+    }
 }

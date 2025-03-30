@@ -43,7 +43,7 @@ import com.abdok.atmosphere.ui.theme.ColorTextSecondary
 import java.util.Locale
 
 @Composable
-fun WeatherCard(weather: WeatherResponse) {
+fun WeatherCard(weather: WeatherResponse , condition: String) {
 
 
     val description = "${stringResource(R.string.feels_like)} ${weather.main.feels_like.toInt()} ${SharedModel.currentDegree}"
@@ -62,9 +62,9 @@ fun WeatherCard(weather: WeatherResponse) {
             end.linkTo(parent.end)
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
-        }, height = 240, weather.weather[0].icon)
+        }, height = 240, condition)
 
-        val icon = IconsMapper.iconsMap.get(weather.weather.get(0).icon)
+        val icon = IconsMapper.iconsMap.get(condition)
         icon?.let { painterResource(it) }?.let {
             Image(
                 painter = it,
