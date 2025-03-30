@@ -1,27 +1,19 @@
 package com.abdok.atmosphere.View.Screens.Alarm
 
-import android.content.Intent
-import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,21 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.Data.Models.AlertDTO
-import com.abdok.atmosphere.Data.Models.FavouriteLocation.Companion.toJson
 import com.abdok.atmosphere.Data.Response
-import com.abdok.atmosphere.FloatingWindowService
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.Utils.cancelAlarm
 import com.abdok.atmosphere.Utils.convertArabicToEnglish
 import com.abdok.atmosphere.Utils.durationFromNowInSeconds
 import com.abdok.atmosphere.Utils.setAlarm
 import com.abdok.atmosphere.View.Screens.Alarm.Components.AlarmBottomSheet
 import com.abdok.atmosphere.View.Screens.Alarm.Components.AlertsListView
 import com.abdok.atmosphere.View.Screens.Alarm.Components.EmptyAlarmsView
-import com.abdok.atmosphere.View.Screens.Locations.Components.FavouriteLocationsView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +67,6 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
             FloatingActionButton(
                 onClick = {
                     isSheetOpen = true
-                    //context.setAlarm(10)
                 }, containerColor = Color.DarkGray,
                 modifier = Modifier.padding(bottom = 56.dp), shape = RoundedCornerShape(100.dp)
             ) {
@@ -120,6 +108,7 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                         ){
                             viewModel.deleteAlert(it)
                             list -= it
+                            context.cancelAlarm(it.id)
                         }
                     }
                 }

@@ -41,7 +41,6 @@ class AlarmReceiver : BroadcastReceiver() {
             mediaPlayer?.stop()
             mediaPlayer?.release()
             mediaPlayer = null
-
             val manager = NotificationManagerCompat.from(context)
             manager.cancel(1)
         }
@@ -50,7 +49,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         createNotificationChannel(context)
 
-        val id = intent.getIntExtra(Constants.ALARM_ID , -1)
+        val id = intent.getIntExtra(Constants.ALARM_ID, -1)
         Log.i("TAG", "onReceive: $id")
 
         val repository = Repository.getInstance(
@@ -59,16 +58,16 @@ class AlarmReceiver : BroadcastReceiver() {
                 LocalDataBase.getInstance().localDao(), SharedPreferencesImpl.getInstance()
             )
         )
-        removeAlarm(id , repository)
-        getData(context , repository)
+        removeAlarm(id, repository)
+        getData(context, repository)
     }
 
-    private fun removeAlarm(id: Int , repository: Repository){
+    private fun removeAlarm(id: Int, repository: Repository) {
         val result = repository.deleteAlert(id)
         Log.i("TAG", "removeAlarm: $result")
     }
 
-    private fun getData(context: Context , repository: Repository){
+    private fun getData(context: Context, repository: Repository) {
         GlobalScope.launch(Dispatchers.IO) {
             repository
                 .getWeatherLatLon(
@@ -106,7 +105,8 @@ class AlarmReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val activityPendingIntent = PendingIntent.getActivity(
-            context, 1, myIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, 1,
+            myIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val stopIntent = Intent(context, StopAlarmReceiver::class.java)
@@ -117,19 +117,18 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentIntent(activityPendingIntent)
             .setSmallIcon(icon)
             .setContentTitle(title)
             .setContentText(message)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText("$message \n${context.getString(R.string.tap_stop_to_turn_off_the_alarm)}")
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText("$message \n${context.getString(R.string.tap_stop_to_turn_off_the_alarm)}")
             )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
-            .addAction(R.drawable.few_clouds_night, context.getString(R.string.stop), stopPendingIntent
-            )
+            .addAction(R.drawable.few_clouds_night, context.getString(R.string.stop), stopPendingIntent)
             .build()
 
 

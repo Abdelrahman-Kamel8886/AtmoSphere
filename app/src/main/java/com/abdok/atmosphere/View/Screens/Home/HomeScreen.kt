@@ -1,14 +1,20 @@
 package com.abdok.atmosphere.View.Screens.Home
 
 import android.location.Location
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -16,6 +22,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +49,10 @@ import com.abdok.atmosphere.View.Screens.Home.Components.WeatherCard
 import com.abdok.atmosphere.View.Screens.Home.Components.WeatherGrid
 import com.abdok.atmosphere.View.Screens.Home.Components.WindCard
 import com.abdok.atmosphere.View.Theme.ColorTextSecondary
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.launch
 
 
@@ -183,22 +194,55 @@ fun TopView(
     country: String = "Egypt"
     ,code:String = "03d"
 ) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.marker_lottie))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = Int.MAX_VALUE,
+        speed = 1.0f,
+        isPlaying = true
+    )
 
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(top = 48.dp, start = 16.dp)
+            .padding(top = 48.dp,)
     ) {
 
-        Text(
-            text = "$city,",
-            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
-        )
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            , verticalAlignment = Alignment.CenterVertically
+            , horizontalArrangement = Arrangement.Start
+        ){
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                modifier = Modifier.size(48.dp)
+            )
+            Column {
 
-        Text(
-            text = country,
-            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
-        )
+                Text(
+                    text = "$city",
+                    fontWeight = FontWeight.SemiBold, fontSize = 22.sp
+                    , modifier = Modifier.padding(start = 8.dp)
+                )
+                Text(
+                    text = country,
+                    fontWeight = FontWeight.SemiBold, fontSize = 22.sp
+                    , modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+
+//        Text(
+//            text = "$city,",
+//            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
+//        )
+//
+//        Text(
+//            text = country,
+//            fontWeight = FontWeight.SemiBold, fontSize = 30.sp
+//        )
 
 /*
         Text(
