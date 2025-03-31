@@ -44,25 +44,20 @@
             android:name=".ui.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AtmoSphere"></activity>
+            android:theme="@style/Theme.AtmoSphere">
 
-        <service
-            android:name=".FloatingWindowService"
-            android:permission="android.permission.SYSTEM_ALERT_WINDOW"
-            android:exported="true" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AtmoSphere">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <receiver android:name=".receivers.AlarmReceiver" />
