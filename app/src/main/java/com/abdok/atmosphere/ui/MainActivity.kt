@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.work.OneTimeWorkRequestBuilder
 import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
@@ -50,6 +52,7 @@ import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.enums.Locations
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.utils.Constants
+import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.network.NetworkStateObserver
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -211,15 +214,14 @@ class MainActivity : ComponentActivity() {
 
 
     fun scheduleLocationWorker(context: Context = applicationContext) {
-        val workRequest = OneTimeWorkRequestBuilder<LocationWorker>()
-            .setConstraints(
-                Constraints.Builder()
-                    .build()
-            )
-            .build()
+        if (!SharedModel.ll) {
+            val workRequest = OneTimeWorkRequestBuilder<LocationWorker>()
+                .setConstraints(Constraints.Builder().build())
+                .build()
 
-        val workManager = WorkManager.getInstance(context)
-        workManager.enqueue(workRequest)
+            val workManager = WorkManager.getInstance(context)
+            workManager.enqueue(workRequest)
+        }
     }
 
 
@@ -233,14 +235,21 @@ class MainActivity : ComponentActivity() {
             listOf(Color(0xFFF5F5F5), Color(0xFFFFFFFF))
         )
         val navController = rememberNavController()
-        val isNavBarVisible = CurvedNavBar.mutableNavBarState.observeAsState()
-        //var background = SharedModel.screenBackground.observeAsState()
+        val isNavBarVisible = CurvedNavBar.mutableNavBarState.collectAsStateWithLifecycle()
         Scaffold(
             bottomBar = {
                 when (isNavBarVisible.value) {
-                    true -> CurvedNavBar.ShowCurvedNavBar(navController)
-                    false -> {}
-                    null -> {}
+
+                    true -> {
+                        Log.e("TAG", "nav bar visible: " )
+                        CurvedNavBar.ShowCurvedNavBar(navController)
+                    }
+                    false -> {
+                        Log.e("TAG", "nav bar not visible: " )
+                    }
+                    null -> {
+                        Log.e("TAG", "nav bar null: " )
+                    }
                 }
             }
         ) { innerPadding ->
@@ -274,7 +283,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 }
+
+
 
 
 

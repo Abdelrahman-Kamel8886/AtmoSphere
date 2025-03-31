@@ -30,7 +30,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailsScreen(favouriteLocation: FavouriteLocation , viewModel: DetailsViewModel) {
 
-    CurvedNavBar.mutableNavBarState.value = false
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(false)
+    }
     val context = LocalContext.current
 
     LaunchedEffect(Unit){

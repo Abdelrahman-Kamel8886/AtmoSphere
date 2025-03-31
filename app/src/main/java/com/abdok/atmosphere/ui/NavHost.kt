@@ -1,6 +1,8 @@
 package com.abdok.atmosphere.ui
 
 import android.location.Location
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -35,11 +37,13 @@ import com.abdok.atmosphere.ui.screens.settings.SettingsScreen
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModel
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModelFactory
 
-
 @Composable
 fun setupNavHost(navController: NavHostController, location: Location?) {
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.HomeRoute) {
+
+    NavHost(navController = navController
+        , startDestination = ScreenRoutes.HomeRoute
+    ) {
 
         val repository = RepositoryImpl.getInstance(
             RemoteDataSourceImpl.getInstance(RetroConnection.retroServices),

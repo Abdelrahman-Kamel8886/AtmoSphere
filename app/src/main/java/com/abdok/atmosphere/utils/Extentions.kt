@@ -6,6 +6,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import com.abdok.atmosphere.receivers.AlarmReceiver
@@ -226,11 +229,6 @@ fun String.getWeatherNotification(): String {
     return notifications[this]?.get(language) ?: "Weather update not available."
 }
 
-
-
-
-
-
 @SuppressLint("MissingPermission")
 fun Context.getGpsLocation(onLocationReceived: (location: Location) -> Unit){
     val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -246,6 +244,18 @@ fun Context.getGpsLocation(onLocationReceived: (location: Location) -> Unit){
             Log.i("TAG", "getGpsLocation: 222 ${it.message}")
             it.printStackTrace()
         }
+}
+
+fun Context.isNetworkConnected(): Boolean {
+    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo
+        networkInfo != null && networkInfo.isConnected
+    }
 }
 
 

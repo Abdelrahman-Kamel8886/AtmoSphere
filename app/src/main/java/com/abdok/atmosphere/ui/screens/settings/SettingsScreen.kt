@@ -56,7 +56,9 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
-    CurvedNavBar.mutableNavBarState.value = true
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(true)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.refreshValues()

@@ -40,6 +40,10 @@ fun LocationsScreen(
     onItemSelected: (String) ->Unit
 ) {
 
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(true)
+    }
+
     val context = LocalContext.current
 
     val favouriteLocations = viewModel.favLocations.collectAsStateWithLifecycle()
@@ -53,8 +57,6 @@ fun LocationsScreen(
     LaunchedEffect(Unit) {
         viewModel.getFavouriteLocations()
     }
-
-    CurvedNavBar.mutableNavBarState.value = true
 
     val systemUiController = rememberSystemUiController()
 

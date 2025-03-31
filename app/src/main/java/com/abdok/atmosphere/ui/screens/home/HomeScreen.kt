@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.ui.screens.home
 
+import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.data.models.CombinedWeatherData
 import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
 import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
@@ -51,6 +53,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
+
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(true)
+    }
+
     LaunchedEffect(Unit) {
         location?.let {
             viewModel.updateCurrentLocation(location.latitude, location.longitude)

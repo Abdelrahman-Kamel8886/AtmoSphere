@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.utils.cancelAlarm
 import com.abdok.atmosphere.utils.convertArabicToEnglish
 import com.abdok.atmosphere.utils.durationFromNowInSeconds
@@ -54,6 +55,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertsScreen(viewModel: AlarmViewModel) {
+
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(true)
+    }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetOpen by remember { mutableStateOf(false) }

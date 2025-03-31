@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.abdok.atmosphere.data.Response
+import com.abdok.atmosphere.utils.SharedModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -17,8 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
 class LocationWorker(context: Context,
-                     workerParams: WorkerParameters
-) : CoroutineWorker(context, workerParams) {
+                     workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
     companion object{
         val mutableLiveLocation : MutableLiveData<Response<Location>> = MutableLiveData(Response.Loading)
@@ -30,6 +30,7 @@ class LocationWorker(context: Context,
     private lateinit var locationCallback: LocationCallback
 
     override suspend fun doWork(): Result {
+        SharedModel.ll = true
         return try {
             if (isNetworkAvailable()) {
                 getLocation()
@@ -53,7 +54,7 @@ class LocationWorker(context: Context,
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                Log.i("TAG", "onLocationResult: $locationResult")
+                Log.i("TAG", "work onLocationResult: $locationResult")
                 mutableLiveLocation.postValue(Response.Success(locationResult.lastLocation!!))
                 fusedLocationClient.removeLocationUpdates(locationCallback)
             }

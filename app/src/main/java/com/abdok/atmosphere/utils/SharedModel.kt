@@ -15,4 +15,7 @@ object SharedModel {
 
     var currentLocation : Location? = null
 
+
+    var ll = false
+
 }

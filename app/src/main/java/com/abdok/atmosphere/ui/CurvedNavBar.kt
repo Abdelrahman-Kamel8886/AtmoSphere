@@ -13,12 +13,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.abdok.atmosphere.data.models.ScreenMenuItem
+import kotlinx.coroutines.flow.MutableStateFlow
 import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem
 import np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
 
 object CurvedNavBar {
 
-    val mutableNavBarState = MutableLiveData(true)
+    val mutableNavBarState = MutableStateFlow(true)
     val activeIndex: MutableLiveData<Int> = MutableLiveData(0)
 
 

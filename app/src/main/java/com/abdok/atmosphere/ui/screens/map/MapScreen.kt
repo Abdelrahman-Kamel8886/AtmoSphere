@@ -70,7 +70,9 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun MapScreen(viewModel: MapViewModel , mapSelection: MapSelection , onBackClick: () -> Unit) {
 
-    CurvedNavBar.mutableNavBarState.value = false
+    LaunchedEffect(Unit) {
+        CurvedNavBar.mutableNavBarState.emit(false)
+    }
 
     val cityLocationState = viewModel.addressLocation.collectAsStateWithLifecycle()
 

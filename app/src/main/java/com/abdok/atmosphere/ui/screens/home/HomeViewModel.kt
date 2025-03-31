@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.ui.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -59,6 +60,7 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
         lang: String = repository.fetchPreferenceData(Constants.LANGUAGE_CODE , Languages.ENGLISH.code)
     ){
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            Log.i("TAG", "getWeatherAndForecastLatLon: $lat , $lon ")
             mutableCombinedWeatherData.value = Response.Loading
             try {
 

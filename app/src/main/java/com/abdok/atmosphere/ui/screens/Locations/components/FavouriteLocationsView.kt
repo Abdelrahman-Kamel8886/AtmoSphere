@@ -32,32 +32,30 @@ fun FavouriteLocationsView(
     onDelete: (FavouriteLocation) -> Unit,
     onSelected: (FavouriteLocation) -> Unit
 ) {
+        LazyColumn (modifier = Modifier.fillMaxWidth()){
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                tint = Color.DarkGray,
-                contentDescription = null
-            )
-            Text(
-                text = stringResource(R.string.saved_locations),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.DarkGray
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        tint = Color.DarkGray,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.saved_locations),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.DarkGray
+                    )
+                }
+            }
 
-        LazyColumn {
             items(locations , key = {it.cityName}){
                     SwipeToDeleteContainer(
                         item = it,
@@ -68,8 +66,8 @@ fun FavouriteLocationsView(
                         FavouriteLocationCard(item = it , onSelected = onSelected)
                     }
             }
+            item {
+                Spacer(modifier = Modifier.height(150.dp))
+            }
         }
-
-        Spacer(modifier = Modifier.height(150.dp))
-    }
 }
