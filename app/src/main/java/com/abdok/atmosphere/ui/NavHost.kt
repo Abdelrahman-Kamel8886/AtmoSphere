@@ -2,13 +2,17 @@ package com.abdok.atmosphere.ui
 
 import android.location.Location
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.abdok.atmosphere.R
 import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
@@ -36,10 +40,12 @@ import com.abdok.atmosphere.ui.screens.map.MapViewModelFactory
 import com.abdok.atmosphere.ui.screens.settings.SettingsScreen
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModel
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModelFactory
+import com.abdok.atmosphere.utils.isNetworkConnected
 
 @Composable
 fun setupNavHost(navController: NavHostController, location: Location?) {
 
+    val context = LocalContext.current
 
     NavHost(navController = navController
         , startDestination = ScreenRoutes.HomeRoute
@@ -63,7 +69,12 @@ fun setupNavHost(navController: NavHostController, location: Location?) {
             LocationsScreen(
                 viewModel,
                 onLocationClick = {
-                    navController.navigate(ScreenRoutes.MapRoute(MapSelection.FAVOURITE))
+                    if (context.isNetworkConnected()){
+                        navController.navigate(ScreenRoutes.MapRoute(MapSelection.FAVOURITE))
+                    }
+                    else{
+                        Toast.makeText(context, context.getString(R.string.check_your_internet_connection), Toast.LENGTH_SHORT).show()
+                    }
                 },
                 onItemSelected = {
                     navController.navigate(ScreenRoutes.DetailsRoute(it))
@@ -79,7 +90,12 @@ fun setupNavHost(navController: NavHostController, location: Location?) {
             val settingsFactory = SettingsViewModelFactory(repository)
             val viewModel: SettingsViewModel = viewModel(factory = settingsFactory)
             SettingsScreen(viewModel){
-                navController.navigate(ScreenRoutes.MapRoute(MapSelection.LOCATION))
+                if (context.isNetworkConnected()){
+                    navController.navigate(ScreenRoutes.MapRoute(MapSelection.LOCATION))
+                }
+                else{
+                    Toast.makeText(context, context.getString(R.string.check_your_internet_connection), Toast.LENGTH_SHORT).show()
+                }
             }
         }
         composable<ScreenRoutes.MapRoute> {
