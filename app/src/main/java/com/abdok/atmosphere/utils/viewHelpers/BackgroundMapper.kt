@@ -47,8 +47,20 @@ object BackgroundMapper {
         "11n" to Color.White, // Thunderstorm (Night)
         "13n" to Color.White, // Snow (Night)
         "50n" to Color.White // Mist (Night)
+    )
 
+    private val statusBarDarkIconMap = mapOf(
+        "11d" to false, // Thunderstorm (day)
 
+        "01n" to false, // Clear sky (Night)
+        "02n" to false, // Few clouds (Night)
+        "03n" to false, // Scattered clouds (Night)
+        "04n" to false, // Broken clouds (Night)
+        "09n" to false, // Shower rain (Night)
+        "10n" to false, // Rain (Night)
+        "11n" to false, // Thunderstorm (Night)
+        "13n" to false, // Snow (Night)
+        "50n" to false // Mist (Night)
     )
 
     private val HourTempTextColorMap = mapOf(
@@ -139,6 +151,10 @@ object BackgroundMapper {
 
     fun getHourTempTextColor(condition: String): Pair<Color, Color> {
         return HourTempTextColorMap[condition] ?: (Color.Gray to Color.DarkGray)
+    }
+
+    fun getStatusBarDarkIcon(condition: String): Boolean {
+        return statusBarDarkIconMap[condition] ?: true
     }
 
     private fun getContrastingTextColor(bgColor: Color): Color {

@@ -24,6 +24,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import com.abdok.atmosphere.utils.setAlarm
 import com.abdok.atmosphere.ui.screens.alarm.components.AlarmBottomSheet
 import com.abdok.atmosphere.ui.screens.alarm.components.AlertsListView
 import com.abdok.atmosphere.ui.screens.alarm.components.EmptyAlarmsView
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +85,15 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
     }
 
     LaunchedEffect(Unit) { viewModel.getAlerts() }
+
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = true
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },

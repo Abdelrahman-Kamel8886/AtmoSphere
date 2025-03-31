@@ -15,6 +15,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ import com.abdok.atmosphere.ui.theme.ColorHourText
 import com.abdok.atmosphere.ui.theme.ColorTempText
 import com.abdok.atmosphere.ui.theme.ColorTextPrimary
 import com.abdok.atmosphere.ui.theme.ColorTextSecondary
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
@@ -57,6 +59,7 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
     }
 
     val weatherDataState = viewModel.combinedWeatherData.collectAsStateWithLifecycle()
+    val isAnimation = viewModel.isAnimation.collectAsStateWithLifecycle()
     val refreshState = rememberPullToRefreshState()
 
     val isRefreshing = weatherDataState.value is Response.Loading
@@ -93,7 +96,7 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
                             .fillMaxSize()
                     ) {
                         item {
-                            DrawHome(combinedWeatherData = data)
+                            DrawHome(combinedWeatherData = data , isAnimation = isAnimation.value)
                         }
                     }
                 }
@@ -103,14 +106,13 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
 }
 
 @Composable
-fun DrawHome(combinedWeatherData: CombinedWeatherData) {
+fun DrawHome(combinedWeatherData: CombinedWeatherData , isAnimation : Boolean = false) {
 
-    val animation = false
     val condition = combinedWeatherData.weatherResponse.weather[0].icon
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background GIF
-        if (animation){
+        if (isAnimation){
             GifEffectBackground(
                 modifier = Modifier
                     .matchParentSize()
@@ -133,11 +135,38 @@ fun DrawHome(combinedWeatherData: CombinedWeatherData) {
                 SharedModel.screenBackground.value = screenBrush
 
                 ColorTextSecondary = BackgroundMapper.getTextColor(condition)
-                if (animation) {
+                if (isAnimation) {
                     ColorTextPrimary = BackgroundMapper.getMainTextColor(condition)
                     ColorHourText = BackgroundMapper.getHourTempTextColor(condition).first
                     ColorTempText = BackgroundMapper.getHourTempTextColor(condition).second
+
+                    val systemUiController = rememberSystemUiController()
+
+                    SideEffect {
+                        systemUiController.setStatusBarColor(
+                            color = Color.Transparent,
+                            darkIcons = BackgroundMapper.getStatusBarDarkIcon(condition)
+                        )
+                    }
+
                 }
+                else{
+                    ColorTextPrimary = Color.DarkGray
+                    ColorHourText = Color.Gray
+                    ColorTempText = Color.DarkGray
+
+                    val systemUiController = rememberSystemUiController()
+
+                    SideEffect {
+                        systemUiController.setStatusBarColor(
+                            color = Color.Transparent,
+                            darkIcons = true
+                        )
+                    }
+
+                }
+
+
 
 
                 Column {

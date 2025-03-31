@@ -50,4 +50,6 @@
     <string name="tap_stop_to_turn_off_the_alarm">Pulse DETENER para apagar la alarma</string>
     <string name="stop">DETENER</string>
     <string name="clouds">nubes</string>
+    <string name="permission_denied">Permiso denegado</string>
+    <string name="show_animated_background">Mostrar fondo animado</string>
 </resources>

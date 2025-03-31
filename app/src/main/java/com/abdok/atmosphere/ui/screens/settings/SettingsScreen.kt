@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.ui.screens.settings.componnts.SegmentedControlSection
 import com.abdok.atmosphere.ui.screens.settings.componnts.SwitchSection
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
@@ -65,6 +67,15 @@ fun SettingsScreen(
     val selectedLanguage by viewModel.language.collectAsStateWithLifecycle()
     val selectedLocation by viewModel.location.collectAsStateWithLifecycle()
     val isAnimation by viewModel.isAnimation.collectAsStateWithLifecycle()
+
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = true
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -126,7 +137,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         SwitchSection(switchIcon =Icons.Default.Animation
-            , switchText = "Show Animated Background",
+            , switchText = stringResource(R.string.show_animated_background),
             isSwitchChecked =isAnimation
             , onSwitchToggled = viewModel::updateAnimation
         )

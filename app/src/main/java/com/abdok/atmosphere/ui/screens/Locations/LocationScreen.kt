@@ -12,6 +12,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.ui.screens.Locations.components.EmptyLocationsView
 import com.abdok.atmosphere.ui.screens.Locations.components.FavouriteLocationsView
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun LocationsScreen(
@@ -53,6 +55,15 @@ fun LocationsScreen(
     }
 
     CurvedNavBar.mutableNavBarState.value = true
+
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = true
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState , modifier = Modifier.wrapContentHeight(align = Alignment.Top)) },

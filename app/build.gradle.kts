@@ -150,6 +150,9 @@ dependencies {
 
     implementation ("androidx.lifecycle:lifecycle-service:2.8.1")
 
+    implementation( "com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+
+
 
 }
 

@@ -29,6 +29,9 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
     private var speed : String
     var location : Pair<Double , Double>
 
+    private val _isAnimation = MutableStateFlow(false)
+    val isAnimation = _isAnimation.asStateFlow()
+
     init {
         unit = repository.fetchPreferenceData(Constants.TEMPERATURE_UNIT , Units.METRIC.value)
         SharedModel.currentDegree = Units.getDegreeByValue(unit)
@@ -38,6 +41,8 @@ class HomeViewModel(private val repository: Repository) : ViewModel() {
 
         val loc = repository.getLocation()
         location = Pair(loc.first , loc.second)
+
+        _isAnimation.value = repository.fetchPreferenceData(Constants.IS_ANIMATION , false)
     }
 
     private var mutableCombinedWeatherData = MutableStateFlow<Response<CombinedWeatherData>>(Response.Loading)

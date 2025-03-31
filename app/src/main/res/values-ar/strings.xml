@@ -50,4 +50,6 @@
     <string name="tap_stop_to_turn_off_the_alarm">اضغط على \"إيقاف\" لإيقاف تشغيل المنبه</string>
     <string name="stop">إيقاف</string>
     <string name="clouds">الغيوم</string>
+    <string name="permission_denied">تم رفض الإذن</string>
+    <string name="show_animated_background">إظهار الخلفية المتحركة</string>
 </resources>

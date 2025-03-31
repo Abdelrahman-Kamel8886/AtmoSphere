@@ -9,6 +9,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.ui.CurvedNavBar
 import com.abdok.atmosphere.ui.screens.home.DrawHome
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +40,8 @@ fun DetailsScreen(favouriteLocation: FavouriteLocation , viewModel: DetailsViewM
     val weatherDataState = viewModel.combinedWeatherData.collectAsStateWithLifecycle()
     val refreshState = rememberPullToRefreshState()
     val isRefreshing = weatherDataState.value is Response.Loading
+    val isAnimation = viewModel.isAnimation.collectAsStateWithLifecycle()
+
     val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -56,12 +60,12 @@ fun DetailsScreen(favouriteLocation: FavouriteLocation , viewModel: DetailsViewM
                 }
                 is Response.Error -> {
                     val message = (weatherDataState.value as Response.Error).exception
-                    DrawDetails(favouriteLocation.combinedWeatherData)
+                    DrawDetails(favouriteLocation.combinedWeatherData , isAnimation = isAnimation.value)
                 }
 
                 is Response.Success -> {
                     val data = (weatherDataState.value as Response.Success).data
-                    DrawDetails(data)
+                    DrawDetails(data , isAnimation = isAnimation.value)
                 }
 
                 null -> {
@@ -75,13 +79,13 @@ fun DetailsScreen(favouriteLocation: FavouriteLocation , viewModel: DetailsViewM
 }
 
 @Composable
-fun DrawDetails(data: CombinedWeatherData) {
+fun DrawDetails(data: CombinedWeatherData , isAnimation : Boolean = false) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
         item {
-            DrawHome(combinedWeatherData = data)
+            DrawHome(combinedWeatherData = data , isAnimation = isAnimation)
         }
     }
 }
