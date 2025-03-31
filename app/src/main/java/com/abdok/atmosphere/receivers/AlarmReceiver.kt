@@ -23,8 +23,8 @@ import com.abdok.atmosphere.ui.MainActivity
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.utils.Constants
 import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
-import com.abdok.atmosphere.utils.getWeatherNotification
-import com.abdok.atmosphere.utils.translateWeatherCondition
+import com.abdok.atmosphere.utils.extension.getWeatherNotification
+import com.abdok.atmosphere.utils.extension.translateWeatherCondition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.catch

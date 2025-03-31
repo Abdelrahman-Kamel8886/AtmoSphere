@@ -41,14 +41,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.data.Response
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.enums.Alert
 import com.abdok.atmosphere.ui.CurvedNavBar
-import com.abdok.atmosphere.utils.cancelAlarm
-import com.abdok.atmosphere.utils.convertArabicToEnglish
-import com.abdok.atmosphere.utils.durationFromNowInSeconds
-import com.abdok.atmosphere.utils.setAlarm
+import com.abdok.atmosphere.utils.extension.convertArabicToEnglish
+import com.abdok.atmosphere.utils.extension.durationFromNowInSeconds
 import com.abdok.atmosphere.ui.screens.alarm.components.AlarmBottomSheet
 import com.abdok.atmosphere.ui.screens.alarm.components.AlertsListView
 import com.abdok.atmosphere.ui.screens.alarm.components.EmptyAlarmsView
+import com.abdok.atmosphere.utils.extension.cancelAlarm
+import com.abdok.atmosphere.utils.extension.cancelNotification
+import com.abdok.atmosphere.utils.extension.scheduleNotification
+import com.abdok.atmosphere.utils.extension.setAlarm
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -139,7 +142,14 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                         AlertsListView(alerts = list, snackbarHostState = snackbarHostState) {
                             viewModel.deleteAlert(it)
                             list -= it
-                            context.cancelAlarm(it.id)
+                            when(it.selectedOption){
+                                Alert.ALARM -> {
+                                    context.cancelAlarm(it.id)
+                                }
+                                Alert.NOTIFICATION -> {
+                                    context.cancelNotification(it.id)
+                                }
+                            }
                         }
                     }
                 }
@@ -163,7 +173,14 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                     Log.i("TAG", "Alert Scheduled within : $duration seconds")
                     viewModel.addAlert(alert)
                     viewModel.getAlerts()
-                    context.setAlarm(duration, id)
+                    when(selectedOption){
+                        Alert.ALARM -> {
+                            context.setAlarm(duration, id)
+                        }
+                        Alert.NOTIFICATION -> {
+                            context.scheduleNotification(id, duration)
+                        }
+                    }
                     isSheetOpen = false
                 }
             }

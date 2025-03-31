@@ -1,19 +1,14 @@
-package com.abdok.atmosphere.utils
+package com.abdok.atmosphere.utils.extension
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.location.Location
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.SystemClock
-import android.util.Log
-import com.abdok.atmosphere.receivers.AlarmReceiver
 import com.abdok.atmosphere.data.models.ForecastResponse
-import com.google.android.gms.location.LocationServices
+import com.abdok.atmosphere.receivers.AlarmReceiver
+import com.abdok.atmosphere.utils.Constants
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalTime
@@ -35,31 +30,6 @@ fun ForecastResponse.getDaysForecast(): Map<Int, List<ForecastResponse.Item0>> {
     }
     return forecastMap.mapValues { it.value.take(8) }
 }
-
-
-@SuppressLint("ScheduleExactAlarm")
-fun Context.setAlarm(seconds: Int , id: Int) {
-    val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val intent = Intent(this, AlarmReceiver::class.java)
-        .putExtra(Constants.ALARM_ID,id)
-    val pendingIntent = PendingIntent.getBroadcast(
-        this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-    val triggerTime = SystemClock.elapsedRealtime() + (seconds * 1000)
-    alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, pendingIntent)
-
-}
-
-fun Context.cancelAlarm(id: Int) {
-    val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val intent = Intent(this, AlarmReceiver::class.java)
-        .putExtra(Constants.ALARM_ID, id)
-
-    val pendingIntent = PendingIntent.getBroadcast(
-        this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-    alarmManager.cancel(pendingIntent)
-}
-
 fun String.convertArabicToEnglish(): String {
     val arabicNumbers = charArrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
     val englishNumbers = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
@@ -229,34 +199,9 @@ fun String.getWeatherNotification(): String {
     return notifications[this]?.get(language) ?: "Weather update not available."
 }
 
-@SuppressLint("MissingPermission")
-fun Context.getGpsLocation(onLocationReceived: (location: Location) -> Unit){
-    val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-    fusedLocationProviderClient.lastLocation
-        .addOnSuccessListener {
-            Log.i("TAG", "getGpsLocation: ")
-            if (it != null) {
-                Log.i("TAG", "getGpsLocation: 111 ${it.latitude} ${it.longitude}")
-                onLocationReceived(it)
-            }
-        }.addOnFailureListener {
-            Log.i("TAG", "getGpsLocation: 222 ${it.message}")
-            it.printStackTrace()
-        }
-}
 
-fun Context.isNetworkConnected(): Boolean {
-    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    } else {
-        val networkInfo = connectivityManager.activeNetworkInfo
-        networkInfo != null && networkInfo.isConnected
-    }
-}
+
 
 
 

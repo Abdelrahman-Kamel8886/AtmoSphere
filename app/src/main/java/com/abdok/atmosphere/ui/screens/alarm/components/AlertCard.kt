@@ -26,7 +26,7 @@ import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.enums.Alert
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
-import com.abdok.atmosphere.utils.convertNumbersBasedOnLanguage
+import com.abdok.atmosphere.utils.extension.convertNumbersBasedOnLanguage
 
 @Composable
 fun AlertCard(item: AlertDTO) {

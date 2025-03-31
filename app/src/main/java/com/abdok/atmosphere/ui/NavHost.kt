@@ -1,18 +1,16 @@
 package com.abdok.atmosphere.ui
 
 import android.location.Location
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
@@ -20,8 +18,10 @@ import com.abdok.atmosphere.data.models.FavouriteLocation
 import com.abdok.atmosphere.data.models.ScreenRoutes
 import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
-import com.abdok.atmosphere.data.RepositoryImpl
 import com.abdok.atmosphere.enums.MapSelection
+import com.abdok.atmosphere.ui.screens.Locations.LocationViewModelFactory
+import com.abdok.atmosphere.ui.screens.Locations.LocationsScreen
+import com.abdok.atmosphere.ui.screens.Locations.LocationsViewModel
 import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModel
 import com.abdok.atmosphere.ui.screens.alarm.AlarmViewModelFactory
 import com.abdok.atmosphere.ui.screens.alarm.AlertsScreen
@@ -31,19 +31,16 @@ import com.abdok.atmosphere.ui.screens.details.DetailsViewModelFactory
 import com.abdok.atmosphere.ui.screens.home.HomeScreen
 import com.abdok.atmosphere.ui.screens.home.HomeViewModel
 import com.abdok.atmosphere.ui.screens.home.HomeViewModelFactory
-import com.abdok.atmosphere.ui.screens.Locations.LocationViewModelFactory
-import com.abdok.atmosphere.ui.screens.Locations.LocationsScreen
-import com.abdok.atmosphere.ui.screens.Locations.LocationsViewModel
 import com.abdok.atmosphere.ui.screens.map.MapScreen
 import com.abdok.atmosphere.ui.screens.map.MapViewModel
 import com.abdok.atmosphere.ui.screens.map.MapViewModelFactory
 import com.abdok.atmosphere.ui.screens.settings.SettingsScreen
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModel
 import com.abdok.atmosphere.ui.screens.settings.SettingsViewModelFactory
-import com.abdok.atmosphere.utils.isNetworkConnected
+import com.abdok.atmosphere.utils.extension.isNetworkConnected
 
 @Composable
-fun setupNavHost(navController: NavHostController, location: Location?) {
+fun SetupNavHost(navController: NavHostController, location: Location?) {
 
     val context = LocalContext.current
 

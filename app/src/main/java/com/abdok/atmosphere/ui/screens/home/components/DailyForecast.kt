@@ -24,7 +24,7 @@ import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
-import com.abdok.atmosphere.utils.getDaysForecast
+import com.abdok.atmosphere.utils.extension.getDaysForecast
 import com.abdok.atmosphere.ui.theme.ColorTextSecondary
 
 @Composable

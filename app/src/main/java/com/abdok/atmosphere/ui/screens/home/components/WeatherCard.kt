@@ -37,8 +37,8 @@ import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
-import com.abdok.atmosphere.utils.convertNumbersBasedOnLanguage
-import com.abdok.atmosphere.utils.translateWeatherCondition
+import com.abdok.atmosphere.utils.extension.convertNumbersBasedOnLanguage
+import com.abdok.atmosphere.utils.extension.translateWeatherCondition
 import com.abdok.atmosphere.ui.theme.ColorTextSecondary
 import java.util.Locale
 

@@ -258,7 +258,7 @@ class MainActivity : ComponentActivity() {
                     .background(defaultBackground)
             ) {
 
-                setupNavHost(navController, location)
+                SetupNavHost(navController, location)
                 if (!isConnected) {
                     Row(
                         Modifier
