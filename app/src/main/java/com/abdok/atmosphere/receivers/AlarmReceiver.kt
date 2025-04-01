@@ -17,10 +17,10 @@ import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
 import com.abdok.atmosphere.data.models.WeatherResponse
 import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
-import com.abdok.atmosphere.data.RepositoryImpl
+import com.abdok.atmosphere.data.repository.RepositoryImpl
 import com.abdok.atmosphere.enums.Units
-import com.abdok.atmosphere.ui.MainActivity
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.screens.MainActivity
 import com.abdok.atmosphere.utils.Constants
 import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
 import com.abdok.atmosphere.utils.extension.getWeatherNotification

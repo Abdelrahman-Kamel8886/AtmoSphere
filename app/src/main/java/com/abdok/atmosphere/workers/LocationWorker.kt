@@ -8,7 +8,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.abdok.atmosphere.data.Response
+import com.abdok.atmosphere.data.models.Response
 import com.abdok.atmosphere.utils.SharedModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback

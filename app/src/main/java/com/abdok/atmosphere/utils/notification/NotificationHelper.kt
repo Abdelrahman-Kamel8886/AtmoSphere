@@ -5,13 +5,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
-import com.abdok.atmosphere.R
-import com.abdok.atmosphere.ui.MainActivity
+import com.abdok.atmosphere.screens.MainActivity
 
 object NotificationHelper {
     private const val CHANNEL_ID = "scheduled_notification"

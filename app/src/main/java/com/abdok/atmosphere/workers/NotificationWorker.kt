@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.abdok.atmosphere.data.RepositoryImpl
+import com.abdok.atmosphere.data.repository.RepositoryImpl
 import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl

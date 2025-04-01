@@ -61,7 +61,13 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+
         }
+    }
+    packagingOptions {
+        exclude("META-INF/LICENSE-notice.md")
+        exclude("META-INF/LICENSE.md")   // (Optional: to exclude the other license file if needed)
+        exclude("META-INF/LICENSE.txt")  // (Optional: in case there are any more conflicts)
     }
 }
 
@@ -151,6 +157,11 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-service:2.8.1")
 
     implementation( "com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+
+    androidTestImplementation ("io.mockk:mockk-android:1.13.17")
+    androidTestImplementation ("io.mockk:mockk-agent:1.13.17")
+
+
 
 
 
