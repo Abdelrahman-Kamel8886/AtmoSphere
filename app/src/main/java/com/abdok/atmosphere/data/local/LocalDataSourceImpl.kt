@@ -7,7 +7,7 @@ import com.abdok.atmosphere.data.models.FavouriteLocation
 import com.abdok.atmosphere.data.models.HomeLocation
 import com.abdok.atmosphere.utils.Constants
 
-class LocalDataSourceImpl private constructor(private val dao: LocalDao, private val sharedPreferences: ISharedPreferences) : LocalDataSource {
+class LocalDataSourceImpl (private val dao: LocalDao, private val sharedPreferences: ISharedPreferences) : LocalDataSource {
 
     //Room
     override fun insertFavoriteLocation(favoriteLocation: FavouriteLocation) = dao.insertFavouriteLocation(favoriteLocation)
