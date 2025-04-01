@@ -19,6 +19,12 @@
       <SelectionState runConfigName="updateFavouriteLocation_and_getAllFavouriteLocations()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="LocalDataSourceImplTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="deleteAlert_shouldRemoveItem()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

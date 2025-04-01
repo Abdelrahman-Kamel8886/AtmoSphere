@@ -37,7 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.abdok.atmosphere.R
 import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.data.models.Response
@@ -62,6 +65,8 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
     LaunchedEffect(Unit) {
         CurvedNavBar.mutableNavBarState.emit(true)
     }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetOpen by remember { mutableStateOf(false) }
@@ -89,6 +94,13 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                     message = context.getString(R.string.permission_denied),
                 )
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED){
+            permissionState.value = isPermissionGranted(context, permission)
+
         }
     }
 

@@ -197,7 +197,6 @@ class MainActivity : ComponentActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
                 scheduleLocationWorker()
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
