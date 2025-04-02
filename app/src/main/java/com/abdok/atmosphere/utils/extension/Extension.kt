@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
@@ -199,6 +200,17 @@ fun String.getWeatherNotification(): String {
     return notifications[this]?.get(language) ?: "Weather update not available."
 }
 
+fun String.addMinutes(minutes: Int): String {
+    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val date = dateFormat.parse(this) ?: return this
+
+    val calendar = Calendar.getInstance().apply {
+        time = date
+        add(Calendar.MINUTE, minutes)
+    }
+
+    return dateFormat.format(calendar.time)
+}
 
 
 

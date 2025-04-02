@@ -189,7 +189,7 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                     viewModel.getAlerts()
                     when(selectedOption){
                         Alert.ALARM -> {
-                            context.setAlarm(startDuration, id , endDuration)
+                            context.setAlarm(startDuration, endDuration , alert)
                         }
                         Alert.NOTIFICATION -> {
                             context.scheduleNotification(id, startDuration)

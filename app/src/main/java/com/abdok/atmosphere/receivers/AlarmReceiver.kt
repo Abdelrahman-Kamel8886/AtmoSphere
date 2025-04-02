@@ -20,11 +20,13 @@ import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
 import com.abdok.atmosphere.data.repository.RepositoryImpl
 import com.abdok.atmosphere.enums.Units
 import com.abdok.atmosphere.R
+import com.abdok.atmosphere.data.models.AlertDTO
 import com.abdok.atmosphere.screens.MainActivity
 import com.abdok.atmosphere.utils.Constants
 import com.abdok.atmosphere.utils.viewHelpers.IconsMapper
 import com.abdok.atmosphere.utils.extension.getWeatherNotification
 import com.abdok.atmosphere.utils.extension.translateWeatherCondition
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.catch
@@ -49,9 +51,9 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         createNotificationChannel(context)
 
-        val id = intent.getIntExtra(Constants.ALARM_ID, -1)
-        Log.i("TAG", "onReceive: $id")
-
+        val alert = Gson().fromJson(intent.getStringExtra(Constants.ALARM_ID), AlertDTO::class.java)
+        val id = alert.id
+        
         val repository = RepositoryImpl.getInstance(
             RemoteDataSourceImpl.getInstance(RetroConnection.retroServices),
             LocalDataSourceImpl.getInstance(
@@ -59,7 +61,7 @@ class AlarmReceiver : BroadcastReceiver() {
             )
         )
         removeAlarm(id, repository)
-        getData(context, repository)
+        getData(context, repository,alert)
     }
 
     private fun removeAlarm(id: Int, repository: RepositoryImpl) {
@@ -67,7 +69,7 @@ class AlarmReceiver : BroadcastReceiver() {
         Log.i("TAG", "removeAlarm: $result")
     }
 
-    private fun getData(context: Context, repository: RepositoryImpl) {
+    private fun getData(context: Context, repository: RepositoryImpl , alert: AlertDTO) {
         GlobalScope.launch(Dispatchers.IO) {
             repository
                 .getWeatherLatLon(
@@ -76,11 +78,11 @@ class AlarmReceiver : BroadcastReceiver() {
                     Units.METRIC.value, Locale.getDefault().language
                 )
                 .catch {
-                    showNotification(context, null)
+                    showNotification(context, null,alert)
                 }
                 .collect {
                     if (it != null) {
-                        showNotification(context, it)
+                        showNotification(context, it , alert)
                     }
                 }
 
@@ -88,7 +90,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun showNotification(context: Context, weatherResponse: WeatherResponse?) {
+    private fun showNotification(context: Context, weatherResponse: WeatherResponse? , alert: AlertDTO) {
         
         var icon = R.drawable.few_clouds_night
         var title = context.getString(R.string.weather_details)
@@ -98,7 +100,9 @@ class AlarmReceiver : BroadcastReceiver() {
             val condition = weatherResponse.weather[0].icon
             icon = IconsMapper.getIcon(condition)
             title = weatherResponse.weather[0].description.translateWeatherCondition()
-            message = condition.getWeatherNotification()
+            message = "${condition.getWeatherNotification()}\n" +
+                    "${"Temperature: " + weatherResponse.main.temp + "°C"}\n" +
+                    "${"Humidity: " + weatherResponse.main.humidity + "%"}"
         }
 
         if (mediaPlayer == null) {
@@ -123,18 +127,25 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val snoozeIntent = Intent(context, StopAlarmReceiver::class.java).apply {
+            putExtra("SNOOZE", true)
+            putExtra(Constants.ALARM_ID, Gson().toJson(alert))
+        }
+        val snoozePendingIntent = PendingIntent.getBroadcast(
+            context,alert.id, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentIntent(activityPendingIntent)
             .setSmallIcon(icon)
             .setContentTitle(title)
             .setContentText(message)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("$message \n${context.getString(R.string.tap_stop_to_turn_off_the_alarm)}")
-            )
+            .setStyle(NotificationCompat.BigTextStyle().bigText("$message"))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
             .addAction(R.drawable.few_clouds_night, context.getString(R.string.stop), stopPendingIntent)
+            .addAction(R.drawable.few_clouds_night, context.getString(R.string.snooze), snoozePendingIntent)
             .build()
 
 
