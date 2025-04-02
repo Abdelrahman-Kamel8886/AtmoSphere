@@ -1,5 +1,14 @@
 package com.abdok.atmosphere.screens.settings
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,21 +24,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.abdok.atmosphere.R
 import com.abdok.atmosphere.enums.Languages
 import com.abdok.atmosphere.enums.Locations
 import com.abdok.atmosphere.enums.Speeds
 import com.abdok.atmosphere.enums.Units
-import com.abdok.atmosphere.R
-import com.abdok.atmosphere.utils.localization.LanguageManager
-import com.abdok.atmosphere.ui.components.CurvedNavBar
 import com.abdok.atmosphere.screens.settings.componnts.SegmentedControlSection
 import com.abdok.atmosphere.screens.settings.componnts.SwitchSection
+import com.abdok.atmosphere.ui.components.CurvedNavBar
+import com.abdok.atmosphere.utils.localization.LanguageManager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
@@ -39,6 +54,46 @@ fun SettingsScreen(
     onMapSelected: () -> Unit
 ) {
     val context = LocalContext.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+    val locationServicesState = remember { mutableStateOf(isLocationServicesEnabled(context)) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val isGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+                    || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (isGranted) {
+                if (!locationServicesState.value) {
+                    openLocationSettings(context)
+                }
+                else{
+                    viewModel.updateLocation(Locations.getValue(Locations.Gps.value))
+                }
+            } else {
+                Toast.makeText(context, "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    val isPermissionGranted = locationPermissions.any {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    LaunchedEffect(Unit) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED){
+            locationServicesState.value = isLocationServicesEnabled(context)
+        }
+    }
+
+
 
     LaunchedEffect(Unit) {
         CurvedNavBar.mutableNavBarState.emit(true)
@@ -106,7 +161,17 @@ fun SettingsScreen(
                 if (it == Locations.getValue(Locations.Map.value)) {
                     onMapSelected()
                 }else{
-                    viewModel.updateLocation(it)
+                    if (!isPermissionGranted) {
+                        permissionLauncher.launch(locationPermissions)
+                    } else {
+                        if (!locationServicesState.value) {
+                            openLocationSettings(context)
+                        }
+                        else{
+                            viewModel.updateLocation(it)
+                        }
+                    }
+
                 }
             }
         )
@@ -131,3 +196,15 @@ fun SettingsScreen(
 
     }
 }
+
+private fun isLocationServicesEnabled(context: Context): Boolean {
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+}
+
+private fun openLocationSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+    context.startActivity(intent)
+}
+

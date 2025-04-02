@@ -52,4 +52,5 @@
     <string name="clouds">الغيوم</string>
     <string name="permission_denied">تم رفض الإذن</string>
     <string name="show_animated_background">إظهار الخلفية المتحركة</string>
+    <string name="weather_details">تفاصيل الطقس</string>
 </resources>

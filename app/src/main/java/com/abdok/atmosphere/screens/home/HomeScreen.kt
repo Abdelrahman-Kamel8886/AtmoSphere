@@ -26,13 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.abdok.atmosphere.R
 import com.abdok.atmosphere.data.models.CombinedWeatherData
 import com.abdok.atmosphere.data.models.Response
-import com.abdok.atmosphere.R
-import com.abdok.atmosphere.ui.components.CurvedNavBar
-import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
-import com.abdok.atmosphere.utils.SharedModel
-import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
 import com.abdok.atmosphere.screens.home.components.DaysForecastList
 import com.abdok.atmosphere.screens.home.components.GifEffectBackground
 import com.abdok.atmosphere.screens.home.components.HourlyForecastList
@@ -41,10 +37,14 @@ import com.abdok.atmosphere.screens.home.components.TopView
 import com.abdok.atmosphere.screens.home.components.WeatherCard
 import com.abdok.atmosphere.screens.home.components.WeatherGrid
 import com.abdok.atmosphere.screens.home.components.WindCard
+import com.abdok.atmosphere.ui.components.CurvedNavBar
 import com.abdok.atmosphere.ui.theme.ColorHourText
 import com.abdok.atmosphere.ui.theme.ColorTempText
 import com.abdok.atmosphere.ui.theme.ColorTextPrimary
 import com.abdok.atmosphere.ui.theme.ColorTextSecondary
+import com.abdok.atmosphere.utils.SharedModel
+import com.abdok.atmosphere.utils.viewHelpers.BackgroundMapper
+import com.abdok.atmosphere.utils.viewHelpers.CountryHelper
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -52,6 +52,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
+
 
     LaunchedEffect(Unit) {
         CurvedNavBar.mutableNavBarState.emit(true)
@@ -110,6 +111,7 @@ fun HomeScreen(viewModel: HomeViewModel, location: Location?) {
         }
     }
 }
+
 
 @Composable
 fun DrawHome(combinedWeatherData: CombinedWeatherData , isAnimation : Boolean = false) {

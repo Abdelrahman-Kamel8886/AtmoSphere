@@ -270,7 +270,6 @@ class MainActivity : ComponentActivity() {
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
                                 .background(Color.Gray, shape = RoundedCornerShape(4.dp))
                                 .padding(vertical = 8.dp),
                             text = stringResource(R.string.offline_mood),

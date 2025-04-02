@@ -52,4 +52,5 @@
     <string name="clouds">Clouds</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="show_animated_background">Show Animated Background</string>
+    <string name="weather_details">Weather Details</string>
 </resources>

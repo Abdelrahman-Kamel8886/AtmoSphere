@@ -76,7 +76,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     Units.METRIC.value, Locale.getDefault().language
                 )
                 .catch {
-                    Log.i("TAG", "onReceive: ")
+                    showNotification(context, null)
                 }
                 .collect {
                     if (it != null) {
@@ -88,12 +88,18 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun showNotification(context: Context, weatherResponse: WeatherResponse) {
-        val condition = weatherResponse.weather[0].icon
-
-        val icon = IconsMapper.getIcon(condition)
-        val title = weatherResponse.weather[0].description.translateWeatherCondition()
-        val message = condition.getWeatherNotification()
+    private fun showNotification(context: Context, weatherResponse: WeatherResponse?) {
+        
+        var icon = R.drawable.few_clouds_night
+        var title = context.getString(R.string.weather_details)
+        var message = context.getString(R.string.check_your_internet_connection)
+        
+        weatherResponse?.let {
+            val condition = weatherResponse.weather[0].icon
+            icon = IconsMapper.getIcon(condition)
+            title = weatherResponse.weather[0].description.translateWeatherCondition()
+            message = condition.getWeatherNotification()
+        }
 
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(context, R.raw.alarm1)

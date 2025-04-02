@@ -181,16 +181,18 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                         endDuration = endDuration.convertArabicToEnglish(),
                         selectedOption = selectedOption
                     )
-                    val duration = startDuration.durationFromNowInSeconds()
-                    Log.i("TAG", "Alert Scheduled within : $duration seconds")
+                    val startDuration = startDuration.durationFromNowInSeconds()
+                    val endDuration = endDuration.durationFromNowInSeconds()
+                    Log.i("TAG", "Alert Scheduled within : $startDuration seconds")
+                    Log.i("TAG", "Alert Stop within : $endDuration seconds")
                     viewModel.addAlert(alert)
                     viewModel.getAlerts()
                     when(selectedOption){
                         Alert.ALARM -> {
-                            context.setAlarm(duration, id)
+                            context.setAlarm(startDuration, id , endDuration)
                         }
                         Alert.NOTIFICATION -> {
-                            context.scheduleNotification(id, duration)
+                            context.scheduleNotification(id, startDuration)
                         }
                     }
                     isSheetOpen = false
