@@ -10,7 +10,7 @@ import com.abdok.atmosphere.data.remote.RemoteDataSource
 import com.abdok.atmosphere.enums.Locations
 import com.abdok.atmosphere.utils.Constants
 
-class RepositoryImpl private constructor(
+class RepositoryImpl constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : Repository {

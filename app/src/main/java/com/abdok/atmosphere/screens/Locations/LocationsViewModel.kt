@@ -20,8 +20,8 @@ class LocationsViewModel(private val repository: Repository) : ViewModel() {
         MutableStateFlow<Response<List<FavouriteLocation>>>(Response.Loading)
     val favLocations = _favLocations.asStateFlow()
 
-    private var _message = MutableSharedFlow<String>()
-    val message = _message.asSharedFlow()
+    private var _message = MutableStateFlow("")
+    val message = _message.asStateFlow()
 
     fun getFavouriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {

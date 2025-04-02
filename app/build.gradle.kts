@@ -7,8 +7,11 @@ plugins {
     kotlin ("plugin.serialization") version "2.1.10"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
     id ("kotlin-kapt")
+
 }
 
+val androidXTestExtKotlinRunnerVersion by extra("1.1.3")
+val androidXTestCoreVersion by extra("1.6.1")
 
 android {
     namespace = "com.abdok.atmosphere"
@@ -82,6 +85,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.places)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -161,8 +165,15 @@ dependencies {
     androidTestImplementation ("io.mockk:mockk-android:1.13.17")
     androidTestImplementation ("io.mockk:mockk-agent:1.13.17")
 
+    testImplementation ("io.mockk:mockk-android:1.13.17")
+    testImplementation ("io.mockk:mockk-agent:1.13.17")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
+    testImplementation ("androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion")
+    testImplementation ("androidx.test:core-ktx:$androidXTestCoreVersion")
+    testImplementation ("org.robolectric:robolectric:4.11")
 
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
 
 
 }
