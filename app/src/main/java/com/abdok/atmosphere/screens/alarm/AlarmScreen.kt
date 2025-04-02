@@ -147,13 +147,15 @@ fun AlertsScreen(viewModel: AlarmViewModel) {
                 val data = (alerts.value as Response.Success).data
                 var list by remember { mutableStateOf(data) }
 
+                Log.i("TAG", "AlertsScreen: ${list.size}")
+
                 if (data.isEmpty()) {
                     EmptyAlarmsView(padding = innerPadding)
                 } else {
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        AlertsListView(alerts = list, snackbarHostState = snackbarHostState) {
+                        AlertsListView(alerts = data, snackbarHostState = snackbarHostState) {
                             viewModel.deleteAlert(it)
-                            list -= it
+                           // data -= it
                             when(it.selectedOption){
                                 Alert.ALARM -> {
                                     context.cancelAlarm(it.id)

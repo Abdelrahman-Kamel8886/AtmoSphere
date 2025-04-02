@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -33,31 +35,30 @@ fun AlertsListView(
     onDelete: (AlertDTO) -> Unit
 ) {
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 48.dp)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                tint = Color.DarkGray,
-                contentDescription = null
-            )
-            Text(
-                text = stringResource(R.string.scheduled_alerts),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.DarkGray
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn (modifier = Modifier.fillMaxWidth()){
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 48.dp)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationsActive,
+                        tint = Color.DarkGray,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.scheduled_alerts),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.DarkGray
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-        LazyColumn {
             items(alerts , key = {it.id}){
                     SwipeToDeleteContainer(
                         item = it,
@@ -68,8 +69,9 @@ fun AlertsListView(
                         AlertCard(it)
                     }
             }
-        }
 
-        Spacer(modifier = Modifier.height(150.dp))
-    }
+            item {
+                Spacer(modifier = Modifier.height(150.dp))
+            }
+        }
 }

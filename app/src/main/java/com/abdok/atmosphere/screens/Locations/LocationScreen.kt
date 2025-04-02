@@ -1,5 +1,6 @@
 package com.abdok.atmosphere.screens.Locations
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -40,6 +41,7 @@ fun LocationsScreen(
     onItemSelected: (String) ->Unit
 ) {
 
+
     LaunchedEffect(Unit) {
         CurvedNavBar.mutableNavBarState.emit(true)
     }
@@ -47,6 +49,7 @@ fun LocationsScreen(
     val context = LocalContext.current
 
     val favouriteLocations = viewModel.favLocations.collectAsStateWithLifecycle()
+
 
     val snackbarHostState = remember { SnackbarHostState()}
 
@@ -95,8 +98,8 @@ fun LocationsScreen(
             is Response.Loading -> {}
 
             is Response.Success -> {
-                val locations = (favouriteLocations.value as Response.Success).data
 
+                val locations = (favouriteLocations.value as Response.Success).data
                 var list by remember { mutableStateOf(locations) }
 
                 if(list.isNullOrEmpty()){
