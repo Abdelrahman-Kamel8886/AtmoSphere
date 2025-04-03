@@ -1,38 +1,34 @@
 package com.abdok.atmosphere.screens
 
+import android.content.Context
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.compose.rememberNavController
-import androidx.work.Constraints
-import androidx.work.WorkManager
-import com.abdok.atmosphere.workers.LocationWorker
-import android.content.Context
-import android.content.IntentSender
-import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,26 +37,28 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.abdok.atmosphere.R
 import com.abdok.atmosphere.data.local.LocalDataSourceImpl
 import com.abdok.atmosphere.data.local.room.LocalDataBase
 import com.abdok.atmosphere.data.local.sharedPreference.SharedPreferencesImpl
+import com.abdok.atmosphere.data.models.Response
 import com.abdok.atmosphere.data.remote.RemoteDataSourceImpl
 import com.abdok.atmosphere.data.remote.retrofit.RetroConnection
 import com.abdok.atmosphere.data.repository.RepositoryImpl
-import com.abdok.atmosphere.data.models.Response
 import com.abdok.atmosphere.enums.Locations
-import com.abdok.atmosphere.R
-import com.abdok.atmosphere.ui.components.CurvedNavBar
 import com.abdok.atmosphere.navigation.SetupNavHost
-import com.abdok.atmosphere.utils.Constants
+import com.abdok.atmosphere.ui.components.CurvedNavBar
 import com.abdok.atmosphere.utils.SharedModel
 import com.abdok.atmosphere.utils.network.NetworkStateObserver
+import com.abdok.atmosphere.workers.LocationWorker
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
-import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -85,10 +83,8 @@ class MainActivity : ComponentActivity() {
             )
         )
         viewModel = ViewModelProvider(this , factory)[MainViewModel::class.java]
-
-        applyLanguage()
+        viewModel.applyLanguage(context = this)
         enableEdgeToEdge()
-
         setContent {
 
             val locationTypeState = viewModel.locationState.observeAsState()
@@ -147,18 +143,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun applyLanguage() {
-        val sharedPreferences = SharedPreferencesImpl.getInstance()
-        val language = sharedPreferences.fetchData(Constants.LANGUAGE_CODE, Constants.DEFAULT_LANG)
-
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-        val config = resources.configuration
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
-    }
-
 
     private fun checkLocationPermission(): Boolean {
         return checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -286,14 +270,3 @@ class MainActivity : ComponentActivity() {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
